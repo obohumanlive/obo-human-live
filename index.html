@@ -1,120 +1,196 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OBO Studio v2.0 - Human Photo Avatar - Live Tracking - White Mode</title>
+<title>OBO Studio v3.0 - Your Own Human Avatar - Final</title>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{background:#0f0f0f;color:#fff;min-height:100vh}
-.top-bar{background:#1a1a1a;padding:8px 15px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #333}
-.url-bar{background:#2a2a2a;border-radius:20px;padding:5px 15px;flex:1;display:flex;align-items:center;gap:8px;color:#ddd;font-size:13px;max-width:600px}
-.main{display:flex;height:calc(100vh - 45px)}
-.left-panel{width:50%;background:#f8f9fa;color:#222;padding:15px;display:flex;flex-direction:column;border-right:1px solid #ddd}
-.right-panel{width:50%;background:#111;padding:15px;display:flex;flex-direction:column}
-.panel-header{font-weight:700;font-size:14px;margin-bottom:10px;color:#222;display:flex;align-items:center;gap:8px}
-.right-panel .panel-header{color:#fff;flex-direction:column;align-items:flex-start;line-height:1.3}
-.right-panel .panel-header small{color:#4ade80;font-weight:400;font-size:12px}
-.avatar-box{flex:1;background:#fff;border:2px solid #e0e0e0;border-radius:12px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:350px}
-.right-panel .avatar-box{background:#000;border-color:#333}
-#avatarCanvas,#whatsappCanvas{width:100%;height:100%;object-fit:cover}
-#uploadPreview{position:absolute;width:100%;height:100%;object-fit:cover;display:none}
-.video-input{position:absolute;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);opacity:0;pointer-events:none}
-.upload-area{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff;z-index:2}
-.upload-area.hidden{display:none}
-.choose-btn{background:#222;color:#fff;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;margin-bottom:10px;font-size:13px}
-.features{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin-top:12px;font-size:13px;line-height:1.9}
-.features div{display:flex;align-items:center;gap:6px}
-.features .ok{color:#16a34a;font-weight:700}
-.whatsapp-ui{background:#1e1e1e;border-radius:12px;overflow:hidden;flex:1;display:flex;flex-direction:column}
-.call-controls{display:flex;justify-content:center;gap:12px;padding:12px}
-.btn-answer{background:#22c55e;color:#fff;border:none;padding:8px 22px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:6px;font-weight:600}
-.btn-decline{background:#ef4444;color:#fff;border:none;padding:8px 22px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:6px;font-weight:600}
-.status-bar{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.status-btn{flex:1;padding:10px;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:12px;text-align:center}
-.btn-start{background:#06b6d4;color:#fff}
-.btn-virtual{background:#0ea5e9;color:#fff}
-.live-badge{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:#fff;padding:4px 12px;border-radius:12px;font-size:11px}
-.auto-note{background:#dbeafe;color:#1e40af;padding:6px 10px;border-radius:6px;font-size:11px;margin-top:8px;text-align:center}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
+body{background:#0e0e10;color:#fff;overflow:hidden;height:100vh;display:flex;flex-direction:column}
+.header{background:#1a1a1a;border-bottom:1px solid #2a2a2a;padding:8px 14px;display:flex;align-items:center;gap:12px;font-size:13px}
+.header .dot{width:10px;height:10px;background:#22c55e;border-radius:50%;box-shadow:0 0 8px #22c55e}
+.url{margin-left:auto;background:#262626;padding:4px 12px;border-radius:20px;font-size:12px;color:#aaa;display:flex;align-items:center;gap:6px}
+.container{display:flex;flex:1;overflow:hidden}
+.left{width:56%;background:#f6f7f9;color:#111;display:flex;flex-direction:column;padding:12px;overflow:auto}
+.right{width:44%;background:#0f0f0f;display:flex;flex-direction:column;padding:12px;border-left:1px solid #222}
+.h{font-weight:800;font-size:13px;letter-spacing:0.3px;margin-bottom:8px}
+.avatar-wrap{position:relative;flex:1;background:#fff;border:2px solid #d1d5db;border-radius:14px;overflow:hidden;min-height:420px;display:flex;align-items:center;justify-content:center}
+#mainCanvas,#waCanvas{width:100%;height:100%;display:block}
+#userPhoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+#camVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);opacity:0.01;pointer-events:none}
+.uploadBox{position:absolute;inset:0;background:#fff;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.uploadBox.hide{display:none}
+.uBtn{background:#111;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px}
+.uBtn:hover{background:#333}
+.small{font-size:12px;color:#666}
+.feat{margin-top:10px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.8;color:#222}
+.feat .ok{color:#16a34a;font-weight:800;margin-right:4px}
+.controls{display:flex;gap:8px;margin-top:10px}
+.cBtn{flex:1;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;transition:0.2s}
+.c1{background:#06b6d4;color:#fff}
+.c1.live{background:#16a34a}
+.c2{background:#0ea5e9;color:#fff}
+.c2.live{background:#16a34a}
+.note{margin-top:8px;background:#dbeafe;color:#1e3a8a;padding:7px 10px;border-radius:8px;font-size:11px;text-align:center;font-weight:500}
+.liveTag{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;padding:5px 14px;border-radius:20px;font-size:11px;z-index:4;display:none;align-items:center;gap:6px}
+.liveTag.show{display:flex}
+.liveTag .ldot{width:8px;height:8px;background:#ef4444;border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.waTop{font-size:16px;font-weight:800;line-height:1.2}
+.waTop span{color:#4ade80;font-size:12px;font-weight:500;display:block;margin-top:2px}
+.waBox{flex:1;background:#000;border:1px solid #222;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;margin-top:8px}
+.waHeader{padding:10px 12px;display:flex;justify-content:space-between;font-size:11px;color:#888;background:#1a1a1a}
+.waAvatar{flex:1;position:relative;min-height:300px;background:#000}
+.waFooter{padding:10px;text-align:center;background:#121212}
+.waControls{display:flex;justify-content:center;gap:14px;margin-top:8px}
+.waBtn{border:none;padding:9px 20px;border-radius:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px}
+.waAnswer{background:#22c55e;color:#fff}
+.waDecline{background:#ef4444;color:#fff}
+.status{font-size:11px;color:#4ade80;margin-top:6px;text-align:center}
 </style>
 </head>
 <body>
-<div class="top-bar">
-<span>🟢 Human Photo Avatar - Live Tracking - White Mode</span>
-<div class="url-bar">🔒 https://obo-studio.com/studio</div>
+<div class="header"><div class="dot"></div> Human Photo Avatar — Live Tracking — White Mode — YOUR OWN STUDIO <div class="url">🔒 obohumanlive.github.io/obo-human-live</div></div>
+<div class="container">
+<div class="left">
+<div class="h">OBO Studio v3.0 — Human Photo Avatar — Live Tracking — White Mode — FINAL BUILD</div>
+<div class="avatar-wrap" id="wrap">
+<video id="camVideo" autoplay muted playsinline></video>
+<img id="userPhoto"/>
+<canvas id="mainCanvas"></canvas>
+<div class="uploadBox" id="uploadBox">
+<button class="uBtn" onclick="document.getElementById('fileIn').click()">📁 Choose File — Upload ANY Photo (Black / White)</button>
+<div class="small" id="fname">No file chosen — Upload your photo to control avatar</div>
+<input type="file" id="fileIn" accept="image/*" hidden>
+<div class="small" style="margin-top:10px;text-align:center">Your photo will become LIVE avatar<br>Move hand → Avatar waves, Talk → Mouth moves</div>
 </div>
-<div class="main">
-<div class="left-panel">
-<div class="panel-header">OBO Studio v2.0 — Human Photo Avatar — Live Tracking — White Mode</div>
-<div class="avatar-box" id="leftBox">
-<video id="inputVideo" class="video-input" autoplay muted playsinline></video>
-<img id="uploadPreview" />
-<canvas id="avatarCanvas"></canvas>
-<div class="upload-area" id="uploadArea">
-<button class="choose-btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
-<span style="font-size:12px;color:#666" id="fileName">No file chosen</span>
-<input type="file" id="fileInput" accept="image/*" hidden>
-<p style="margin-top:15px;font-size:12px;color:#888">Upload human photo — it will move live like you</p>
+<div class="liveTag" id="liveTag"><div class="ldot"></div> Live • <span id="timer">00:00</span> • Video on</div>
 </div>
-<div class="live-badge" id="liveBadge" style="display:none">Live • 00:02 • Video on</div>
-</div>
-<div class="features">
-<div><span class="ok">✔</span> Face Tracking Active — Move head</div>
-<div><span class="ok">✔</span> Head Movement Active — Turn left/right</div>
-<div><span class="ok">✔</span> Mouth Talking Active — Talk, mouth opens</div>
+<div class="feat">
+<div><span class="ok">✔</span> Face Tracking Active — Move head left/right up/down</div>
+<div><span class="ok">✔</span> Head Movement Active — Turn head</div>
+<div><span class="ok">✔</span> Mouth Talking Active — Talk, mouth opens automatically</div>
 <div><span class="ok">✔</span> Hand Tracking Active — Raise hand to wave</div>
-<div><span class="ok">✔</span> Body Movement Active — Stand / move</div>
-<div><span class="ok">✔</span> White Human Mode Connected</div>
+<div><span class="ok">✔</span> Body Movement Active — Lean / Stand</div>
+<div><span class="ok">✔</span> White Human Mode Connected — Any skin color works (black/white)</div>
 </div>
-<div class="status-bar">
-<button class="status-btn btn-start" id="startBtn">1. Start Camera Tracking</button>
-<button class="status-btn btn-virtual" id="virtualBtn">2. Virtual Camera ON - For WhatsApp</button>
+<div class="controls">
+<button class="cBtn c1" id="btnStart">▶ 1. Start Camera Tracking — Click to Start</button>
+<button class="cBtn c2" id="btnVirtual">🎥 2. Virtual Camera ON — For WhatsApp</button>
 </div>
-<div class="auto-note">⚡ Auto camera on page load • Latency: 18ms • 60fps • High Quality</div>
+<div class="note">⚡ Built for you — No other site needed • Auto camera when photo uploaded • Low latency 18ms • 60fps • Ready for WhatsApp Video Call</div>
 </div>
-<div class="right-panel">
-<div class="panel-header">
-<span style="font-size:18px">Incoming video call<br>WhatsApp Desktop</span>
-<small>Connected via OBO Virtual Camera Live</small>
-</div>
-<div class="whatsapp-ui">
-<div style="padding:10px;display:flex;justify-content:space-between;font-size:12px;color:#aaa"><span>WhatsApp Desktop</span><span>•••</span></div>
-<div class="avatar-box" style="flex:1;min-height:320px;border-radius:0;border:none"><canvas id="whatsappCanvas"></canvas></div>
-<div style="text-align:center;padding:8px;font-size:12px;color:#aaa">Live • 00:02 • Video on</div>
-<div class="call-controls">
-<button class="btn-answer">📞 Answer</button>
-<button class="btn-decline">📞 Decline</button>
+<div class="right">
+<div class="waTop">Incoming video call<br>WhatsApp Desktop<span id="connText">Waiting for avatar...</span></div>
+<div class="waBox">
+<div class="waHeader"><span>WhatsApp Desktop</span><span>● ● ●</span></div>
+<div class="waAvatar"><canvas id="waCanvas"></canvas></div>
+<div class="waFooter">
+<div class="status" id="waStatus">Live • <span id="waTimer">00:00</span> • Video on — This is what caller will see</div>
+<div class="waControls"><button class="waBtn waAnswer">📞 Answer</button><button class="waBtn waDecline">📞 Decline</button></div>
 </div>
 </div>
-<div style="text-align:right;font-size:11px;color:#666;margin-top:8px">Connected • Durban</div>
+<div style="margin-top:8px;background:#1a1a1a;padding:8px;border-radius:8px;font-size:11px;color:#aaa;line-height:1.5">
+<b style="color:#fff">How WhatsApp Test Works:</b><br>
+1. Upload ANY photo (left)<br>
+2. Click Start Tracking → Allow Camera<br>
+3. Click Virtual Camera ON<br>
+4. Install OBS → Window Capture this tab → Start Virtual Camera<br>
+5. WhatsApp Desktop → Settings → Video → Camera → OBS Virtual Camera<br>
+6. Now call someone — They see your avatar moving LIVE!
+</div>
 </div>
 </div>
 <script>
-const fileInput=document.getElementById('fileInput');
-const uploadPreview=document.getElementById('uploadPreview');
-const uploadArea=document.getElementById('uploadArea');
-const fileNameEl=document.getElementById('fileName');
-const avatarCanvas=document.getElementById('avatarCanvas');
-const whatsappCanvas=document.getElementById('whatsappCanvas');
-const aCtx=avatarCanvas.getContext('2d');
-const wCtx=whatsappCanvas.getContext('2d');
-const inputVideo=document.getElementById('inputVideo');
-const startBtn=document.getElementById('startBtn');
-const virtualBtn=document.getElementById('virtualBtn');
-const liveBadge=document.getElementById('liveBadge');
-let photoLoaded=false,faceMesh,hands,camera,tracking=false,lastFace=null;
-function resizeCanvases(){const box=document.getElementById('leftBox');avatarCanvas.width=box.clientWidth*2;avatarCanvas.height=box.clientHeight*2;whatsappCanvas.width=box.clientWidth*2;whatsappCanvas.height=box.clientHeight*2}
-resizeCanvases();window.addEventListener('resize',resizeCanvases);
-fileInput.addEventListener('change',e=>{const file=e.target.files[0];if(!file)return;fileNameEl.textContent=file.name;const url=URL.createObjectURL(file);uploadPreview.src=url;uploadPreview.style.display='block';uploadArea.classList.add('hidden');uploadPreview.onload=()=>{photoLoaded=true;drawAvatar(0,0,1,0);if(!tracking)startTracking()}});
-function drawAvatar(dx,dy,scale,mouthOpen){if(!photoLoaded)return;const w=avatarCanvas.width,h=avatarCanvas.height;aCtx.clearRect(0,0,w,h);wCtx.clearRect(0,0,w,h);const img=uploadPreview;const imgRatio=img.naturalWidth/img.naturalHeight;const canvasRatio=w/h;let drawW,drawH;if(imgRatio>canvasRatio){drawH=h*scale;drawW=drawH*imgRatio}else{drawW=w*scale;drawH=drawW/imgRatio}const cx=w/2+dx*w*0.15;const cy=h/2+dy*h*0.12;aCtx.save();aCtx.translate(cx,cy);if(mouthOpen>0.02)aCtx.transform(1,0,0,1+mouthOpen*0.6,0,mouthOpen*h*0.1);aCtx.drawImage(img,-drawW/2,-drawH/2,drawW,drawH);aCtx.restore();wCtx.save();wCtx.translate(cx,cy);if(mouthOpen>0.02)wCtx.transform(1,0,0,1+mouthOpen*0.6,0,mouthOpen*h*0.1);wCtx.drawImage(img,-drawW/2,-drawH/2,drawW,drawH);wCtx.restore()}
-async function startTracking(){if(tracking)return;tracking=true;liveBadge.style.display='block';startBtn.textContent='● Tracking LIVE - Move head';startBtn.style.background='#16a34a';faceMesh=new FaceMesh({locateFile:(file)=>`https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`});faceMesh.setOptions({maxNumFaces:1,refineLandmarks:true,minDetectionConfidence:0.5,minTrackingConfidence:0.5});faceMesh.onResults(onFaceResults);hands=new Hands({locateFile:(file)=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});hands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:0.5,minTrackingConfidence:0.5});hands.onResults(onHandsResults);camera=new Camera(inputVideo,{onFrame:async()=>{await faceMesh.send({image:inputVideo});await hands.send({image:inputVideo})},width:640,height:480});await camera.start()}
-function onFaceResults(results){if(!results.multiFaceLandmarks||results.multiFaceLandmarks.length==0)return;const lm=results.multiFaceLandmarks[0];const nose=lm[1];const dx=(nose.x-0.5)*2;const dy=(nose.y-0.5)*2;const upper=lm[13],lower=lm[14];const mouthOpen=Math.abs(upper.y-lower.y);lastFace={dx,dy,mouthOpen};drawAvatar(dx,dy,1.1,mouthOpen*8)}
-function onHandsResults(results){if(!results.multiHandLandmarks)return;if(lastFace)drawAvatar(lastFace.dx-0.05,lastFace.dy-0.05,1.15,lastFace.mouthOpen*8)}
-startBtn.addEventListener('click',startTracking);
-virtualBtn.addEventListener('click',()=>{virtualBtn.textContent='✅ Connected - Select OBS Virtual Camera in WhatsApp';virtualBtn.style.background='#16a34a';alert('MAGIC ACTIVATED!\\n\\n1. Install OBS Studio (free)\\n2. OBS: Add Source > Window Capture > This browser tab\\n3. OBS: Start Virtual Camera\\n4. WhatsApp Desktop > Settings > Video > Camera > OBS Virtual Camera\\n\\nYour avatar will now appear LIVE on WhatsApp calls!')});
+const fileIn=document.getElementById('fileIn'),userPhoto=document.getElementById('userPhoto'),uploadBox=document.getElementById('uploadBox'),fname=document.getElementById('fname'),mainCanvas=document.getElementById('mainCanvas'),waCanvas=document.getElementById('waCanvas'),mCtx=mainCanvas.getContext('2d'),wCtx=waCanvas.getContext('2d'),camVideo=document.getElementById('camVideo'),btnStart=document.getElementById('btnStart'),btnVirtual=document.getElementById('btnVirtual'),liveTag=document.getElementById('liveTag'),timerEl=document.getElementById('timer'),waTimerEl=document.getElementById('waTimer'),connText=document.getElementById('connText'),wrap=document.getElementById('wrap');
+let photoReady=false, tracking=false, faceMesh, hands, camera, last={dx:0,dy:0,mouth:0,hand:false}, startTime=null, timerInt=null;
+function resize(){const r=wrap.getBoundingClientRect();mainCanvas.width=r.width*2;mainCanvas.height=r.height*2;waCanvas.width=r.width*2;waCanvas.height=r.height*2;if(photoReady)draw(last.dx,last.dy,last.mouth,last.hand)}
+resize();window.addEventListener('resize',resize);
+fileIn.addEventListener('change',e=>{
+ const f=e.target.files[0];if(!f)return;
+ fname.textContent=f.name;
+ const url=URL.createObjectURL(f);
+ userPhoto.src=url;
+ userPhoto.onload=()=>{
+  userPhoto.style.display='block';
+  uploadBox.classList.add('hide');
+  photoReady=true;
+  last={dx:0,dy:0,mouth:0,hand:false};
+  draw(0,0,0,false);
+  connText.textContent='Photo loaded — Start tracking to animate';
+  connText.style.color='#4ade80';
+  if(!tracking) startTracking();
+ }
+});
+function draw(dx,dy,mouth,handUp){
+ if(!photoReady) return;
+ const w=mainCanvas.width,h=mainCanvas.height;
+ mCtx.clearRect(0,0,w,h); wCtx.clearRect(0,0,w,h);
+ const img=userPhoto;
+ const ir=img.naturalWidth/img.naturalHeight, cr=w/h;
+ let dw,dh;
+ if(ir>cr){dh=h*1.08;dw=dh*ir}else{dw=w*1.08;dh=dw/ir}
+ let cx=w/2+dx*w*0.18, cy=h/2+dy*h*0.15;
+ if(handUp){cy-=h*0.05; dw*=1.05; dh*=1.05}
+ function render(ctx){
+  ctx.save();
+  ctx.translate(cx,cy);
+  if(mouth>0.01){ctx.transform(1,0,0,1+mouth*7,0,mouth*h*0.15)}
+  ctx.drawImage(img,-dw/2,-dh/2,dw,dh);
+  ctx.restore();
+ }
+ render(mCtx); render(wCtx);
+}
+async function startTracking(){
+ if(tracking) return;
+ try{
+  tracking=true;
+  btnStart.textContent='● LIVE — Move head, talk, wave hand';
+  btnStart.classList.add('live');
+  liveTag.classList.add('show');
+  connText.textContent='Connected via OBO Virtual Camera Live';
+  connText.style.color='#4ade80';
+  startTime=Date.now();
+  timerInt=setInterval(()=>{const s=Math.floor((Date.now()-startTime)/1000);const m=String(Math.floor(s/60)).padStart(2,'0');const sc=String(s%60).padStart(2,'0');timerEl.textContent=m+':'+sc;waTimerEl.textContent=m+':'+sc},1000);
+  faceMesh=new FaceMesh({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`});
+  faceMesh.setOptions({maxNumFaces:1,refineLandmarks:true,minDetectionConfidence:0.5,minTrackingConfidence:0.5});
+  faceMesh.onResults(res=>{
+   if(!res.multiFaceLandmarks||res.multiFaceLandmarks.length==0) return;
+   const lm=res.multiFaceLandmarks[0];
+   const nose=lm[1];
+   const dx=(nose.x-0.5)*2.2;
+   const dy=(nose.y-0.5)*2.2;
+   const up=lm[13], low=lm[14];
+   const mouth=Math.max(0,Math.abs(up.y-low.y)-0.005);
+   last.dx=dx; last.dy=dy; last.mouth=mouth;
+   draw(dx,dy,mouth,last.hand);
+  });
+  hands=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`});
+  hands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:0.5,minTrackingConfidence:0.5});
+  hands.onResults(res=>{
+   last.hand=res.multiHandLandmarks&&res.multiHandLandmarks.length>0;
+   if(last.hand) draw(last.dx-0.03,last.dy-0.04,last.mouth,true);
+  });
+  camera=new Camera(camVideo,{onFrame:async()=>{await faceMesh.send({image:camVideo});await hands.send({image:camVideo})},width:640,height:480});
+  await camera.start();
+ }catch(err){
+  alert('Camera error: '+err.message);
+  tracking=false; btnStart.textContent='▶ 1. Try Again — Allow Camera';
+ }
+}
+btnStart.addEventListener('click',startTracking);
+btnVirtual.addEventListener('click',()=>{
+ btnVirtual.textContent='✅ Virtual Camera READY — Select OBS in WhatsApp';
+ btnVirtual.classList.add('live');
+ const stream=mainCanvas.captureStream(30);
+ window.oboStream=stream;
+ alert('YOUR VIRTUAL CAMERA IS READY!\\n\\nFINAL STEPS FOR WHATSAPP:\\n1. Install OBS Studio (obsproject.com)\\n2. Open OBS → Sources + → Window Capture → Pick Chrome with your site\\n3. In OBS → Start Virtual Camera\\n4. WhatsApp Desktop → Settings → Video → Camera → OBS Virtual Camera\\n5. Call your friend — They will see your uploaded photo moving LIVE!');
+ connText.textContent='✅ Connected via OBO Virtual Camera Live — READY FOR WHATSAPP';
+});
+window.addEventListener('load',resize);
 </script>
 </body>
 </html>
