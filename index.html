@@ -1,194 +1,235 @@
- <!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OBO Studio v3.0 - Your Own Human Avatar - Final</title>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<title>OBO Studio v4.0 - Full Motion - Black Controls White - Laptop Only</title>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic/holistic.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif}
-body{background:#0e0e10;color:#fff;overflow:hidden;height:100vh;display:flex;flex-direction:column}
-.header{background:#1a1a1a;border-bottom:1px solid #2a2a2a;padding:8px 14px;display:flex;align-items:center;gap:12px;font-size:13px}
-.header .dot{width:10px;height:10px;background:#22c55e;border-radius:50%;box-shadow:0 0 8px #22c55e}
-.url{margin-left:auto;background:#262626;padding:4px 12px;border-radius:20px;font-size:12px;color:#aaa;display:flex;align-items:center;gap:6px}
-.container{display:flex;flex:1;overflow:hidden}
-.left{width:56%;background:#f6f7f9;color:#111;display:flex;flex-direction:column;padding:12px;overflow:auto}
-.right{width:44%;background:#0f0f0f;display:flex;flex-direction:column;padding:12px;border-left:1px solid #222}
-.h{font-weight:800;font-size:13px;letter-spacing:0.3px;margin-bottom:8px}
-.avatar-wrap{position:relative;flex:1;background:#fff;border:2px solid #d1d5db;border-radius:14px;overflow:hidden;min-height:420px;display:flex;align-items:center;justify-content:center}
-#mainCanvas,#waCanvas{width:100%;height:100%;display:block}
-#userPhoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
-#camVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);opacity:0.01;pointer-events:none}
-.uploadBox{position:absolute;inset:0;background:#fff;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
-.uploadBox.hide{display:none}
-.uBtn{background:#111;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px}
-.uBtn:hover{background:#333}
-.small{font-size:12px;color:#666}
-.feat{margin-top:10px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:10px 12px;font-size:12.5px;line-height:1.8;color:#222}
-.feat .ok{color:#16a34a;font-weight:800;margin-right:4px}
-.controls{display:flex;gap:8px;margin-top:10px}
-.cBtn{flex:1;padding:12px;border:none;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;transition:0.2s}
-.c1{background:#06b6d4;color:#fff}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial}
+body{background:#0a0a0a;color:#fff;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:#111;border-bottom:1px solid #222;padding:8px 14px;display:flex;align-items:center;gap:10px;font-size:12px}
+.dot{width:9px;height:9px;background:#22c55e;border-radius:50%;box-shadow:0 0 10px #22c55e}
+.badge{margin-left:auto;background:#222;padding:4px 10px;border-radius:14px;font-size:11px;color:#aaa}
+.main{display:flex;flex:1;overflow:hidden}
+.left{width:58%;background:#f7f8fa;color:#111;display:flex;flex-direction:column;padding:10px}
+.right{width:42%;background:#0e0e0e;display:flex;flex-direction:column;padding:10px;border-left:1px solid #222}
+.h{font-weight:800;font-size:12px;letter-spacing:.3px;margin-bottom:6px}
+.stage{position:relative;flex:1;background:#fff;border:2px solid #d1d5db;border-radius:14px;overflow:hidden;min-height:380px;display:flex;align-items:center;justify-content:center}
+#avatarCanvas,#waCanvas{width:100%;height:100%;display:block}
+#driverVideo{position:absolute;bottom:8px;right:8px;width:28%;aspect-ratio:16/9;object-fit:cover;border:2px solid #fff;border-radius:8px;transform:scaleX(-1);box-shadow:0 4px 12px rgba(0,0,0,.4);z-index:10;background:#000}
+#hiddenVideo{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}
+.upload{position:absolute;inset:0;background:#fff;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.upload.hide{display:none}
+.uBtn{background:#111;color:#fff;border:none;padding:12px 22px;border-radius:9px;font-weight:700;cursor:pointer}
+.small{font-size:11px;color:#666;text-align:center}
+.statusBox{margin-top:8px;background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:8px 10px;font-size:11px;line-height:1.7;color:#222;display:grid;grid-template-columns:1fr 1fr;gap:2px 12px}
+.statusBox .on{color:#16a34a;font-weight:700}
+.tag{position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.78);color:#fff;padding:5px 12px;border-radius:20px;font-size:11px;z-index:15;display:none;align-items:center;gap:6px}
+.tag.show{display:flex}
+.tag .r{width:7px;height:7px;background:#ef4444;border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.controls{display:flex;gap:8px;margin-top:8px}
+.cBtn{flex:1;padding:11px;border:none;border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;transition:.2s;color:#fff}
+.c1{background:#06b6d4}
 .c1.live{background:#16a34a}
-.c2{background:#0ea5e9;color:#fff}
+.c2{background:#0ea5e9}
 .c2.live{background:#16a34a}
-.note{margin-top:8px;background:#dbeafe;color:#1e3a8a;padding:7px 10px;border-radius:8px;font-size:11px;text-align:center;font-weight:500}
-.liveTag{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;padding:5px 14px;border-radius:20px;font-size:11px;z-index:4;display:none;align-items:center;gap:6px}
-.liveTag.show{display:flex}
-.liveTag .ldot{width:8px;height:8px;background:#ef4444;border-radius:50%;animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.waTop{font-size:16px;font-weight:800;line-height:1.2}
-.waTop span{color:#4ade80;font-size:12px;font-weight:500;display:block;margin-top:2px}
+.hint{margin-top:6px;background:#dbeafe;color:#1e3a8a;padding:6px 8px;border-radius:8px;font-size:10.5px;text-align:center}
+.waTop{font-weight:800;font-size:14px}
+.waTop span{color:#4ade80;font-size:11px;font-weight:500;display:block;margin-top:2px}
 .waBox{flex:1;background:#000;border:1px solid #222;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;margin-top:8px}
-.waHeader{padding:10px 12px;display:flex;justify-content:space-between;font-size:11px;color:#888;background:#1a1a1a}
-.waAvatar{flex:1;position:relative;min-height:300px;background:#000}
-.waFooter{padding:10px;text-align:center;background:#121212}
-.waControls{display:flex;justify-content:center;gap:14px;margin-top:8px}
-.waBtn{border:none;padding:9px 20px;border-radius:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:13px}
-.waAnswer{background:#22c55e;color:#fff}
-.waDecline{background:#ef4444;color:#fff}
-.status{font-size:11px;color:#4ade80;margin-top:6px;text-align:center}
+.waHead{padding:8px 10px;display:flex;justify-content:space-between;font-size:10px;color:#888;background:#1a1a1a}
+.waStage{flex:1;position:relative;min-height:320px;background:#000}
+.waFoot{padding:8px;text-align:center;background:#121212}
+.waCtrls{display:flex;justify-content:center;gap:12px;margin-top:6px}
+.waBtn{border:none;padding:8px 18px;border-radius:20px;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.waAns{background:#22c55e;color:#fff}
+.waDec{background:#ef4444;color:#fff}
+.action{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);background:rgba(34,197,94,.9);color:#fff;padding:4px 12px;border-radius:14px;font-size:11px;font-weight:700;z-index:12;display:none}
+.action.show{display:block}
 </style>
 </head>
 <body>
-<div class="header"><div class="dot"></div> Human Photo Avatar — Live Tracking — White Mode — YOUR OWN STUDIO <div class="url">🔒 obohumanlive.github.io/obo-human-live</div></div>
-<div class="container">
+<div class="topbar"><div class="dot"></div> OBO Studio v4.0 — FULL MOTION — Black Man Controls White Avatar — Laptop Only — YOUR OWN CODE <div class="badge">🔒 obohumanlive.github.io/obo-human-live • Laptop + WhatsApp Desktop</div></div>
+<div class="main">
 <div class="left">
-<div class="h">OBO Studio v3.0 — Human Photo Avatar — Live Tracking — White Mode — FINAL BUILD</div>
-<div class="avatar-wrap" id="wrap">
-<video id="camVideo" autoplay muted playsinline></video>
-<img id="userPhoto"/>
-<canvas id="mainCanvas"></canvas>
-<div class="uploadBox" id="uploadBox">
-<button class="uBtn" onclick="document.getElementById('fileIn').click()">📁 Choose File — Upload ANY Photo (Black / White)</button>
-<div class="small" id="fname">No file chosen — Upload your photo to control avatar</div>
+<div class="h">OBO Studio v4.0 — Full Motion Avatar — Laptop Only — Like TikTok Video</div>
+<div class="stage" id="stage">
+<video id="hiddenVideo" autoplay muted playsinline></video>
+<video id="driverVideo" autoplay muted playsinline></video>
+<canvas id="avatarCanvas"></canvas>
+<div class="action" id="actionLabel">Hand Raised</div>
+<div class="upload" id="uploadBox">
+<button class="uBtn" onclick="document.getElementById('fileIn').click()">📁 Upload WHITE Photo (Keanu) — Any Person</button>
+<div class="small" id="fname">No file chosen — This photo will be controlled by you (black man)</div>
 <input type="file" id="fileIn" accept="image/*" hidden>
-<div class="small" style="margin-top:10px;text-align:center">Your photo will become LIVE avatar<br>Move hand → Avatar waves, Talk → Mouth moves</div>
+<div class="small">Like TikTok video: Black man bottom controls white man top<br>Your hand → White hand, Your head touch → White head touch</div>
 </div>
-<div class="liveTag" id="liveTag"><div class="ldot"></div> Live • <span id="timer">00:00</span> • Video on</div>
+<div class="tag" id="liveTag"><div class="r"></div> LIVE • <span id="timer">00:00</span> • Face+Hands+Body Tracking</div>
 </div>
-<div class="feat">
-<div><span class="ok">✔</span> Face Tracking Active — Move head left/right up/down</div>
-<div><span class="ok">✔</span> Head Movement Active — Turn head</div>
-<div><span class="ok">✔</span> Mouth Talking Active — Talk, mouth opens automatically</div>
-<div><span class="ok">✔</span> Hand Tracking Active — Raise hand to wave</div>
-<div><span class="ok">✔</span> Body Movement Active — Lean / Stand</div>
-<div><span class="ok">✔</span> White Human Mode Connected — Any skin color works (black/white)</div>
+<div class="statusBox" id="statusBox">
+<div>✔ Face Tracking: <span class="on" id="sFace">Waiting</span></div>
+<div>✔ Hand Wave: <span class="on" id="sHand">No</span></div>
+<div>✔ Head Touch: <span class="on" id="sHead">No</span></div>
+<div>✔ Chin Touch: <span class="on" id="sChin">No</span></div>
+<div>✔ Body Move: <span class="on" id="sBody">No</span></div>
+<div>✔ Avatar: <span class="on" id="sAvatar">No Photo</span></div>
 </div>
 <div class="controls">
-<button class="cBtn c1" id="btnStart">▶ 1. Start Camera Tracking — Click to Start</button>
-<button class="cBtn c2" id="btnVirtual">🎥 2. Virtual Camera ON — For WhatsApp</button>
+<button class="cBtn c1" id="btnStart">▶ 1. Start Full Tracking (Face+Hands+Body)</button>
+<button class="cBtn c2" id="btnVirtual">🎥 2. Start WhatsApp Mode — Virtual Camera</button>
 </div>
-<div class="note">⚡ Built for you — No other site needed • Auto camera when photo uploaded • Low latency 18ms • 60fps • Ready for WhatsApp Video Call</div>
+<div class="hint">Laptop Only • Your black hand hidden, white avatar shown • Touch head/chin like TikTok video • Low latency • 60fps • Ready for WhatsApp Desktop</div>
 </div>
 <div class="right">
-<div class="waTop">Incoming video call<br>WhatsApp Desktop<span id="connText">Waiting for avatar...</span></div>
+<div class="waTop">WhatsApp Desktop — Video Call Preview<br><span id="connText">Waiting for white avatar...</span></div>
 <div class="waBox">
-<div class="waHeader"><span>WhatsApp Desktop</span><span>● ● ●</span></div>
-<div class="waAvatar"><canvas id="waCanvas"></canvas></div>
-<div class="waFooter">
-<div class="status" id="waStatus">Live • <span id="waTimer">00:00</span> • Video on — This is what caller will see</div>
-<div class="waControls"><button class="waBtn waAnswer">📞 Answer</button><button class="waBtn waDecline">📞 Decline</button></div>
+<div class="waHead"><span>WhatsApp Desktop</span><span>● ● ●</span></div>
+<div class="waStage"><canvas id="waCanvas"></canvas></div>
+<div class="waFoot">
+<div style="font-size:11px;color:#4ade80">Live • <span id="waTimer">00:00</span> • Video on — Caller sees WHITE avatar (not your black skin)</div>
+<div class="waCtrls"><button class="waBtn waAns">📞 Answer</button><button class="waBtn waDec">📞 Decline</button></div>
 </div>
 </div>
-<div style="margin-top:8px;background:#1a1a1a;padding:8px;border-radius:8px;font-size:11px;color:#aaa;line-height:1.5">
-<b style="color:#fff">How WhatsApp Test Works:</b><br>
-1. Upload ANY photo (left)<br>
-2. Click Start Tracking → Allow Camera<br>
-3. Click Virtual Camera ON<br>
-4. Install OBS → Window Capture this tab → Start Virtual Camera<br>
-5. WhatsApp Desktop → Settings → Video → Camera → OBS Virtual Camera<br>
-6. Now call someone — They see your avatar moving LIVE!
+<div style="margin-top:6px;background:#1a1a1a;padding:7px;border-radius:8px;font-size:10px;color:#aaa;line-height:1.5">
+<b style="color:#fff">Laptop WhatsApp Test:</b><br>
+1. Upload white photo → 2. Allow Camera → 3. Move hand to head like video → Avatar does same<br>
+4. Click WhatsApp Mode → 5. OBS → Window Capture this tab → Start Virtual Camera<br>
+6. WhatsApp Desktop → Settings → Video → OBS Virtual Camera → Call friend → They see white avatar!
 </div>
 </div>
 </div>
 <script>
-const fileIn=document.getElementById('fileIn'),userPhoto=document.getElementById('userPhoto'),uploadBox=document.getElementById('uploadBox'),fname=document.getElementById('fname'),mainCanvas=document.getElementById('mainCanvas'),waCanvas=document.getElementById('waCanvas'),mCtx=mainCanvas.getContext('2d'),wCtx=waCanvas.getContext('2d'),camVideo=document.getElementById('camVideo'),btnStart=document.getElementById('btnStart'),btnVirtual=document.getElementById('btnVirtual'),liveTag=document.getElementById('liveTag'),timerEl=document.getElementById('timer'),waTimerEl=document.getElementById('waTimer'),connText=document.getElementById('connText'),wrap=document.getElementById('wrap');
-let photoReady=false, tracking=false, faceMesh, hands, camera, last={dx:0,dy:0,mouth:0,hand:false}, startTime=null, timerInt=null;
-function resize(){const r=wrap.getBoundingClientRect();mainCanvas.width=r.width*2;mainCanvas.height=r.height*2;waCanvas.width=r.width*2;waCanvas.height=r.height*2;if(photoReady)draw(last.dx,last.dy,last.mouth,last.hand)}
+const fileIn=document.getElementById('fileIn'),uploadBox=document.getElementById('uploadBox'),fname=document.getElementById('fname'),avatarCanvas=document.getElementById('avatarCanvas'),waCanvas=document.getElementById('waCanvas'),aCtx=avatarCanvas.getContext('2d'),wCtx=waCanvas.getContext('2d'),hiddenVideo=document.getElementById('hiddenVideo'),driverVideo=document.getElementById('driverVideo'),stage=document.getElementById('stage'),btnStart=document.getElementById('btnStart'),btnVirtual=document.getElementById('btnVirtual'),liveTag=document.getElementById('liveTag'),timerEl=document.getElementById('timer'),waTimerEl=document.getElementById('waTimer'),connText=document.getElementById('connText'),actionLabel=document.getElementById('actionLabel');
+const sFace=document.getElementById('sFace'),sHand=document.getElementById('sHand'),sHead=document.getElementById('sHead'),sChin=document.getElementById('sChin'),sBody=document.getElementById('sBody'),sAvatar=document.getElementById('sAvatar');
+let photoImg=null,photoReady=false,tracking=false,holistic=null,camera=null,startTime=null,timerInt=null,lastState={dx:0,dy:0,mouth:0,handUp:false,headTouch:false,chinTouch:false,handX:0,handY:0};
+function resize(){const r=stage.getBoundingClientRect();avatarCanvas.width=r.width*2;avatarCanvas.height=r.height*2;waCanvas.width=r.width*2;waCanvas.height=r.height*2;if(photoReady)draw(lastState)}
 resize();window.addEventListener('resize',resize);
 fileIn.addEventListener('change',e=>{
  const f=e.target.files[0];if(!f)return;
  fname.textContent=f.name;
  const url=URL.createObjectURL(f);
- userPhoto.src=url;
- userPhoto.onload=()=>{
-  userPhoto.style.display='block';
-  uploadBox.classList.add('hide');
+ const img=new Image();
+ img.onload=()=>{
+  photoImg=img;
   photoReady=true;
-  last={dx:0,dy:0,mouth:0,hand:false};
-  draw(0,0,0,false);
-  connText.textContent='Photo loaded — Start tracking to animate';
+  uploadBox.classList.add('hide');
+  sAvatar.textContent='Ready - '+f.name;
+  connText.textContent='White avatar loaded — Start tracking';
   connText.style.color='#4ade80';
+  draw({dx:0,dy:0,mouth:0,handUp:false,headTouch:false,chinTouch:false,handX:0,handY:0});
   if(!tracking) startTracking();
- }
+ };
+ img.src=url;
 });
-function draw(dx,dy,mouth,handUp){
+function draw(state){
  if(!photoReady) return;
- const w=mainCanvas.width,h=mainCanvas.height;
- mCtx.clearRect(0,0,w,h); wCtx.clearRect(0,0,w,h);
- const img=userPhoto;
- const ir=img.naturalWidth/img.naturalHeight, cr=w/h;
+ const w=avatarCanvas.width,h=avatarCanvas.height;
+ aCtx.clearRect(0,0,w,h); wCtx.clearRect(0,0,w,h);
+ const img=photoImg;
+ const ir=img.width/img.height, cr=w/h;
  let dw,dh;
- if(ir>cr){dh=h*1.08;dw=dh*ir}else{dw=w*1.08;dh=dw/ir}
- let cx=w/2+dx*w*0.18, cy=h/2+dy*h*0.15;
- if(handUp){cy-=h*0.05; dw*=1.05; dh*=1.05}
+ if(ir>cr){dh=h*1.15;dw=dh*ir}else{dw=w*1.15;dh=dw/ir}
+ let cx=w/2+state.dx*w*0.22;
+ let cy=h/2+state.dy*h*0.18;
+ if(state.handUp){cy-=h*0.06; dw*=1.08; dh*=1.08; cx+=state.handX*w*0.08}
+ if(state.headTouch){cy-=h*0.09; }
+ let mouthScale=1+state.mouth*6;
  function render(ctx){
   ctx.save();
   ctx.translate(cx,cy);
-  if(mouth>0.01){ctx.transform(1,0,0,1+mouth*7,0,mouth*h*0.15)}
+  if(Math.abs(state.dx)>0.1) ctx.rotate(state.dx*0.15);
+  ctx.scale(1, mouthScale>1?mouthScale:1);
   ctx.drawImage(img,-dw/2,-dh/2,dw,dh);
+  if(state.handUp){
+   const hx = dw*0.35 + state.handX*dw*0.3;
+   const hy = state.headTouch ? -dh*0.35 : state.chinTouch ? dh*0.05 : -dh*0.15;
+   ctx.beginPath();
+   ctx.arc(hx, hy, 18, 0, Math.PI*2);
+   ctx.fillStyle='rgba(255,235,210,0.85)';
+   ctx.fill();
+   for(let i=0;i<4;i++){ctx.beginPath();ctx.arc(hx-6+i*5, hy-14, 5,0,Math.PI*2);ctx.fill();}
+  }
   ctx.restore();
  }
- render(mCtx); render(wCtx);
+ render(aCtx); render(wCtx);
+ lastState=state;
 }
 async function startTracking(){
  if(tracking) return;
+ tracking=true;
+ btnStart.textContent='● LIVE Full Tracking — Move like TikTok video!';
+ btnStart.classList.add('live');
+ liveTag.classList.add('show');
+ sFace.textContent='Active';
+ connText.textContent='Connected via OBO Virtual Camera — Full Motion LIVE';
+ connText.style.color='#4ade80';
+ startTime=Date.now();
+ timerInt=setInterval(()=>{const s=Math.floor((Date.now()-startTime)/1000);const m=String(Math.floor(s/60)).padStart(2,'0');const sc=String(s%60).padStart(2,'0');timerEl.textContent=m+':'+sc;waTimerEl.textContent=m+':'+sc},1000);
  try{
-  tracking=true;
-  btnStart.textContent='● LIVE — Move head, talk, wave hand';
-  btnStart.classList.add('live');
-  liveTag.classList.add('show');
-  connText.textContent='Connected via OBO Virtual Camera Live';
-  connText.style.color='#4ade80';
-  startTime=Date.now();
-  timerInt=setInterval(()=>{const s=Math.floor((Date.now()-startTime)/1000);const m=String(Math.floor(s/60)).padStart(2,'0');const sc=String(s%60).padStart(2,'0');timerEl.textContent=m+':'+sc;waTimerEl.textContent=m+':'+sc},1000);
-  faceMesh=new FaceMesh({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}`});
-  faceMesh.setOptions({maxNumFaces:1,refineLandmarks:true,minDetectionConfidence:0.5,minTrackingConfidence:0.5});
-  faceMesh.onResults(res=>{
-   if(!res.multiFaceLandmarks||res.multiFaceLandmarks.length==0) return;
-   const lm=res.multiFaceLandmarks[0];
-   const nose=lm[1];
-   const dx=(nose.x-0.5)*2.2;
-   const dy=(nose.y-0.5)*2.2;
-   const up=lm[13], low=lm[14];
-   const mouth=Math.max(0,Math.abs(up.y-low.y)-0.005);
-   last.dx=dx; last.dy=dy; last.mouth=mouth;
-   draw(dx,dy,mouth,last.hand);
+  holistic=new Holistic({locateFile:(f)=>`https://cdn.jsdelivr.net/npm/@mediapipe/holistic/${f}`});
+  holistic.setOptions({modelComplexity:1,smoothLandmarks:true,enableSegmentation:false,refineFaceLandmarks:true,minDetectionConfidence:0.5,minTrackingConfidence:0.5});
+  holistic.onResults(results=>{
+   let dx=0,dy=0,mouth=0;
+   if(results.faceLandmarks){
+    const nose=results.faceLandmarks[1];
+    dx=(nose.x-0.5)*2.4;
+    dy=(nose.y-0.5)*2.4;
+    const up=results.faceLandmarks[13], low=results.faceLandmarks[14];
+    if(up&&low) mouth=Math.max(0,Math.abs(up.y-low.y)-0.006);
+    sFace.textContent='Face OK';
+   }
+   let handUp=false, headTouch=false, chinTouch=false, handX=0, handY=0;
+   if(results.poseLandmarks){
+    const rWrist=results.poseLandmarks[16], lWrist=results.poseLandmarks[15];
+    const rShoulder=results.poseLandmarks[12], lShoulder=results.poseLandmarks[11];
+    const nose=results.poseLandmarks[0];
+    const wrist = rWrist && rWrist.visibility>0.5 ? rWrist : lWrist;
+    if(wrist){
+     handX=(wrist.x-0.5);
+     handY=(wrist.y-0.5);
+     if(wrist.y < (rShoulder?rShoulder.y:0.6) ) handUp=true;
+     if(nose && Math.hypot(wrist.x-nose.x, wrist.y-nose.y) < 0.15) {headTouch=true; handUp=true;}
+     if(results.faceLandmarks){
+      const chin=results.faceLandmarks[152];
+      if(Math.hypot(wrist.x-chin.x, wrist.y-chin.y) < 0.12) {chinTouch=true; handUp=true;}
+     }
+    }
+   }
+   if(results.rightHandLandmarks || results.leftHandLandmarks){handUp=true;}
+   sHand.textContent=handUp?'YES — Waving':'No';
+   sHead.textContent=headTouch?'YES — Touching Head':'No';
+   sChin.textContent=chinTouch?'YES — Touching Chin':'No';
+   sBody.textContent=Math.abs(dx)>0.15?'Moving':'Stable';
+   let label='';
+   if(headTouch) label='Touching Head — Like TikTok 3s';
+   else if(chinTouch) label='Touching Chin/Beard — Like TikTok 6s';
+   else if(handUp) label='Hand Raised — Like TikTok 0s';
+   if(label){actionLabel.textContent=label;actionLabel.classList.add('show');} else {actionLabel.classList.remove('show');}
+   draw({dx,dy,mouth,handUp,headTouch,chinTouch,handX,handY});
   });
-  hands=new Hands({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`});
-  hands.setOptions({maxNumHands:2,modelComplexity:1,minDetectionConfidence:0.5,minTrackingConfidence:0.5});
-  hands.onResults(res=>{
-   last.hand=res.multiHandLandmarks&&res.multiHandLandmarks.length>0;
-   if(last.hand) draw(last.dx-0.03,last.dy-0.04,last.mouth,true);
-  });
-  camera=new Camera(camVideo,{onFrame:async()=>{await faceMesh.send({image:camVideo});await hands.send({image:camVideo})},width:640,height:480});
+  camera=new Camera(hiddenVideo,{onFrame:async()=>{await holistic.send({image:hiddenVideo});},width:640,height:480});
   await camera.start();
+  driverVideo.srcObject=hiddenVideo.srcObject;
+  await driverVideo.play();
  }catch(err){
   alert('Camera error: '+err.message);
-  tracking=false; btnStart.textContent='▶ 1. Try Again — Allow Camera';
+  tracking=false;
+  btnStart.textContent='▶ 1. Try Again — Allow Camera';
  }
 }
 btnStart.addEventListener('click',startTracking);
 btnVirtual.addEventListener('click',()=>{
- btnVirtual.textContent='✅ Virtual Camera READY — Select OBS in WhatsApp';
+ btnVirtual.textContent='✅ Virtual Camera READY — Select OBS in WhatsApp Desktop';
  btnVirtual.classList.add('live');
- const stream=mainCanvas.captureStream(30);
+ const stream=avatarCanvas.captureStream(30);
  window.oboStream=stream;
- alert('YOUR VIRTUAL CAMERA IS READY!\\n\\nFINAL STEPS FOR WHATSAPP:\\n1. Install OBS Studio (obsproject.com)\\n2. Open OBS → Sources + → Window Capture → Pick Chrome with your site\\n3. In OBS → Start Virtual Camera\\n4. WhatsApp Desktop → Settings → Video → Camera → OBS Virtual Camera\\n5. Call your friend — They will see your uploaded photo moving LIVE!');
- connText.textContent='✅ Connected via OBO Virtual Camera Live — READY FOR WHATSAPP';
+ connText.textContent='✅ Connected via OBO Virtual Camera — READY FOR WHATSAPP CALL';
+ connText.style.color='#22c55e';
+ alert('v4.0 VIRTUAL CAMERA READY — Laptop Only!\\n\\nFor WhatsApp Desktop:\\n1. Install OBS Studio\\n2. OBS → Sources + → Window Capture → Pick Chrome (your site)\\n3. OBS → Start Virtual Camera\\n4. WhatsApp Desktop → Settings → Video → Camera → OBS Virtual Camera\\n5. Call friend — They will see WHITE avatar doing exactly what YOU (black man) do!');
 });
 window.addEventListener('load',resize);
 </script>
