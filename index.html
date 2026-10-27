@@ -1,102 +1,127 @@
-# app.py - PYTHON BACKEND FOR HUMAN SATELLITE - FREE - NO GOOGLE
-# Owner: You - Language: Python - Creator Guido van Rossum - Free
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BIG LOCATION - HUMAN SATELLITE - FINAL</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Arial;background:#000;color:#fff;overflow:hidden}
+#map{height:100vh;width:100vw}
+.top{position:fixed;top:0;left:0;right:0;z-index:1000;background:#000;color:#0f0;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #0f0;font-weight:900}
+.btns{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:10px}
+button{padding:15px 20px;border:0;border-radius:999px;font-weight:900;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.6)}
+#goLive{background:#0f0;color:#000}
+#stopLive{background:#ff1a1a;color:#fff;display:none}
+#cameraBox{position:fixed;bottom:80px;left:10px;right:10px;z-index:999;background:#111;border:2px solid #0f0;border-radius:16px;padding:10px;display:none}
+#cameraBox video{width:100%;height:220px;object-fit:cover;border-radius:12px;background:#000}
+.small{position:fixed;top:48px;left:10px;z-index:999;background:rgba(0,0,0,0.85);padding:8px 10px;border-radius:8px;border:1px solid #0f0;font-size:11px;max-width:300px}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #f00}70%{box-shadow:0 0 0 12px rgba(255,0,0,0)}100%{box-shadow:0 0 0 0 rgba(255,0,0,0)}}
+</style>
+</head>
+<body>
+<div class="top"><span>🇳🇬 BIG LOCATION</span><span style="font-size:10px;color:#fff">FREE MAP • PYTHON READY • HUMAN LIVE</span></div>
+<div class="small" id="status">👋 Click map to WATCH • Tap GO LIVE to SHOW ROAD WORK CLEARLY • No Google bill</div>
+<div id="map"></div>
 
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import os, time
-from datetime import datetime
+<div id="cameraBox">
+<video id="liveVideo" autoplay playsinline muted></video>
+<div style="display:flex;justify-content:space-between;padding:8px 2px 2px 2px;font-size:12px"><span id="timer">15s - 480p - 7MB</span><span id="locText">Getting GPS...</span></div>
+<div style="font-size:11px;color:#0f0;text-align:center">Human visible for road - Face to face - Clear</div>
+</div>
 
-app = Flask(__name__)
-CORS(app) # Allow your HTML map to talk to Python
+<div class="btns">
+<button id="goLive">🔴 GO LIVE - SHOW ROAD</button>
+<button id="stopLive">⏹ STOP & PUBLISH TO MAP</button>
+</div>
 
-# Folder to save live videos
-os.makedirs("live_videos", exist_ok=True)
+<script>
+// ===== FREE MAP - OSM - NO GOOGLE - Owner: Community - Free =====
+let map = L.map('map',{zoomControl:false}).setView([9.0820,8.6753],6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap FREE'}).addTo(map);
+L.control.zoom({position:'topright'}).addTo(map);
 
-# Memory to save live people location - Like database
-LIVE_PEOPLE = {}  # {user_id: {lat,lng,time,video_path}}
+// Demo pins - To show human for road concept
+let demo = [
+[5.5544,5.7932,'Warri - Road Work'],
+[6.5244,3.3792,'Lagos - Traffic'],
+[9.0765,7.3986,'Abuja - Site Work'],
+[12.0022,8.5920,'Kano - Market Road']
+];
+demo.forEach(d=>{
+ L.marker(d.slice(0,2)).addTo(map).bindPopup(`<b>${d[2]}</b><br><small>Tap GO LIVE here to show real human working</small>`);
+});
 
-@app.route('/')
-def home():
-    return "🇳🇬 BIG LOCATION PYTHON SERVER LIVE - Human Satellite Running"
+// ===== CAMERA + LIVE LOGIC - JavaScript - Owner: ECMA - Free =====
+let myStream=null, mediaRecorder=null, chunks=[], watchID=null, myMarker=null, timerInt=null, myLatLng=null;
 
-# 2. API - Front go call this every 3 sec to send GPS
-@app.route('/api/go_live', methods=['POST'])
-def go_live():
-    data = request.json
-    user_id = data.get('user_id', 'anon_' + str(int(time.time())))
-    lat = data.get('lat')
-    lng = data.get('lng')
-    # Save location with time
-    LIVE_PEOPLE[user_id] = {
-        "lat": lat,
-        "lng": lng,
-        "time": datetime.now().isoformat(),
-        "status": "LIVE",
-        "place": data.get('place', 'Nigeria Road')
-    }
-    print(f"🔴 {user_id} LIVE at {lat},{lng}")
-    return jsonify({"ok": True, "message": "You LIVE now", "user_id": user_id})
+function updateStatus(t){ document.getElementById('status').innerHTML=t; }
 
-# 3. API - Front go call to get all live people to show for map
-@app.route('/api/live_people')
-def live_people():
-    # Remove people wey no send location for 2 mins - Dem comot road
-    now = time.time()
-    active = {}
-    for uid, info in LIVE_PEOPLE.items():
-        # Parse time
-        try:
-            t = datetime.fromisoformat(info['time']).timestamp()
-            if now - t < 120: # 2 mins
-                active[uid] = info
-        except: active[uid]=info
-    return jsonify(active)
+document.getElementById('goLive').onclick = async()=>{
+ try{
+  let stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:640},height:{ideal:480}},audio:true});
+  myStream=stream;
+  document.getElementById('liveVideo').srcObject=stream;
+  document.getElementById('cameraBox').style.display='block';
+  document.getElementById('goLive').style.display='none';
+  document.getElementById('stopLive').style.display='block';
+  updateStatus('🔴 LIVE - Camera ON - Human visible clearly - GPS tracking...');
 
-# 4. API - Upload 15 sec video
-@app.route('/api/upload_video', methods=['POST'])
-def upload_video():
-    file = request.files.get('video')
-    lat = request.form.get('lat')
-    lng = request.form.get('lng')
-    user_id = request.form.get('user_id')
-    if file:
-        filename = f"{user_id}_{int(time.time())}.webm"
-        path = os.path.join("live_videos", filename)
-        file.save(path)
-        LIVE_PEOPLE[user_id]['video'] = filename
-        return jsonify({"ok": True, "video_url": f"/live_videos/{filename}", "lat": lat, "lng": lng})
-    return jsonify({"ok": False})
+  watchID = navigator.geolocation.watchPosition(pos=>{
+   myLatLng=[pos.coords.latitude,pos.coords.longitude];
+   document.getElementById('locText').innerText = `${myLatLng[0].toFixed(5)}, ${myLatLng[1].toFixed(5)}`;
+   if(!myMarker){
+    myMarker = L.marker(myLatLng,{icon:L.divIcon({html:'<div style="width:18px;height:18px;background:#0f0;border:3px solid #fff;border-radius:50%;box-shadow:0 0 12px #0f0"></div>',className:''})}).addTo(map);
+   }else myMarker.setLatLng(myLatLng);
+   map.setView(myLatLng,17);
+  },e=>{document.getElementById('locText').innerText='Allow Location for GPS'}, {enableHighAccuracy:true});
 
-# Run server
-if __name__ == '__main__':
-    print("🇳🇬 Python Human Satellite server starting...")
-    print("Front map go talk to http://localhost:5000/api/live_people")
-    app.run(host='0.0.0.0', port=5000, debug=True)
-// ADD THIS INSIDE YOUR MAP SCRIPT - SEND LIVE TO PYTHON
-let myId = 'user_' + Math.floor(Math.random()*100000);
+  chunks=[];
+  mediaRecorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9'});
+  mediaRecorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};
+  mediaRecorder.start();
 
-async function sendLiveToPython(lat,lng){
-  await fetch('http://localhost:5000/api/go_live',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({user_id:myId, lat:lat, lng:lng, place:'Road Work'})
-  });
+  let sec=15;
+  document.getElementById('timer').innerText=`00:${sec} - REC`;
+  timerInt=setInterval(()=>{
+   sec--; document.getElementById('timer').innerText=`00:${sec<10?'0':''+sec:sec} - REC - 480p`;
+   if(sec<=0) stopAndPublish();
+  },1000);
+
+ }catch(err){ alert('Allow Camera + Location: '+err.message); }
+};
+
+function stopAndPublish(){
+ if(timerInt) clearInterval(timerInt);
+ if(mediaRecorder && mediaRecorder.state!=='inactive'){ try{mediaRecorder.stop();}catch(e){} }
+ if(myStream){ myStream.getTracks().forEach(t=>t.stop()); }
+ if(watchID) navigator.geolocation.clearWatch(watchID);
+
+ setTimeout(()=>{
+  let blob = new Blob(chunks,{type:'video/webm'});
+  let url = URL.createObjectURL(blob);
+  let latlng = myLatLng || map.getCenter();
+  let html = `<div style="width:300px"><div style="color:#0f0;font-weight:900">🔴 HUMAN LIVE - VISIBLE CLEARLY</div><div style="font-size:11px">${latlng[0].toFixed(5)}, ${latlng[1].toFixed(5)} • ${new Date().toLocaleTimeString()}</div><video src="${url}" controls autoplay playsinline width="100%" style="margin-top:8px;border:2px solid #0f0;border-radius:12px"></video><div style="font-size:11px;margin-top:6px">👷 Person working for road - Face visible - 15s - 7MB<br><span style="color:#0f0">Data saved: ${ (blob.size/1024/1024).toFixed(2)} MB • Earn ₦50</span><br><br><b>Python backend later go save this video for cloud forever</b></div></div>`;
+  L.marker([latlng[0],latlng[1]],{icon:L.divIcon({html:'<div style="width:18px;height:18px;background:red;border:3px solid #fff;border-radius:50%;animation:pulse 1s infinite"></div>',className:''})}).addTo(map).bindPopup(html).openPopup();
+  
+  document.getElementById('cameraBox').style.display='none';
+  document.getElementById('goLive').style.display='block';
+  document.getElementById('stopLive').style.display='none';
+  updateStatus('✅ Published! Click red pin to watch human clearly. GO LIVE again for another road.');
+ },300);
 }
 
-// When you GO LIVE - Send location every 3 sec to Python
-navigator.geolocation.watchPosition(pos=>{
-  let lat=pos.coords.latitude, lng=pos.coords.longitude;
-  sendLiveToPython(lat,lng);
-},{},{enableHighAccuracy:true});
+document.getElementById('stopLive').onclick = stopAndPublish;
 
-// To show all live people for map - Call Python every 5 sec
-setInterval(async()=>{
-  let res = await fetch('http://localhost:5000/api/live_people');
-  let people = await res.json();
-  // Clear old pins
-  // Show new pins - Human visible for road
-  for(let uid in people){
-    let p=people[uid];
-    L.marker([p.lat,p.lng]).addTo(map).bindPopup(`<b>🔴 ${uid} LIVE</b><br>Human working for road<br>${p.lat},${p.lng}<br><small>${p.time}</small>`);
-  }
-},5000);
+// Click map to watch
+map.on('click',e=>{
+ if(document.getElementById('cameraBox').style.display==='block') return;
+ L.popup().setLatLng(e.latlng).setContent(`<div style="width:260px"><b>📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}</b><br><small>No LIVE yet here</small><br><br><button onclick="document.getElementById('goLive').click()" style="width:100%;padding:12px;background:#0f0;border:0;border-radius:10px;font-weight:900">🔴 GO LIVE HERE - SHOW HUMAN</button><br><br><small>When you GO LIVE, people go see human for road clear - face to face</small></div>`).openOn(map);
+});
+
+updateStatus('✅ Ready - Save file as index.html - Double click - E go open - Test GO LIVE');
+</script>
+</body>
+</html>
