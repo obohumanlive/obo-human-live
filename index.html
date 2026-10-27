@@ -3,102 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
-<title>Oil-Truth LIVE MAP - Warri Phone</title>
+<title>NIGERIA LIVE MAP - Big Location</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial;background:#0e1628;color:#fff;overflow:hidden}
-.phone{width:100%;max-width:420px;margin:0 auto;height:100vh;background:#000;position:relative;display:flex;flex-direction:column}
-.top{padding:12px 14px;background:#fff;color:#000;border-bottom:1px solid #ddd}
+body{font-family:Arial;background:#000;color:#fff}
+.top{padding:10px 12px;background:#fff;color:#000;display:flex;justify-content:space-between;align-items:center}
 .top b{font-size:14px}
-.top .sub{font-size:11px;color:#555;margin-top:2px}
-.top .live{float:right;background:#00c853;color:#fff;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:900}
-#map{flex:1;z-index:1;min-height:45vh}
-.badge{position:absolute;top:70px;right:10px;z-index:10;background:#ff6d00;color:#fff;padding:6px 10px;border-radius:8px;font-size:10px;font-weight:900}
-.dotLabel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;background:rgba(0,0,0,.6);color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;border:2px solid #00ff88}
-.feed{background:#121a2e;padding:10px;border-top:3px solid #1a2a4a}
-.feed h4{font-size:12px;margin-bottom:8px}
-.feed video{width:100%;height:160px;background:#000;border-radius:10px;object-fit:cover}
-.humanBtn{width:100%;padding:14px;background:#ffaa00;color:#000;border:none;border-radius:30px;font-weight:900;margin-top:10px;font-size:14px}
-.bottom{height:60px;background:#0e1628;display:flex;justify-content:space-around;align-items:center;border-top:1px solid #1a2a4a}
-.bottom div{font-size:10px;text-align:center;color:#8aa0c5}
-.bottom .active{color:#fff;background:#1e2a4a;padding:6px 12px;border-radius:10px}
+.live{background:#00c853;color:#fff;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:900}
+#map{width:100%;height:55vh}
+.feed{padding:10px;background:#0e1628}
+.feed h4{font-size:12px;margin-bottom:6px}
+.feed video{width:100%;height:200px;background:#000;border-radius:10px;object-fit:cover}
+.btn{width:100%;padding:12px;background:#ffaa00;color:#000;border:none;border-radius:30px;font-weight:900;margin-top:8px}
+.info{font-size:10px;color:#8aa0c5;margin-top:6px}
 </style>
 </head>
 <body>
-<div class="phone">
 <div class="top">
-<div class="live">● LIVE • <span id="time">12:34 PM WAT</span></div>
-<div><b>OIL-TRUTH LIVE MAP</b></div>
-<div class="sub">Warri, Delta State • Satellite View • Updated <span id="up">30s ago</span></div>
+<div><b>NIGERIA LIVE MAP</b><br><small style="color:#555">Satellite View • Live Human</small></div>
+<div class="live">● LIVE <span id="time"></span></div>
 </div>
 
 <div id="map"></div>
-<div class="badge">Pipeline Route<br>14B — Active</div>
-<div class="dotLabel">🔵 YOU • LIVE</div>
 
 <div class="feed">
-<h4>LIVE CAMERA FEED — Pipeline Road Section 14B</h4>
-<video id="liveCam" autoplay playsinline muted></video>
-<button class="humanBtn" onclick="toggleZoom()">👥 HUMAN LIVE MAP — Tap to Zoom Face</button>
-<div style="font-size:10px;color:#8aa0c5;margin-top:6px" id="status">Auto live — Camera auto-started — You see workers welding live — Pinch map to zoom — Blue dot moving</div>
-</div>
-
-<div class="bottom">
-<div class="active">🗺️<br>Map</div>
-<div>📹<br>Cameras</div>
-<div>🔔<br>Alerts</div>
-<div>📊<br>Report</div>
-</div>
+<h4>LIVE CAMERA — Your Phone</h4>
+<video id="cam" autoplay playsinline muted></video>
+<button class="btn" onclick="startAll()">TAP TO START LIVE — Camera + GPS</button>
+<div class="info" id="status">Tap button — Allow camera + location — Map go show your blue dot live for Nigeria</div>
 </div>
 
 <script>
-let map=L.map('map',{zoomControl:false, maxZoom:22}).setView([5.55,5.78],16);
-// Google satellite — Best for Warri zoom — No "Map data not yet available"
-let gSat=L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',{maxZoom:22,maxNativeZoom:20}).addTo(map);
-L.polyline([[5.516,5.75],[5.55,5.78],[5.67,5.90]],{color:'#ff2d2d',weight:6}).addTo(map);
-L.marker([5.55,5.78]).addTo(map).bindPopup('P-102 Warri-Sapele — Human Live — Workers here LIVE');
+let map = L.map('map',{zoomControl:false}).setView([9.08,8.67],6); // Nigeria center
+
+// Free satellite — Esri — Clear for Nigeria — No grey — Free forever
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{
+maxZoom:19, attribution:'Esri Satellite'
+}).addTo(map);
+
+// Nigeria pipeline markers — Real locations
+L.marker([5.55,5.78]).addTo(map).bindPopup('Warri — Pipeline 14B');
+L.marker([5.35,5.46]).addTo(map).bindPopup('Forcados — 87km');
+L.marker([6.44,3.42]).addTo(map).bindPopup('Lagos');
+L.marker([9.07,7.48]).addTo(map).bindPopup('Abuja — Command Center');
+L.marker([4.82,7.04]).addTo(map).bindPopup('Port Harcourt');
+
+let myDot = null;
 
 function updateTime(){
-let n=new Date().toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit'});
-document.getElementById('time').innerText=n+' WAT';
-document.getElementById('up').innerText='30s ago';
+document.getElementById('time').innerText = new Date().toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit'})+' WAT';
 }
 setInterval(updateTime,1000); updateTime();
 
-let zoomed=false;
-function toggleZoom(){
-let v=document.getElementById('liveCam');
-if(!zoomed){v.style.transform='scale(1.5)'; v.style.transformOrigin='center'; zoomed=true; document.getElementById('status').innerText='Zoomed IN — Face very clear — Worker welding live — Tap again to zoom out';}
-else{v.style.transform='scale(1)'; zoomed=false; document.getElementById('status').innerText='Zoomed OUT — Full road — Moto driving live';}
-}
-
-// AUTO START CAMERA WHEN LINK CLICK — NO BUTTON PRESS
-async function autoCam(){
+async function startAll(){
 try{
-let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280}},audio:true});
-document.getElementById('liveCam').srcObject=s;
-document.getElementById('status').innerText='✅ AUTO LIVE — You see workers live NOW — Pipeline Road 14B — Zoom to see face — Blue dot moving — For government';
-autoGPS();
+let s = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false});
+document.getElementById('cam').srcObject = s;
+document.getElementById('status').innerText = '✅ Camera LIVE — Now starting GPS...';
+startGPS();
 }catch(e){
-document.getElementById('status').innerText='Tap screen once to start auto live — Chrome need one tap — After that auto';
-document.body.addEventListener('click', async ()=>{
-let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280}},audio:true});
-document.getElementById('liveCam').srcObject=s;
-autoGPS();
-},{once:true});
+document.getElementById('status').innerText = 'Camera block — Allow camera for Chrome — Tap again';
 }
-}
-function autoGPS(){
-if(!navigator.geolocation)return;
-navigator.geolocation.watchPosition(p=>{
-let lat=p.coords.latitude.toFixed(5), lon=p.coords.longitude.toFixed(5);
-document.querySelector('.dotLabel').innerText='🔵 YOU • LIVE '+lat+','+lon;
-},null,{enableHighAccuracy:true});
 }
 
-window.addEventListener('load', ()=>{map.invalidateSize(); autoCam();});
+function startGPS(){
+if(!navigator.geolocation){document.getElementById('status').innerText='No GPS'; return;}
+navigator.geolocation.watchPosition(p=>{
+let lat=p.coords.latitude, lon=p.coords.longitude;
+if(!myDot){
+myDot = L.circleMarker([lat,lon],{radius:8,color:'#00ff88',fillColor:'#00ff88',fillOpacity:1}).addTo(map).bindPopup('YOU LIVE');
+map.setView([lat,lon],16);
+}else{
+myDot.setLatLng([lat,lon]);
+}
+document.getElementById('status').innerText = '✅ LIVE — You dey '+lat.toFixed(5)+','+lon.toFixed(5)+' — Map dey show you for Nigeria — Satellite view';
+},err=>{document.getElementById('status').innerText='GPS error — Allow location';},{enableHighAccuracy:true});
+}
 </script>
 </body>
 </html>
