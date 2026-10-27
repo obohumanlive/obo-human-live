@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trust Bank | Transfer Demonstration</title>
+<title>Trust Bank | Transfer </title>
 
 <style>
 :root {
@@ -402,24 +402,23 @@ footer {
 <body>
 
 <div class="top-notice">
-    DEMONSTRATION ONLY — No real bank transfer or payment is processed.
 </div>
 
 <header class="site-header">
     <h1 class="brand">TRUST BANK</h1>
-    <p class="brand-subtitle">WORLDWIDE TRANSFER DEMONSTRATION</p>
+    <p class="brand-subtitle">WORLDWIDE TRANSFER </p>
 </header>
 
 <main class="container">
 
     <section class="card">
         <div class="card-heading">
-            <h2>International Transfer Demo</h2>
+            <h2>International Transfer </h2>
             <p>
                 Enter sample details to preview the white-and-green
-                transfer interface and demonstration receipt.
+                transfer interface and receipt.
             </p>
-            <span class="demo-label">TEST MODE · NO REAL MONEY</span>
+            <span class="-label">TEST MODE · </span>
         </div>
 
         <form id="transferForm">
@@ -460,7 +459,7 @@ footer {
                 <input
                     id="bankName"
                     type="text"
-                    value="Trust Bank (Demo)"
+                    value="Trust Bank "
                     required
                 >
             </div>
@@ -503,7 +502,7 @@ footer {
                 </div>
 
                 <div class="field">
-                    <label for="amount">Demo Amount</label>
+                    <label for="amount"> Amount</label>
                     <input
                         id="amount"
                         type="number"
@@ -520,7 +519,7 @@ footer {
                 <textarea
                     id="description"
                     maxlength="200"
-                    placeholder="Example: Demo family support transfer"
+                    placeholder="Example:  family support transfer"
                 ></textarea>
             </div>
 
@@ -535,7 +534,7 @@ footer {
         </form>
     </section>
 
-    <!-- RECEIPT: hidden until the demo form is submitted -->
+    <!-- RECEIPT: hidden until the  form is submitted -->
 
     <section id="receipt" aria-live="polite">
 
@@ -546,7 +545,7 @@ footer {
 
         <div class="success-banner">
             <div class="success-icon">✓</div>
-            <h2>DEMO SUCCESSFUL</h2>
+            <h2> SUCCESSFUL</h2>
             <p>
                 Your demonstration receipt has been generated.<br>
                 No real money was transferred.
@@ -586,7 +585,8 @@ footer {
 
             <div class="receipt-row">
                 <span>Bank Name</span>
-                <strong id="outBank">Trust Bank (Demo)</strong>
+                <strong id="outBank">Trust Bank
+</strong>
             </div>
 
             <div class="receipt-row">
@@ -601,7 +601,7 @@ footer {
 
             <div class="receipt-row">
                 <span>Description</span>
-                <strong id="outDescription">Demo transfer</strong>
+                <strong id="outDescription"> transfer</strong>
             </div>
 
             <div class="receipt-row">
@@ -615,8 +615,8 @@ footer {
 
         <div class="demo-warning">
             <strong>DEMONSTRATION ONLY</strong><br>
-            This receipt records a local website demo, not a bank transaction.
-            It is not proof of payment or evidence that funds were sent or received.
+            This receipt records a local website , not a bank transaction.
+        
         </div>
 
         <div class="receipt-actions">
@@ -625,15 +625,15 @@ footer {
                 class="primary-button"
                 id="printButton"
             >
-                Print / Save Demo Receipt as PDF
+                Print / Save  Receipt as PDF
             </button>
 
             <button
                 type="button"
                 class="secondary-button"
-                id="newDemoButton"
+                id="Button"
             >
-                Start New Demo
+                Start New 
             </button>
         </div>
 
@@ -642,7 +642,7 @@ footer {
 </main>
 
 <footer>
-    TRUST BANK · DEMONSTRATION INTERFACE<br>
+    TRUST BANK · NTERFACE<br>
     Fictional sample interface. No banking services are provided.
 </footer>
 
@@ -697,7 +697,7 @@ footer {
         putText("outAccount", getValue("accountNumber"));
         putText(
             "outDescription",
-            getValue("description") || "Demo transfer"
+            getValue("description") || " transfer"
         );
 
         putText(
@@ -706,7 +706,7 @@ footer {
         );
 
         /*
-         * This only generates a local demonstration receipt.
+         * This only generates a local  receipt.
          * It does not call a bank or payment service.
          */
         receipt.style.display = "block";
@@ -728,13 +728,13 @@ footer {
         }
     );
 
-    document.getElementById("newDemoButton").addEventListener(
+    document.getElementById("newButton").addEventListener(
         "click",
         function () {
             form.reset();
 
             document.getElementById("bankName").value =
-                "Trust Bank (Demo)";
+                "Trust Bank ";
 
             receipt.style.display = "none";
 
