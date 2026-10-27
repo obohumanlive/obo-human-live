@@ -2,457 +2,909 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OBO Human Live — Avatar Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>OBO Human Live AI Studio</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#07101b;color:#edf5ff;font:14px Arial,sans-serif}
-header{padding:16px 20px;background:#0b1725;border-bottom:1px solid #293b50}
-h1{margin:0;font-size:24px}h1 span{color:#43e477}
-main{display:grid;grid-template-columns:260px minmax(0,1fr) 260px;gap:12px;padding:12px;max-width:1500px;margin:auto}
-.panel{background:#101c2a;border:1px solid #293b50;border-radius:9px;margin-bottom:12px;overflow:hidden}
-h2{font-size:13px;margin:0;padding:12px;background:#0d1723;border-bottom:1px solid #293b50}
-.pad{padding:12px}
-button,select{background:#1b2c41;color:white;border:1px solid #3a5069;border-radius:5px;padding:9px;cursor:pointer;margin:3px 2px}
-button:hover,button.active{border-color:#43e477;background:#17482f}
-.green{background:#168642}
-label{display:block;margin-top:12px;font-size:12px;color:#b9cce0}
-input[type=range]{width:100%;accent-color:#43e477}
-input[type=color]{width:100%;height:32px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.grid button{min-height:65px;margin:0}
-.stage{height:540px;background:#07101b;position:relative}
-#threeHost{height:100%;width:100%}#threeHost canvas{display:block;width:100%;height:100%}
-.stageLabel{position:absolute;top:10px;left:10px;background:#07101bcc;padding:8px;border-radius:4px;font-size:12px}
-.status{padding:10px;background:#091522;border:1px solid #293b50;border-radius:5px;color:#b9cce0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
-.status b{color:#43e477}
-video{width:100%;background:#000;transform:scaleX(-1);border-radius:5px}
-.row{display:flex;flex-wrap:wrap;gap:5px}
-.muted{font-size:12px;color:#9db0c7;line-height:1.5}
-.hide{display:none}
-@media(max-width:950px){main{grid-template-columns:1fr}.stage{height:450px}}
+:root {
+    --bg: #07111f;
+    --panel: #101e32;
+    --green: #40e0a0;
+    --text: #f3f7ff;
+    --muted: #a8b8cc;
+    --border: #2a3d56;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+}
+
+header {
+    padding: 18px;
+    background: #0c192a;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #40e0a0, #6ba8ff);
+    color: #06111c;
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.logo h1 {
+    font-size: 19px;
+    margin: 0;
+}
+
+.logo p {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 4px 0 0;
+}
+
+.status {
+    font-size: 11px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--muted);
+}
+
+main {
+    max-width: 1150px;
+    margin: auto;
+    padding: 24px 16px;
+}
+
+.intro h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.intro p {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.8fr;
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+
+.card-title {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+.video-box {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: #02060c;
+    border-radius: 12px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+}
+
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-message {
+    position: absolute;
+    text-align: center;
+    color: var(--muted);
+    padding: 20px;
+}
+
+.video-message strong {
+    display: block;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.video-message.hidden {
+    display: none;
+}
+
+button, select, input {
+    font: inherit;
+}
+
+button {
+    border: 0;
+    padding: 12px 14px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 4px 3px 4px 0;
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.primary {
+    background: var(--green);
+    color: #071b14;
+}
+
+.secondary {
+    background: #243851;
+    color: white;
+    border: 1px solid #3a506b;
+}
+
+.danger {
+    background: #52252e;
+    color: white;
+}
+
+button:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
+.field {
+    margin-bottom: 18px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+select, input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 9px;
+    background: #091526;
+    color: white;
+    border: 1px solid var(--border);
+}
+
+.appearances {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.appearance {
+    background: #091526;
+    color: white;
+    border: 1px solid var(--border);
+    padding: 14px 5px;
+    border-radius: 10px;
+}
+
+.appearance.active {
+    border: 2px solid var(--green);
+    background: #103027;
+}
+
+.face-icon {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.small {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.notice {
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid #65552d;
+    background: #292213;
+    color: #f3dda3;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 16px;
+}
+
+.engine-box {
+    margin-top: 15px;
+    padding: 13px;
+    background: #091526;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    line-height: 1.6;
+}
+
+.engine-box strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.step {
+    background: #091526;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.step h4 {
+    margin-top: 0;
+}
+
+footer {
+    text-align: center;
+    color: var(--muted);
+    padding: 25px;
+    font-size: 12px;
+}
+
+@media (max-width: 760px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+    }
+
+    .intro h2 {
+        font-size: 26px;
+    }
+
+    .status {
+        display: none;
+    }
+}
 </style>
 </head>
+
 <body>
+
 <header>
-<h1><span>OBO</span> HUMAN LIVE <small> | AI AVATAR STUDIO</small></h1>
-<p class="muted">3D character engine · webcam tracking · live animation prototype</p>
+    <div class="logo">
+        <div class="logo-icon">O</div>
+        <div>
+            <h1>OBO Human Live</h1>
+            <p>AI Appearance Studio</p>
+        </div>
+    </div>
+
+    <div class="status" id="topStatus">
+        ENGINE: NOT CONNECTED
+    </div>
 </header>
 
 <main>
-<aside>
-<section class="panel">
-<h2>1. AVATAR LIBRARY</h2>
-<div class="pad">
-<div class="grid">
-<button data-avatar="male">🧑🏽<br>David</button>
-<button data-avatar="male2">👨🏻<br>Liam</button>
-<button data-avatar="male3">🧔🏾<br>Noah</button>
-<button data-avatar="female">👩🏻<br>Sophia</button>
-<button data-avatar="female2">👩🏽<br>Emma</button>
-<button data-avatar="robot">🤖<br>Android</button>
-</div>
-</div>
-</section>
 
-<section class="panel">
-<h2>2. APPEARANCE</h2>
-<div class="pad">
-<label>Skin tone</label><input id="skin" type="color" value="#b87955">
-<label>Hair color</label><input id="hair" type="color" value="#211b1a">
-<label>Clothing</label><input id="shirt" type="color" value="#202b39">
-<label>Character size</label><input id="scale" type="range" min="70" max="130" value="100">
-<label>Expression</label>
-<select id="expression">
-<option value="neutral">Neutral</option>
-<option value="happy">Happy</option>
-<option value="surprised">Surprised</option>
-<option value="serious">Serious</option>
-</select>
-<button id="apply" class="green">APPLY APPEARANCE</button>
-</div>
-</section>
+    <section class="intro">
+        <p style="color:#40e0a0;font-weight:bold;">
+            YOUR PERSONAL AI STUDIO
+        </p>
 
-<section class="panel">
-<h2>3. ANIMATION</h2>
-<div class="pad">
-<label>Animation preset</label>
-<select id="motion">
-<option value="idle">Idle / breathing</option>
-<option value="talk">Talking gestures</option>
-<option value="wave">Wave hand</option>
-<option value="dance">Dance loop</option>
-</select>
-<label>Movement intensity</label><input id="power" type="range" min="0" max="100" value="55">
-<div class="row"><button id="play" class="green">▶ PLAY</button><button id="pause">Ⅱ PAUSE</button></div>
-</div>
-</section>
-</aside>
+        <h2>Live Video. New Appearance.</h2>
 
-<section>
-<section class="panel">
-<h2>4. LIVE 3D AVATAR PREVIEW</h2>
-<div class="stage">
-<div id="threeHost"></div>
-<div class="stageLabel">3D VIEW · <span id="name">DAVID</span></div>
-</div>
-<div class="pad">
-<div class="row">
-<button id="rotate">AUTO ROTATE: ON</button>
-<button id="snapshot">SNAPSHOT</button>
-<button id="fullscreen">FULL SCREEN</button>
-</div>
-<div id="status" class="status"><b>Status:</b> Starting 3D engine…</div>
-</div>
-</section>
+        <p>
+            Start your camera, select an appearance preset,
+            and prepare to connect a real-time AI transformation
+            engine for compatible video-call applications.
+        </p>
+    </section>
 
-<section class="panel">
-<h2>5. BACKGROUND</h2>
-<div class="pad row">
-<button data-bg="#07101b">Studio</button>
-<button data-bg="#263b4a">Slate</button>
-<button data-bg="#1c392b">Green</button>
-<button data-bg="#342044">Neon</button>
-<button data-bg="#e8edf2">Light</button>
-</div>
-</section>
+    <div class="grid">
 
-<section class="panel">
-<h2>6. RECORDING</h2>
-<div class="pad">
-<div class="row">
-<button id="record" class="green">● RECORD</button>
-<button id="stopRecord">■ STOP</button>
-<button id="download">DOWNLOAD</button>
-</div>
-<p class="muted">Records the 3D preview as a WebM video where browser support permits.</p>
-</div>
-</section>
-</section>
+        <!-- CAMERA PANEL -->
 
-<aside>
-<section class="panel">
-<h2>7. WEBCAM & POSE TRACKING</h2>
-<div class="pad">
-<video id="webcam" autoplay muted playsinline></video>
-<div class="row">
-<button id="startCam" class="green">START WEBCAM</button>
-<button id="stopCam">STOP</button>
-</div>
-<div class="row">
-<button id="startTrack" class="green">START TRACKING</button>
-<button id="stopTrack">STOP TRACKING</button>
-</div>
-<div id="trackStatus" class="status">Camera is off.</div>
-</div>
-</section>
+        <section class="card">
 
-<section class="panel">
-<h2>8. HEAD & MOUTH CONTROLS</h2>
-<div class="pad">
-<label>Head tilt</label><input id="tilt" type="range" min="-25" max="25" value="0">
-<label>Manual mouth movement</label><input id="mouth" type="range" min="0" max="100" value="10">
-<p class="muted">These controls demonstrate facial movement. Automatic lip-sync requires a compatible facial rig and audio processing.</p>
-</div>
-</section>
+            <div class="card-title">
+                01 — Live Camera
+            </div>
 
-<section class="panel">
-<h2>9. WHATSAPP OUTPUT</h2>
-<div class="pad">
-<div class="status">This page cannot create a Windows virtual camera by itself. OBS Studio can capture this preview and transmit it through OBS Virtual Camera.</div>
-<button id="obs" class="green">SHOW CONNECTION STEPS</button>
-<div id="obsSteps" class="status hide">
-1. Install OBS Studio.<br>
-2. Add Window Capture and select this browser.<br>
-3. Crop to the avatar preview.<br>
-4. Start Virtual Camera in OBS.<br>
-5. Select OBS Virtual Camera in WhatsApp Desktop if available.
-</div>
-</div>
-</section>
+            <div class="card-body">
 
-<section class="panel">
-<h2>10. ENGINE STATUS</h2>
-<div class="pad"><div id="engineStatus" class="status">Loading renderer…</div></div>
-</section>
-</aside>
+                <div class="video-box">
+
+                    <video
+                        id="camera"
+                        autoplay
+                        playsinline
+                        muted>
+                    </video>
+
+                    <div class="video-message" id="videoMessage">
+                        <strong>Camera preview</strong>
+                        Press Start Camera to begin.
+                    </div>
+
+                </div>
+
+                <p class="small" id="cameraStatus">
+                    Camera is currently stopped.
+                </p>
+
+                <button
+                    class="primary"
+                    id="startCamera">
+                    Start Camera
+                </button>
+
+                <button
+                    class="secondary"
+                    id="stopCamera"
+                    disabled>
+                    Stop Camera
+                </button>
+
+                <button
+                    class="secondary"
+                    id="checkEngine">
+                    Check Engine
+                </button>
+
+                <div class="engine-box">
+                    <strong id="engineTitle">
+                        Transformation engine not connected
+                    </strong>
+
+                    <div class="small" id="engineMessage">
+                        The camera preview works independently.
+                        A compatible AI engine is still required
+                        to transform your appearance.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- APPEARANCE PANEL -->
+
+        <section class="card">
+
+            <div class="card-title">
+                02 — Choose Appearance
+            </div>
+
+            <div class="card-body">
+
+                <div class="field">
+                    <label>Select an appearance preset</label>
+
+                    <div class="appearances">
+
+                        <button
+                            class="appearance active"
+                            data-look="studio">
+                            <span class="face-icon">◉</span>
+                            Studio
+                        </button>
+
+                        <button
+                            class="appearance"
+                            data-look="classic">
+                            <span class="face-icon">◉</span>
+                            Classic
+                        </button>
+
+                        <button
+                            class="appearance"
+                            data-look="cinematic">
+                            <span class="face-icon">◉</span>
+                            Cinematic
+                        </button>
+
+                    </div>
+
+                    <p class="small">
+                        These are interface presets only.
+                        They do not change your face until a
+                        compatible transformation engine is connected.
+                    </p>
+                </div>
+
+                <div class="field">
+                    <label for="engineAddress">
+                        Local AI engine address
+                    </label>
+
+                    <input
+                        id="engineAddress"
+                        value="ws://127.0.0.1:8765"
+                        spellcheck="false">
+
+                    <p class="small">
+                        This address will work only if a compatible
+                        local companion engine is installed and running.
+                    </p>
+                </div>
+
+                <div class="field">
+                    <label for="destination">
+                        Video-call application
+                    </label>
+
+                    <select id="destination">
+                        <option>WhatsApp Desktop</option>
+                        <option>Zoom</option>
+                        <option>Google Meet</option>
+                        <option>Other compatible application</option>
+                    </select>
+                </div>
+
+                <button
+                    class="primary"
+                    id="connectEngine"
+                    style="width:100%;">
+                    Connect AI Engine
+                </button>
+
+                <div class="notice">
+                    <strong>Privacy and consent</strong><br>
+                    Use an original AI appearance or a likeness
+                    you have permission to use. Do not use face
+                    transformation to impersonate someone or deceive
+                    people about your identity.
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+
+    <!-- VIDEO CALL SETUP -->
+
+    <section class="card">
+
+        <div class="card-title">
+            03 — Video Call Setup
+        </div>
+
+        <div class="card-body">
+
+            <div class="steps">
+
+                <div class="step">
+                    <h4>Step 1</h4>
+                    <p class="small">
+                        Install and run a compatible real-time
+                        transformation engine on your Windows laptop.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h4>Step 2</h4>
+                    <p class="small">
+                        Route the processed video to a supported
+                        virtual camera, such as OBS Virtual Camera
+                        when the engine supports that workflow.
+                    </p>
+                </div>
+
+                <div class="step">
+                    <h4>Step 3</h4>
+                    <p class="small">
+                        Open your video-call application and select
+                        the virtual camera if the application
+                        supports it.
+                    </p>
+                </div>
+
+            </div>
+
+            <p>
+                <button
+                    class="secondary"
+                    id="openOBS">
+                    Open OBS Studio
+                </button>
+
+                <button
+                    class="secondary"
+                    id="openEngine">
+                    Open DeepFaceLive Project
+                </button>
+            </p>
+
+            <p class="small">
+                This website is the control panel. It does not yet
+                perform AI face replacement or create a virtual camera.
+            </p>
+
+        </div>
+    </section>
+
 </main>
 
-<script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
+<footer>
+    OBO Human Live AI Studio · Prototype Build 0.1
+</footer>
+
+<script>
+(() => {
+
+    const camera = document.getElementById("camera");
+    const startButton = document.getElementById("startCamera");
+    const stopButton = document.getElementById("stopCamera");
+
+    const cameraStatus = document.getElementById("cameraStatus");
+    const videoMessage = document.getElementById("videoMessage");
+
+    const engineTitle = document.getElementById("engineTitle");
+    const engineMessage = document.getElementById("engineMessage");
+    const topStatus = document.getElementById("topStatus");
+
+    let cameraStream = null;
+    let engineSocket = null;
+    let selectedLook = "studio";
+
+    function showEngineStatus(status, title, message) {
+        topStatus.textContent = "ENGINE: " + status;
+        engineTitle.textContent = title;
+        engineMessage.textContent = message;
+    }
+
+    async function startCamera() {
+
+        if (!navigator.mediaDevices ||
+            !navigator.mediaDevices.getUserMedia) {
+
+            cameraStatus.textContent =
+                "Camera requires HTTPS or localhost in a supported browser.";
+
+            return;
+        }
+
+        try {
+
+            cameraStream =
+                await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "user"
+                    },
+                    audio: false
+                });
+
+            camera.srcObject = cameraStream;
+
+            videoMessage.classList.add("hidden");
+
+            cameraStatus.textContent =
+                "Camera is running. Preview is displayed locally.";
+
+            startButton.disabled = true;
+            stopButton.disabled = false;
+
+            sendEngine({
+                type: "camera_status",
+                active: true
+            });
+
+        } catch (error) {
+
+            if (error.name === "NotAllowedError") {
+                cameraStatus.textContent =
+                    "Camera permission denied. Allow camera access in Chrome settings.";
+            } else {
+                cameraStatus.textContent =
+                    "Unable to start camera: " + error.message;
+            }
+
+        }
+    }
+
+    function stopCamera() {
+
+        if (cameraStream) {
+
+            cameraStream.getTracks().forEach(track => {
+                track.stop();
+            });
+
+        }
+
+        cameraStream = null;
+        camera.srcObject = null;
+
+        videoMessage.classList.remove("hidden");
+
+        cameraStatus.textContent = "Camera is stopped.";
+
+        startButton.disabled = false;
+        stopButton.disabled = true;
+
+        sendEngine({
+            type: "camera_status",
+            active: false
+        });
+    }
+
+    function sendEngine(data) {
+
+        if (engineSocket &&
+            engineSocket.readyState === WebSocket.OPEN) {
+
+            engineSocket.send(JSON.stringify(data));
+
+        }
+    }
+
+    function disconnectEngine() {
+
+        if (engineSocket) {
+
+            engineSocket.onclose = null;
+            engineSocket.close();
+            engineSocket = null;
+
+        }
+    }
+
+    function connectEngine() {
+
+        const address =
+            document.getElementById("engineAddress").value.trim();
+
+        if (!/^wss?:\/\//i.test(address)) {
+
+            showEngineStatus(
+                "ERROR",
+                "Invalid engine address",
+                "Enter a WebSocket address such as ws://127.0.0.1:8765."
+            );
+
+            return;
+        }
+
+        disconnectEngine();
+
+        showEngineStatus(
+            "CONNECTING",
+            "Connecting to local engine...",
+            "Trying to connect to " + address
+        );
+
+        try {
+
+            engineSocket = new WebSocket(address);
+
+            const socketBeingTested = engineSocket;
+
+            const timeout = setTimeout(() => {
+
+                if (socketBeingTested.readyState !== WebSocket.OPEN) {
+
+                    showEngineStatus(
+                        "NOT CONNECTED",
+                        "Engine did not respond",
+                        "The companion engine must be installed and running first."
+                    );
+
+                    if (engineSocket === socketBeingTested) {
+                        disconnectEngine();
+                    }
+
+                }
+
+            }, 3000);
+
+            engineSocket.onopen = () => {
+
+                clearTimeout(timeout);
+
+                showEngineStatus(
+                    "CONNECTED",
+                    "WebSocket connection established",
+                    "The engine connection is open. Actual video processing must be implemented by the companion engine."
+                );
+
+                sendEngine({
+                    type: "configure",
+                    look: selectedLook,
+                    destination:
+                        document.getElementById("destination").value
+                });
+
+            };
+
+            engineSocket.onmessage = event => {
+
+                let data;
+
+                try {
+                    data = JSON.parse(event.data);
+                } catch (error) {
+                    data = {};
+                }
+
+                if (data.status === "ready") {
+
+                    showEngineStatus(
+                        "CONNECTED",
+                        "Engine reports ready",
+                        data.message || "The engine reports that it is ready."
+                    );
+
+                }
+
+                if (data.status === "error") {
+
+                    showEngineStatus(
+                        "ERROR",
+                        "Engine error",
+                        data.message || "Check the engine logs."
+                    );
+
+                }
+
+            };
+
+            engineSocket.onerror = () => {
+
+                clearTimeout(timeout);
+
+                showEngineStatus(
+                    "NOT CONNECTED",
+                    "Could not connect",
+                    "Check that the companion engine is running at the specified address."
+                );
+
+            };
+
+            engineSocket.onclose = () => {
+
+                if (topStatus.textContent === "ENGINE: CONNECTED") {
+
+                    showEngineStatus(
+                        "NOT CONNECTED",
+                        "Engine disconnected",
+                        "The local connection has closed."
+                    );
+
+                }
+
+            };
+
+        } catch (error) {
+
+            showEngineStatus(
+                "ERROR",
+                "Connection failed",
+                error.message
+            );
+
+        }
+    }
+
+    startButton.addEventListener("click", startCamera);
+    stopButton.addEventListener("click", stopCamera);
+
+    document.getElementById("connectEngine")
+        .addEventListener("click", connectEngine);
+
+    document.getElementById("checkEngine")
+        .addEventListener("click", connectEngine);
+
+    document.querySelectorAll(".appearance")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                document.querySelectorAll(".appearance")
+                    .forEach(item => {
+                        item.classList.remove("active");
+                    });
+
+                button.classList.add("active");
+
+                selectedLook = button.dataset.look;
+
+                sendEngine({
+                    type: "configure",
+                    look: selectedLook,
+                    destination:
+                        document.getElementById("destination").value
+                });
+
+            });
+
+        });
+
+    document.getElementById("destination")
+        .addEventListener("change", () => {
+
+            sendEngine({
+                type: "configure",
+                look: selectedLook,
+                destination:
+                    document.getElementById("destination").value
+            });
+
+        });
+
+    document.getElementById("openOBS")
+        .addEventListener("click", () => {
+
+            window.open(
+                "https://obsproject.com/",
+                "_blank",
+                "noopener"
+            );
+
+        });
+
+    document.getElementById("openEngine")
+        .addEventListener("click", () => {
+
+            window.open(
+                "https://github.com/iperov/DeepFaceLive",
+                "_blank",
+                "noopener"
+            );
+
+        });
+
+    window.addEventListener("beforeunload", () => {
+
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => {
+                track.stop();
+            });
+        }
+
+        disconnectEngine();
+
+    });
+
+})();
 </script>
 
-<script type="module">
-import * as THREE from "three";
-
-const $=id=>document.getElementById(id);
-const host=$("threeHost");
-let scene,camera,renderer,root,parts={};
-let playing=true,rotating=true,stream=null,poseModel=null,tracking=false;
-let recorder=null,chunks=[],poseBusy=false;
-let avatarType="male",poseData=null;
-const clock=new THREE.Clock();
-
-function status(message,error=false){
- $("status").innerHTML="";
- const b=document.createElement("b");
- b.textContent=error?"Notice: ":"Status: ";
- $("status").append(b,document.createTextNode(message));
-}
-function trackMessage(message,error=false){
- $("trackStatus").textContent=message;
- $("trackStatus").style.color=error?"#ff8392":"#b9cce0";
-}
-function material(color,roughness=.7,metalness=0){
- return new THREE.MeshStandardMaterial({color,roughness,metalness});
-}
-function ball(parent,mat,x,y,z,sx,sy,sz){
- const m=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),mat);
- m.position.set(x,y,z);m.scale.set(sx,sy,sz);
- m.castShadow=true;parent.add(m);return m;
-}
-function rod(parent,mat,a,b,r1,r2){
- const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b);
- const direction=new THREE.Vector3().subVectors(B,A);
- const m=new THREE.Mesh(new THREE.CylinderGeometry(r2,r1,direction.length(),14),mat);
- m.position.copy(A).add(B).multiplyScalar(.5);
- m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction.normalize());
- m.castShadow=true;parent.add(m);
- ball(parent,mat,...a,r1,r1,r1);
- ball(parent,mat,...b,r2,r2,r2);
- return m;
-}
-function init(){
- scene=new THREE.Scene();scene.background=new THREE.Color("#07101b");
- camera=new THREE.PerspectiveCamera(35,1,.1,100);
- camera.position.set(0,2.1,7.8);camera.lookAt(0,1.5,0);
- renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
- renderer.setPixelRatio(Math.min(devicePixelRatio,2));
- renderer.outputColorSpace=THREE.SRGBColorSpace;
- renderer.shadowMap.enabled=true;
- host.appendChild(renderer.domElement);
-
- scene.add(new THREE.HemisphereLight(0xcce4ff,0x30313c,2));
- const light=new THREE.DirectionalLight(0xffffff,3);
- light.position.set(3,6,5);light.castShadow=true;scene.add(light);
- const rim=new THREE.DirectionalLight(0x43e477,2);
- rim.position.set(-4,3,-3);scene.add(rim);
-
- const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),material("#0d1724"));
- floor.rotation.x=-Math.PI/2;floor.position.y=-.03;scene.add(floor);
- scene.add(new THREE.GridHelper(20,40,"#24384c","#142335"));
-
- buildAvatar("male");resize();window.addEventListener("resize",resize);
- animate();
- $("engineStatus").innerHTML="Renderer: <b>Three.js WebGL</b><br>Character: procedural 3D model<br>Pose tracking: off";
- status("3D engine started. Choose a character or start the webcam.");
-}
-function resize(){
- if(!renderer)return;
- const w=host.clientWidth||600,h=host.clientHeight||500;
- renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
-}
-function buildAvatar(type){
- avatarType=type;
- if(root){
-  scene.remove(root);
-  root.traverse(o=>{
-   if(o.geometry)o.geometry.dispose();
-   if(o.material)o.material.dispose();
-  });
- }
- root=new THREE.Group();scene.add(root);parts={};
- root.scale.setScalar(Number($("scale").value)/100);
-
- const robot=type==="robot";
- const skin=material(robot?"#9cb6c4":$("skin").value);
- const clothes=material(robot?"#405d72":$("shirt").value,.55,robot?.5:0);
- const hair=material(robot?"#263b4b":$("hair").value);
- const pants=material("#202a39"),white=material("#f7f8fa");
- const iris=material("#426d8b"),lip=material("#814843");
-
- rod(root,pants,[-.2,1.05,0],[-.23,.32,0],.14,.1);
- rod(root,pants,[.2,1.05,0],[.23,.32,0],.14,.1);
- rod(root,material("#121923"),[-.23,.32,0],[-.24,.12,.1],.1,.1);
- rod(root,material("#121923"),[.23,.32,0],[.24,.12,.1],.1,.1);
-
- parts.torso=ball(root,clothes,0,1.55,0,.48,.61,.28);
- rod(root,skin,[0,1.98,0],[0,2.22,0],.12,.12);
-
- parts.head=new THREE.Group();parts.head.position.set(0,2.53,0);root.add(parts.head);
- ball(parts.head,skin,0,0,0,.34,.43,.31);
- ball(parts.head,skin,-.35,0,0,.07,.11,.06);
- ball(parts.head,skin,.35,0,0,.07,.11,.06);
-
- for(const s of [-1,1]){
-  ball(parts.head,white,s*.13,.09,.27,.08,.05,.035);
-  ball(parts.head,iris,s*.13,.09,.302,.03,.035,.018);
-  rod(parts.head,hair,[s*.07,.18,.28],[s*.21,.19,.27],.025,.025);
- }
- ball(parts.head,skin,0,-.015,.3,.055,.1,.07);
- parts.mouth=ball(parts.head,lip,0,-.19,.28,.09,.018,.025);
-
- if(!robot){
-  ball(parts.head,hair,0,.28,-.02,.35,.19,.32);
-  for(let i=0;i<7;i++){
-   ball(parts.head,hair,-.27+i*.09,.36+Math.sin(i*1.7)*.03,.02,.11,.11,.13);
-  }
-  if(type.startsWith("female"))
-   ball(parts.head,hair,0,-.08,-.15,.38,.4,.18);
-  if(type==="male3")
-   ball(parts.head,hair,0,-.18,.22,.23,.13,.1);
- }else{
-  const glow=material("#43e4d7",.25,.6);
-  ball(parts.head,glow,-.13,.09,.31,.05,.05,.02);
-  ball(parts.head,glow,.13,.09,.31,.05,.05,.02);
- }
-
- parts.leftArm=new THREE.Group();parts.leftArm.position.set(-.43,1.9,0);root.add(parts.leftArm);
- rod(parts.leftArm,clothes,[0,0,0],[-.1,-.3,0],.13,.1);
- rod(parts.leftArm,clothes,[-.1,-.3,0],[-.12,-.59,.03],.1,.075);
- ball(parts.leftArm,skin,-.12,-.65,.04,.08,.09,.08);
-
- parts.rightArm=new THREE.Group();parts.rightArm.position.set(.43,1.9,0);root.add(parts.rightArm);
- rod(parts.rightArm,clothes,[0,0,0],[.1,-.3,0],.13,.1);
- rod(parts.rightArm,clothes,[.1,-.3,0],[.12,-.59,.03],.1,.075);
- ball(parts.rightArm,skin,.12,-.65,.04,.08,.09,.08);
-
- $("name").textContent=type.toUpperCase();
- document.querySelectorAll("[data-avatar]").forEach(b=>b.classList.toggle("active",b.dataset.avatar===type));
- status("Selected "+type+" 3D character.");
-}
-function animate(){
- requestAnimationFrame(animate);
- const t=clock.getElapsedTime(),power=Number($("power").value)/100;
- if(root&&playing){
-  root.position.y=Math.sin(t*2)*.025*power;
-  if(rotating)root.rotation.y=Math.sin(t*.3)*.16;
-  if(parts.head){
-   parts.head.rotation.z=Number($("tilt").value)*Math.PI/180;
-   if(tracking&&poseData){
-    parts.head.rotation.y=THREE.MathUtils.lerp(parts.head.rotation.y,poseData.headY,.2);
-    parts.head.rotation.x=THREE.MathUtils.lerp(parts.head.rotation.x,poseData.headX,.2);
-    parts.leftArm.rotation.z=THREE.MathUtils.lerp(parts.leftArm.rotation.z,poseData.left,.2);
-    parts.rightArm.rotation.z=THREE.MathUtils.lerp(parts.rightArm.rotation.z,poseData.right,.2);
-   }else{
-    const mode=$("motion").value;
-    parts.head.rotation.y=Math.sin(t*.7)*.07;
-    parts.leftArm.rotation.z=mode==="dance"?Math.sin(t*4)*.45*power:Math.sin(t*2)*.04;
-    parts.rightArm.rotation.z=mode==="wave"?-.7+Math.sin(t*6)*.3*power:
-      mode==="dance"?-Math.sin(t*4)*.45*power:
-      mode==="talk"?-Math.sin(t*3)*.14*power:-Math.sin(t*1.5)*.04;
-    if(mode==="talk")parts.head.rotation.y+=Math.sin(t*5)*.025;
-   }
-   let mouth=Number($("mouth").value)/100;
-   if($("expression").value==="surprised")mouth=Math.max(mouth,.65);
-   parts.mouth.scale.y=.018+mouth*.1+
-    ($("motion").value==="talk"?Math.abs(Math.sin(t*7))*.035:0);
-   parts.mouth.scale.x=$("expression").value==="happy"?.13:.09;
-  }
- }
- renderer.render(scene,camera);
-}
-
-document.querySelectorAll("[data-avatar]").forEach(b=>b.onclick=()=>buildAvatar(b.dataset.avatar));
-$("apply").onclick=()=>buildAvatar(avatarType);
-$("skin").onchange=$("hair").onchange=$("shirt").onchange=$("scale").onchange=$("expression").onchange=()=>buildAvatar(avatarType);
-$("play").onclick=()=>{playing=true;status("Animation playing.");};
-$("pause").onclick=()=>{playing=false;status("Animation paused.");};
-$("rotate").onclick=()=>{rotating=!rotating;$("rotate").textContent="AUTO ROTATE: "+(rotating?"ON":"OFF");};
-document.querySelectorAll("[data-bg]").forEach(b=>b.onclick=()=>{
- scene.background=new THREE.Color(b.dataset.bg);
- document.querySelectorAll("[data-bg]").forEach(x=>x.classList.toggle("active",x===b));
-});
-$("fullscreen").onclick=async()=>{
- try{if(document.fullscreenElement)await document.exitFullscreen();else await host.parentElement.requestFullscreen();resize();}
- catch(e){status("Fullscreen failed: "+e.message,true);}
-};
-$("snapshot").onclick=()=>{
- const a=document.createElement("a");a.download="obo-avatar.png";
- a.href=renderer.domElement.toDataURL("image/png");a.click();
-};
-$("obs").onclick=()=>$("obsSteps").classList.toggle("hide");
-
-$("startCam").onclick=async()=>{
- try{
-  stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
-  $("webcam").srcObject=stream;await $("webcam").play();
-  trackMessage("Webcam is running. Click START TRACKING to load pose estimation.");
- }catch(e){trackMessage("Camera error: "+e.message+". Allow camera permission in Chrome.",true);}
-};
-function stopTracking(){
- tracking=false;poseData=null;
- if(poseModel&&poseModel.close)poseModel.close();
- poseModel=null;
- $("engineStatus").innerHTML="Renderer: <b>Three.js WebGL</b><br>Character: procedural 3D model<br>Pose tracking: off";
-}
-$("stopCam").onclick=()=>{
- stopTracking();
- if(stream)stream.getTracks().forEach(t=>t.stop());
- stream=null;$("webcam").srcObject=null;trackMessage("Webcam stopped.");
-};
-$("startTrack").onclick=async()=>{
- if(!stream){trackMessage("Start the webcam first.");return;}
- try{
-  trackMessage("Loading MediaPipe pose model…");
-  const mp=await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm");
-  const files=await mp.FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
-  poseModel=await mp.PoseLandmarker.createFromOptions(files,{
-   baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",delegate:"GPU"},
-   runningMode:"VIDEO",numPoses:1
-  });
-  tracking=true;
-  $("engineStatus").innerHTML="Renderer: <b>Three.js WebGL</b><br>Character: procedural 3D model<br>Pose tracking: <b>active</b>";
-  trackMessage("Pose tracking active. Keep your shoulders and arms visible.");
-  poseLoop();
- }catch(e){tracking=false;trackMessage("Tracking could not load. Check internet and reload. "+e.message,true);}
-};
-function poseLoop(){
- if(!tracking||!poseModel||$("webcam").readyState<2){if(tracking)requestAnimationFrame(poseLoop);return;}
- if(!poseBusy){
-  poseBusy=true;
-  try{
-   const res=poseModel.detectForVideo($("webcam"),performance.now());
-   const l=res.landmarks&&res.landmarks[0];
-   if(l){
-    const nose=l[0],ls=l[11],rs=l[12],lw=l[15],rw=l[16];
-    poseData={
-     headY:(.5-nose.x)*1.1,
-     headX:(nose.y-.45)*.7,
-     left:ls&&lw?THREE.MathUtils.clamp((lw.y-ls.y)*2,-1.2,1.2):0,
-     right:rs&&rw?THREE.MathUtils.clamp((rs.y-rw.y)*2,-1.2,1.2):0
-    };
-    trackMessage("Body landmarks detected. Approximate head and arm movement is active.");
-   }else trackMessage("No pose detected. Improve lighting and move back from the camera.");
-  }catch(e){trackMessage("Tracking error: "+e.message,true);}
-  finally{poseBusy=false;}
- }
- if(tracking)requestAnimationFrame(poseLoop);
-}
-$("stopTrack").onclick=()=>{stopTracking();trackMessage("Pose tracking stopped.");};
-
-$("record").onclick=()=>{
- try{
-  chunks=[];
-  const stream=renderer.domElement.captureStream(30);
-  recorder=new MediaRecorder(stream);
-  recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
-  recorder.onstop=()=>status("Recording ready. Click DOWNLOAD.");
-  recorder.start();status("Recording started.");
- }catch(e){status("Recording unavailable: "+e.message,true);}
-};
-$("stopRecord").onclick=()=>{if(recorder&&recorder.state!=="inactive")recorder.stop();};
-$("download").onclick=()=>{
- if(!chunks.length){status("Record and stop first.");return;}
- const a=document.createElement("a");
- a.href=URL.createObjectURL(new Blob(chunks,{type:"video/webm"}));
- a.download="obo-human-live.webm";a.click();
-};
-window.addEventListener("beforeunload",()=>{
- if(stream)stream.getTracks().forEach(t=>t.stop());
- if(poseModel&&poseModel.close)poseModel.close();
-});
-init();
-</script>
 </body>
 </html>
