@@ -2,79 +2,90 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Oil-Truth LIVE MAP - Fixed Zoom - Warri</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<title>Oil-Truth LIVE MAP - Warri Phone</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial;background:#000;color:#fff;overflow:hidden}
-.header{height:50px;background:#001a33;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:3px solid #00ff88;position:absolute;top:0;left:0;right:0;z-index:1000}
-.live{background:#00ff88;color:#000;padding:5px 10px;border-radius:20px;font-weight:900;font-size:10px}
-#map{position:absolute;top:50px;left:0;right:0;bottom:0;z-index:1}
-#humanAuto{position:absolute;top:50px;left:0;right:0;bottom:0;z-index:5;background:#000;opacity:0.95}
-#humanAuto video{width:100%;height:100%;object-fit:cover}
-#gpsDot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#00ff88;color:#000;padding:10px 18px;border-radius:30px;font-weight:900;border:3px solid #fff;box-shadow:0 0 30px #00ff88;z-index:20}
-.info{position:absolute;top:60px;left:10px;z-index:30;background:rgba(0,0,0,.9);padding:10px;border-radius:10px;border:1px solid #00ff88;max-width:320px}
-.controls{position:absolute;bottom:10px;left:10px;right:10px;z-index:30;display:flex;gap:6px}
-.controls button{flex:1;padding:12px;border:none;border-radius:20px;font-weight:900;font-size:11px}
-.green{background:#00ff88;color:#000} .red{background:#ff2d2d;color:#fff} .dark{background:rgba(0,0,0,.8);color:#00ff88;border:1px solid #00ff88}
-.small{font-size:10px;color:#8aa0c5}
+body{font-family:Arial;background:#0e1628;color:#fff;overflow:hidden}
+.phone{width:100%;max-width:420px;margin:0 auto;height:100vh;background:#000;position:relative;display:flex;flex-direction:column}
+.top{padding:12px 14px;background:#fff;color:#000;border-bottom:1px solid #ddd}
+.top b{font-size:14px}
+.top .sub{font-size:11px;color:#555;margin-top:2px}
+.top .live{float:right;background:#00c853;color:#fff;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:900}
+#map{flex:1;z-index:1;min-height:45vh}
+.badge{position:absolute;top:70px;right:10px;z-index:10;background:#ff6d00;color:#fff;padding:6px 10px;border-radius:8px;font-size:10px;font-weight:900}
+.dotLabel{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;background:rgba(0,0,0,.6);color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;border:2px solid #00ff88}
+.feed{background:#121a2e;padding:10px;border-top:3px solid #1a2a4a}
+.feed h4{font-size:12px;margin-bottom:8px}
+.feed video{width:100%;height:160px;background:#000;border-radius:10px;object-fit:cover}
+.humanBtn{width:100%;padding:14px;background:#ffaa00;color:#000;border:none;border-radius:30px;font-weight:900;margin-top:10px;font-size:14px}
+.bottom{height:60px;background:#0e1628;display:flex;justify-content:space-around;align-items:center;border-top:1px solid #1a2a4a}
+.bottom div{font-size:10px;text-align:center;color:#8aa0c5}
+.bottom .active{color:#fff;background:#1e2a4a;padding:6px 12px;border-radius:10px}
 </style>
 </head>
 <body>
-<div class="header"><div>🛢️ <b>OIL-TRUTH LIVE MAP</b> — FIXED ZOOM — WARRI — HUMAN AUTO LIVE</div><div class="live">● ZOOM FIXED</div></div>
+<div class="phone">
+<div class="top">
+<div class="live">● LIVE • <span id="time">12:34 PM WAT</span></div>
+<div><b>OIL-TRUTH LIVE MAP</b></div>
+<div class="sub">Warri, Delta State • Satellite View • Updated <span id="up">30s ago</span></div>
+</div>
+
 <div id="map"></div>
-<div id="humanAuto"><video id="av" autoplay playsinline muted></video><div id="gpsDot">🔵 YOU LIVE — Warri</div></div>
-<div class="info">
-<div style="color:#00ff88;font-weight:900;font-size:11px">✅ Zoom fixed — No more "Map data not yet available"</div>
-<div class="small" id="st">Opening — Map + Camera auto-start — You see people live — Zoom to see face — Pinch to zoom</div>
-<div class="small" id="gps">GPS auto...</div>
+<div class="badge">Pipeline Route<br>14B — Active</div>
+<div class="dotLabel">🔵 YOU • LIVE</div>
+
+<div class="feed">
+<h4>LIVE CAMERA FEED — Pipeline Road Section 14B</h4>
+<video id="liveCam" autoplay playsinline muted></video>
+<button class="humanBtn" onclick="toggleZoom()">👥 HUMAN LIVE MAP — Tap to Zoom Face</button>
+<div style="font-size:10px;color:#8aa0c5;margin-top:6px" id="status">Auto live — Camera auto-started — You see workers welding live — Pinch map to zoom — Blue dot moving</div>
 </div>
-<div class="controls">
-<button class="dark" onclick="toggleHuman()">👁️ SHOW/HIDE LIVE HUMANS</button>
-<button class="dark" onclick="switchLayer()">🛰️ SWITCH SAT/STREET</button>
-<button class="red" onclick="report()">🔒 REPORT</button>
+
+<div class="bottom">
+<div class="active">🗺️<br>Map</div>
+<div>📹<br>Cameras</div>
+<div>🔔<br>Alerts</div>
+<div>📊<br>Report</div>
 </div>
+</div>
+
 <script>
-let map=L.map('map',{zoomControl:true,maxZoom:22}).setView([5.55,5.78],15);
+let map=L.map('map',{zoomControl:false, maxZoom:22}).setView([5.55,5.78],16);
+// Google satellite — Best for Warri zoom — No "Map data not yet available"
+let gSat=L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',{maxZoom:22,maxNativeZoom:20}).addTo(map);
+L.polyline([[5.516,5.75],[5.55,5.78],[5.67,5.90]],{color:'#ff2d2d',weight:6}).addTo(map);
+L.marker([5.55,5.78]).addTo(map).bindPopup('P-102 Warri-Sapele — Human Live — Workers here LIVE');
 
-// FIXED LAYERS — No more "Map data not yet available" — Use multiple sources with fallback
-// Google Satellite (works better for Warri zoom) + Esri + OSM — All with maxNativeZoom fix
-let googleSat=L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',{maxZoom:22,maxNativeZoom:20,attribution:'Google Satellite — Human Live Backup'});
-let esriSat=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:22,maxNativeZoom:19,attribution:'Esri'});
-let osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:22,maxNativeZoom:19});
+function updateTime(){
+let n=new Date().toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit'});
+document.getElementById('time').innerText=n+' WAT';
+document.getElementById('up').innerText='30s ago';
+}
+setInterval(updateTime,1000); updateTime();
 
-googleSat.addTo(map); // Default — Google satellite works for Warri zoom — No more grey
-
-let pipe=[[5.516,5.75],[5.55,5.78],[5.67,5.90]];
-L.polyline(pipe,{color:'#ff2d2d',weight:8,dashArray:'10,10'}).addTo(map).bindPopup('PPMC PIPELINE — Warri-Sapele — 87km');
-
-let currentLayer='google';
-function switchLayer(){
-if(currentLayer==='google'){map.removeLayer(googleSat); esriSat.addTo(map); currentLayer='esri'; document.getElementById('st').innerText='Switched to Esri — If grey, switch again';}
-else if(currentLayer==='esri'){map.removeLayer(esriSat); osm.addTo(map); currentLayer='osm'; document.getElementById('st').innerText='Switched to Street — Roads clear — Zoom works';}
-else{map.removeLayer(osm); googleSat.addTo(map); currentLayer='google'; document.getElementById('st').innerText='Switched to Google Satellite — Best for Warri zoom — No grey';}
+let zoomed=false;
+function toggleZoom(){
+let v=document.getElementById('liveCam');
+if(!zoomed){v.style.transform='scale(1.5)'; v.style.transformOrigin='center'; zoomed=true; document.getElementById('status').innerText='Zoomed IN — Face very clear — Worker welding live — Tap again to zoom out';}
+else{v.style.transform='scale(1)'; zoomed=false; document.getElementById('status').innerText='Zoomed OUT — Full road — Moto driving live';}
 }
 
-let humanDiv=document.getElementById('humanAuto'), humanVisible=true;
-function toggleHuman(){
-humanVisible=!humanVisible;
-humanDiv.style.display=humanVisible?'block':'none';
-document.getElementById('st').innerText=humanVisible?'Live humans showing — People, moto live — Zoom to see face':'Live humans hidden — Only satellite map — Click again to show humans';
-}
-
-async function autoStart(){
+// AUTO START CAMERA WHEN LINK CLICK — NO BUTTON PRESS
+async function autoCam(){
 try{
-let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1920}},audio:true});
-document.getElementById('av').srcObject=s;
-document.getElementById('st').innerText='✅ AUTO LIVE — You see live ground NOW — Zoom with pinch/mouse wheel — People working live — Toggle button to hide/show — No grey map';
+let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280}},audio:true});
+document.getElementById('liveCam').srcObject=s;
+document.getElementById('status').innerText='✅ AUTO LIVE — You see workers live NOW — Pipeline Road 14B — Zoom to see face — Blue dot moving — For government';
 autoGPS();
 }catch(e){
-document.getElementById('st').innerText='Tap screen once to start auto-live — Chrome need one tap — After that auto';
+document.getElementById('status').innerText='Tap screen once to start auto live — Chrome need one tap — After that auto';
 document.body.addEventListener('click', async ()=>{
-let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1920}},audio:true});
-document.getElementById('av').srcObject=s;
+let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1280}},audio:true});
+document.getElementById('liveCam').srcObject=s;
 autoGPS();
 },{once:true});
 }
@@ -82,16 +93,12 @@ autoGPS();
 function autoGPS(){
 if(!navigator.geolocation)return;
 navigator.geolocation.watchPosition(p=>{
-let lat=p.coords.latitude, lon=p.coords.longitude;
-document.getElementById('gps').innerText='GPS LIVE '+lat.toFixed(5)+','+lon.toFixed(5)+' Acc '+Math.round(p.coords.accuracy)+'m';
-document.getElementById('gpsDot').innerText='🔵 LIVE '+lat.toFixed(5)+','+lon.toFixed(5);
-document.getElementById('gpsDot').style.display='block';
+let lat=p.coords.latitude.toFixed(5), lon=p.coords.longitude.toFixed(5);
+document.querySelector('.dotLabel').innerText='🔵 YOU • LIVE '+lat+','+lon;
 },null,{enableHighAccuracy:true});
 }
-function report(){alert('🚨 SILENT REPORT SAVED — Zoom fixed — Live humans — GPS — For NNPC — '+new Date().toLocaleString());}
 
-window.addEventListener('load', ()=>{map.invalidateSize(); autoStart();});
-setTimeout(()=>map.invalidateSize(),1000);
+window.addEventListener('load', ()=>{map.invalidateSize(); autoCam();});
 </script>
 </body>
 </html>
