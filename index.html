@@ -1,751 +1,152 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Trust Bank | Transfer </title>
-
+<title>Oil-Truth Live - Warri Test</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-:root {
-    --green: #087a3e;
-    --dark-green: #075c30;
-    --light-green: #e8f7ed;
-    --border: #dce9df;
-    --text: #25352a;
-    --muted: #66736a;
-    --white: #ffffff;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    background: #f3f8f4;
-    color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-.top-notice {
-    padding: 11px 15px;
-    background: #fff4d6;
-    color: #674d00;
-    text-align: center;
-    font-size: 12px;
-    line-height: 1.5;
-    border-bottom: 1px solid #ead9a5;
-}
-
-.site-header {
-    background: var(--white);
-    border-bottom: 3px solid var(--green);
-    padding: 20px 15px;
-    text-align: center;
-}
-
-.brand {
-    margin: 0;
-    color: var(--green);
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: 2px;
-}
-
-.brand-subtitle {
-    margin: 7px 0 0;
-    color: var(--muted);
-    font-size: 11px;
-    letter-spacing: 1.5px;
-}
-
-.container {
-    width: 100%;
-    max-width: 650px;
-    padding: 20px 14px 35px;
-    margin: auto;
-}
-
-.card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 22px rgba(10, 65, 30, 0.07);
-    margin-bottom: 22px;
-}
-
-.card-heading {
-    padding: 20px;
-    border-bottom: 1px solid var(--border);
-}
-
-.card-heading h2 {
-    color: var(--dark-green);
-    font-size: 21px;
-    margin: 0 0 7px;
-}
-
-.card-heading p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-.demo-label {
-    display: inline-block;
-    margin-top: 12px;
-    background: var(--light-green);
-    color: var(--dark-green);
-    border: 1px solid #c5e7ce;
-    border-radius: 20px;
-    padding: 6px 10px;
-    font-size: 11px;
-    font-weight: bold;
-}
-
-form {
-    padding: 20px;
-}
-
-.field {
-    margin-bottom: 17px;
-}
-
-label {
-    display: block;
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 7px;
-}
-
-input,
-select,
-textarea {
-    width: 100%;
-    padding: 13px;
-    border: 1px solid #cbd9ce;
-    border-radius: 8px;
-    background: #fff;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 15px;
-    outline: none;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(8, 122, 62, 0.1);
-}
-
-textarea {
-    resize: vertical;
-    min-height: 85px;
-}
-
-.row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.primary-button {
-    display: block;
-    width: 100%;
-    border: 0;
-    border-radius: 9px;
-    padding: 15px;
-    background: var(--green);
-    color: #fff;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.primary-button:hover {
-    background: var(--dark-green);
-}
-
-.secondary-button {
-    display: block;
-    width: 100%;
-    margin-top: 10px;
-    padding: 13px;
-    background: #fff;
-    color: var(--dark-green);
-    border: 1px solid var(--green);
-    border-radius: 9px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.small-note {
-    margin: 14px 0 0;
-    font-size: 11px;
-    line-height: 1.6;
-    color: var(--muted);
-    text-align: center;
-}
-
-/* RECEIPT */
-
-#receipt {
-    display: none;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 7px 25px rgba(10, 65, 30, 0.1);
-    margin-bottom: 22px;
-    scroll-margin-top: 15px;
-}
-
-.receipt-brand {
-    background: #fff;
-    text-align: center;
-    padding: 26px 15px 20px;
-}
-
-.receipt-brand h1 {
-    color: var(--green);
-    font-size: 30px;
-    letter-spacing: 2px;
-    margin: 0 0 7px;
-    font-weight: 800;
-}
-
-.receipt-brand p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 11px;
-    letter-spacing: 1px;
-}
-
-.success-banner {
-    background: #e2f6e8;
-    border-top: 1px solid #b7e3c3;
-    border-bottom: 1px solid #b7e3c3;
-    text-align: center;
-    padding: 21px 12px;
-    color: var(--dark-green);
-}
-
-.success-icon {
-    width: 43px;
-    height: 43px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 10px;
-    border-radius: 50%;
-    background: var(--green);
-    color: #fff;
-    font-size: 26px;
-    font-weight: bold;
-}
-
-.success-banner h2 {
-    margin: 0 0 8px;
-    font-size: 21px;
-}
-
-.success-banner p {
-    margin: 0;
-    font-size: 12px;
-    line-height: 1.6;
-}
-
-.receipt-body {
-    padding: 22px 20px;
-}
-
-.receipt-title {
-    text-align: center;
-    color: var(--green);
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 1.5px;
-    margin-bottom: 20px;
-}
-
-.amount-box {
-    background: #f4faf5;
-    border: 1px solid #dceee0;
-    border-radius: 10px;
-    text-align: center;
-    padding: 17px 10px;
-    margin-bottom: 18px;
-}
-
-.amount-box span {
-    display: block;
-    color: var(--muted);
-    font-size: 12px;
-    margin-bottom: 7px;
-}
-
-.amount-box strong {
-    display: block;
-    color: var(--dark-green);
-    font-size: 26px;
-    overflow-wrap: anywhere;
-}
-
-.receipt-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 13px 0;
-    border-bottom: 1px solid #edf2ee;
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.receipt-row span {
-    color: var(--muted);
-    flex: 1;
-}
-
-.receipt-row strong {
-    color: var(--text);
-    flex: 1;
-    text-align: right;
-    overflow-wrap: anywhere;
-}
-
-.demo-warning {
-    background: #f2faf4;
-    border-top: 1px solid var(--border);
-    padding: 17px;
-    color: #315b3e;
-    text-align: center;
-    font-size: 12px;
-    line-height: 1.7;
-}
-
-.receipt-actions {
-    padding: 0 20px 22px;
-}
-
-footer {
-    text-align: center;
-    padding: 20px 12px;
-    font-size: 11px;
-    line-height: 1.7;
-    color: var(--muted);
-}
-
-@media (max-width: 450px) {
-    .brand {
-        font-size: 26px;
-    }
-
-    .row {
-        grid-template-columns: 1fr;
-        gap: 0;
-    }
-
-    .receipt-row {
-        font-size: 12px;
-    }
-
-    .receipt-brand h1 {
-        font-size: 27px;
-    }
-}
-
-@media print {
-    body {
-        background: #fff;
-    }
-
-    body * {
-        visibility: hidden !important;
-    }
-
-    #receipt,
-    #receipt * {
-        visibility: visible !important;
-    }
-
-    #receipt {
-        display: block !important;
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        margin: 0;
-        border: 0;
-        box-shadow: none;
-    }
-
-    .receipt-actions {
-        display: none !important;
-    }
-
-    .success-banner,
-    .success-icon,
-    .amount-box,
-    .demo-warning {
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
-    }
-}
+body{margin:0;font-family:Arial;background:#f5f7fb}
+.header{background:#0f1a34;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center}
+.live-badge{background:#2ecc71;padding:5px 15px;border-radius:20px;font-weight:bold;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:0.5}}
+.container{padding:15px}
+.map-card,.audio-card,.feed-card{background:white;border-radius:12px;padding:12px;margin-bottom:15px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+#map{height:300px;border-radius:8px}
+.feeds{display:grid;grid-template-columns:1fr;gap:12px}
+video{width:100%;height:180px;background:#000;border-radius:8px}
+.wave{width:100%;height:80px;background:#eef3ff;border-radius:8px}
+.btn{background:#0f1a34;color:white;padding:15px;width:100%;border:none;border-radius:10px;font-size:18px;font-weight:bold;margin-top:10px}
+.btn-report{background:#e74c3c}
+.status{font-size:13px;color:#555;margin-top:5px}
 </style>
 </head>
-
 <body>
+<div class="header">
+<div>🛢️ Oil-Truth Live</div>
+<div class="live-badge">● LIVE • Warri-Sapele Road</div>
+</div>
+<div class="container">
 
-<div class="top-notice">
+<div class="map-card">
+<h3>Pipeline Corridor: Warri-Sapele Road - LIVE</h3>
+<div id="map"></div>
+<div class="status">System: All sensors online • Last: <span id="time"></span> • Pipeline Pressure: 42 bar • Leak: No anomalies</div>
 </div>
 
-<header class="site-header">
-    <h1 class="brand">TRUST BANK</h1>
-    <p class="brand-subtitle">WORLDWIDE TRANSFER </p>
-</header>
+<div class="feeds">
+<div class="feed-card">
+<b>DRONE LIVE 100m - LIVE</b> <span style="float:right;color:green">Signal 98%</span>
+<video id="drone" autoplay muted playsinline></video>
+<div class="status">Altitude: 100m | 200MP 8K | 30x Optical Zoom | Very Clear - Zoom Ground Well</div>
+</div>
+<div class="feed-card">
+<b>TOWER LIVE 30m - LIVE</b> <span style="float:right;color:green">Signal 92%</span>
+<video id="tower" autoplay muted playsinline></video>
+<div class="status">Status: Normal | Infrared Night | Face Capture Direct</div>
+</div>
+<div class="feed-card">
+<b>GATE LIVE 15m - LIVE</b> <span style="float:right;color:green">Signal 95%</span>
+<video id="gate" autoplay muted playsinline></video>
+<div class="status">Status: Secure | PPMC Gate Warri</div>
+</div>
+</div>
 
-<main class="container">
+<div class="audio-card">
+<h3>LIVE AUDIO Recording - Voice Proof</h3>
+<canvas id="wave" class="wave"></canvas>
+<div style="display:flex;justify-content:space-between;margin-top:8px">
+<span>🎤 <span id="audioTime">00:00 / 00:30</span> <span style="color:red">● Recording... REC</span></span>
+<span id="voiceDetect">Hearing: Silent creek</span>
+</div>
+<div class="status">Shotgun Mic + Parabolic Dish + Hidden Ground Mic - Record noise - Human talking - Thief discussing how to cut pipeline - Even midnight - Proof - Face + Voice + Action</div>
+</div>
 
-    <section class="card">
-        <div class="card-heading">
-            <h2>International Transfer </h2>
-            <p>
-                Enter sample details to preview the white-and-green
-                transfer interface and receipt.
-            </p>
-            <span class="-label">TEST MODE · </span>
-        </div>
+<button class="btn btn-report" onclick="silentReport()">🔒 SILENT REPORT - No Noise - Send to Government</button>
+<button class="btn" onclick="startAll()">▶️ START LIVE TEST - Camera + Audio</button>
+<div id="reportLog" class="status" style="margin-top:15px;white-space:pre-wrap"></div>
 
-        <form id="transferForm">
-
-            <div class="field">
-                <label for="senderName">Sender Name</label>
-                <input
-                    id="senderName"
-                    type="text"
-                    placeholder="Enter sample sender name"
-                    required
-                >
-            </div>
-
-            <div class="field">
-                <label for="country">Destination Country</label>
-                <select id="country" required>
-                    <option value="">Select destination country</option>
-                    <option>Australia</option>
-                    <option>Canada</option>
-                    <option>France</option>
-                    <option>Germany</option>
-                    <option>Ghana</option>
-                    <option>India</option>
-                    <option>Ireland</option>
-                    <option>Kenya</option>
-                    <option>Nigeria</option>
-                    <option>South Africa</option>
-                    <option>United Arab Emirates</option>
-                    <option>United Kingdom</option>
-                    <option>United States</option>
-                    <option>Other</option>
-                </select>
-            </div>
-
-            <div class="field">
-                <label for="bankName">Bank Name</label>
-                <input
-                    id="bankName"
-                    type="text"
-                    value="Trust Bank "
-                    required
-                >
-            </div>
-
-            <div class="field">
-                <label for="receiverName">Receiver Name</label>
-                <input
-                    id="receiverName"
-                    type="text"
-                    placeholder="Enter sample receiver name"
-                    required
-                >
-            </div>
-
-            <div class="field">
-                <label for="accountNumber">Account Number</label>
-                <input
-                    id="accountNumber"
-                    type="text"
-                    inputmode="numeric"
-                    placeholder="Use a fictional test account"
-                    required
-                >
-            </div>
-
-            <div class="row">
-                <div class="field">
-                    <label for="currency">Currency</label>
-                    <select id="currency" required>
-                        <option value="NGN">NGN — Naira</option>
-                        <option value="AUD">AUD — Australian Dollar</option>
-                        <option value="CAD">CAD — Canadian Dollar</option>
-                        <option value="EUR">EUR — Euro</option>
-                        <option value="GBP">GBP — Pound Sterling</option>
-                        <option value="GHS">GHS — Ghanaian Cedi</option>
-                        <option value="INR">INR — Indian Rupee</option>
-                        <option value="KES">KES — Kenyan Shilling</option>
-                        <option value="USD">USD — US Dollar</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label for="amount"> Amount</label>
-                    <input
-                        id="amount"
-                        type="number"
-                        min="1"
-                        step="0.01"
-                        placeholder="1000.00"
-                        required
-                    >
-                </div>
-            </div>
-
-            <div class="field">
-                <label for="description">Transfer Description</label>
-                <textarea
-                    id="description"
-                    maxlength="200"
-                    placeholder="Example:  family support transfer"
-                ></textarea>
-            </div>
-
-            <button class="primary-button" type="submit">
-                Preview Demo Receipt
-            </button>
-
-            <p class="small-note">
-                This demo does not connect to a bank, send money,
-                charge an account, or confirm an actual transaction.
-            </p>
-        </form>
-    </section>
-
-    <!-- RECEIPT: hidden until the  form is submitted -->
-
-    <section id="receipt" aria-live="polite">
-
-        <div class="receipt-brand">
-            <h1>TRUST BANK</h1>
-            <p>WORLDWIDE TRANSFER DEMONSTRATION</p>
-        </div>
-
-        <div class="success-banner">
-            <div class="success-icon">✓</div>
-            <h2> SUCCESSFUL</h2>
-            <p>
-                Your demonstration receipt has been generated.<br>
-                No real money was transferred.
-            </p>
-        </div>
-
-        <div class="receipt-body">
-
-            <div class="receipt-title">
-                DEMONSTRATION RECEIPT
-            </div>
-
-            <div class="amount-box">
-                <span>Sample Transfer Amount</span>
-                <strong id="outAmount">NGN 0.00</strong>
-            </div>
-
-            <div class="receipt-row">
-                <span>Demo Reference</span>
-                <strong id="outReference">DEMO</strong>
-            </div>
-
-            <div class="receipt-row">
-                <span>Date and Time</span>
-                <strong id="outDate">—</strong>
-            </div>
-
-            <div class="receipt-row">
-                <span>Sender Name</span>
-                <strong id="outSender">—</strong>
-            </div>
-
-            <div class="receipt-row">
-                <span>Destination Country</span>
-                <strong id="outCountry">—</strong>
-            </div>
-
-            <div class="receipt-row">
-                <span>Bank Name</span>
-                <strong id="outBank">Trust Bank
-</strong>
-            </div>
-
-            <div class="receipt-row">
-                <span>Receiver Name</span>
-                <strong id="outReceiver">—</strong>
-            </div>
-
-            <div class="receipt-row">
-                <span>Account Number</span>
-                <strong id="outAccount">—</strong>
-            </div>
-
-            <div class="receipt-row">
-                <span>Description</span>
-                <strong id="outDescription"> transfer</strong>
-            </div>
-
-            <div class="receipt-row">
-                <span>Status</span>
-                <strong style="color:#087a3e">
-                    Demo completed — not a real transfer
-                </strong>
-            </div>
-
-        </div>
-
-        <div class="demo-warning">
-            <strong>DEMONSTRATION ONLY</strong><br>
-            This receipt records a local website , not a bank transaction.
-        
-        </div>
-
-        <div class="receipt-actions">
-            <button
-                type="button"
-                class="primary-button"
-                id="printButton"
-            >
-                Print / Save  Receipt as PDF
-            </button>
-
-            <button
-                type="button"
-                class="secondary-button"
-                id="Button"
-            >
-                Start New 
-            </button>
-        </div>
-
-    </section>
-
-</main>
-
-<footer>
-    TRUST BANK · NTERFACE<br>
-    Fictional sample interface. No banking services are provided.
-</footer>
+</div>
 
 <script>
-(function () {
-    "use strict";
+// MAP - Warri-Sapele Road
+var map = L.map('map').setView([5.55, 5.75], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.marker([5.516, 5.75]).addTo(map).bindPopup("Warri - P-101 Start - Pipelines and Product Marketing").openPopup();
+L.marker([5.65, 5.90]).addTo(map).bindPopup("Sapele - P-103 End");
+var pipeline = [[5.516,5.75],[5.55,5.78],[5.60,5.82],[5.65,5.90]];
+L.polyline(pipeline,{color:'red',dashArray:'8,8',weight:4}).addTo(map).bindPopup("PPMC Pipeline ACTIVE - Warri-Sapele Road");
 
-    const form = document.getElementById("transferForm");
-    const receipt = document.getElementById("receipt");
+// TIME
+setInterval(()=>{document.getElementById('time').innerText=new Date().toLocaleString()},1000);
 
-    function getValue(id) {
-        return document.getElementById(id).value.trim();
-    }
+// CAMERA + AUDIO TEST
+let audioContext, analyser, dataArray, startTime;
+async function startAll(){
+try{
+let stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+document.getElementById('drone').srcObject = stream;
+document.getElementById('tower').srcObject = stream;
+document.getElementById('gate').srcObject = stream;
 
-    function putText(id, value) {
-        document.getElementById(id).textContent = value || "Not provided";
-    }
+// Audio waveform
+audioContext = new (window.AudioContext||window.webkitAudioContext)();
+let source = audioContext.createMediaStreamSource(stream);
+analyser = audioContext.createAnalyser();
+analyser.fftSize = 2048;
+source.connect(analyser);
+dataArray = new Uint8Array(analyser.frequencyBinCount);
+startTime = Date.now();
+drawWave();
+alert("LIVE STARTED! Map LIVE, 3 Camera LIVE, Audio LIVE recording voice. Now click SILENT REPORT to test government alert.");
+}catch(e){alert("Allow Camera + Mic to test: "+e.message)}
+}
 
-    function formatAmount(currency, amount) {
-        const number = Number(amount);
+function drawWave(){
+let canvas = document.getElementById('wave');
+let ctx = canvas.getContext('2d');
+canvas.width = canvas.offsetWidth;
+requestAnimationFrame(drawWave);
+if(!analyser) return;
+analyser.getByteTimeDomainData(dataArray);
+ctx.fillStyle = '#eef3ff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.lineWidth = 2; ctx.strokeStyle = '#2c5eff'; ctx.beginPath();
+let slice = canvas.width / dataArray.length; let x=0;
+for(let i=0;i<dataArray.length;i++){
+let v = dataArray[i]/128.0; let y = v*canvas.height/2;
+if(i==0) ctx.moveTo(x,y); else ctx.lineTo(x,y); x+=slice;
+}
+ctx.stroke();
+let elapsed = Math.floor((Date.now()-startTime)/1000);
+document.getElementById('audioTime').innerText = `00:${String(elapsed).padStart(2,'0')} / 00:30`;
+if(elapsed>2 && Math.max(...dataArray)>130){
+document.getElementById('voiceDetect').innerText = "Hearing: Voice detected! 'Oya bring cutter' - Proof";
+document.getElementById('voiceDetect').style.color = "red";
+}
+}
 
-        if (!Number.isFinite(number)) {
-            return currency + " " + amount;
-        }
+function silentReport(){
+let now = new Date().toLocaleString();
+let log = `✅ SILENT REPORT SENT - ${now}
 
-        return currency + " " + number.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    }
+Location: Warri-Sapele Road P-102 (5.55,5.78)
+GPS: 5.55N,5.78E
+Time: ${now}
+Evidence:
+- Live Video 30 sec: DRONE 100m + TOWER 30m + GATE 15m - Face Capture - 200MP Very Clear + 30x Zoom
+- Live Audio: Voice "Oya bring cutter cut here" - Shotgun mic clear - Midnight
+- Face: Captured - Very clear - Real face direct
+- Voice: Captured - Real voice
+- Action: Persons near pipeline with cutter/hose
+- 3 Proof: Face + Voice + Action = 100% proof
+Sent to: Warri Command Center + Tantita + NNPC Abuja + Naval Boat Forcados
+Status: Drone loudspeaker in 4 mins, Boat in 20 mins
 
-    form.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        if (!form.reportValidity()) {
-            return;
-        }
-
-        const currency = getValue("currency");
-        const amount = getValue("amount");
-
-        const reference =
-            "DEMO-" +
-            Date.now().toString().slice(-10);
-
-        putText("outReference", reference);
-        putText("outDate", new Date().toLocaleString());
-        putText("outSender", getValue("senderName"));
-        putText("outCountry", getValue("country"));
-        putText("outBank", getValue("bankName"));
-        putText("outReceiver", getValue("receiverName"));
-        putText("outAccount", getValue("accountNumber"));
-        putText(
-            "outDescription",
-            getValue("description") || " transfer"
-        );
-
-        putText(
-            "outAmount",
-            formatAmount(currency, amount)
-        );
-
-        /*
-         * This only generates a local  receipt.
-         * It does not call a bank or payment service.
-         */
-        receipt.style.display = "block";
-
-        receipt.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    });
-
-    document.getElementById("printButton").addEventListener(
-        "click",
-        function () {
-            if (receipt.style.display !== "block") {
-                return;
-            }
-
-            window.print();
-        }
-    );
-
-    document.getElementById("newButton").addEventListener(
-        "click",
-        function () {
-            form.reset();
-
-            document.getElementById("bankName").value =
-                "Trust Bank ";
-
-            receipt.style.display = "none";
-
-            form.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        }
-    );
-})();
+This package is proof for government.
+`;
+document.getElementById('reportLog').innerText = log;
+alert("SILENT REPORT SENT! Proof saved. Show this log to government as evidence how alert go look.");
+}
 </script>
-
 </body>
 </html>
