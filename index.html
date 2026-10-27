@@ -1,30 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIG LOCATION - FREE MAP</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>BIG LOCATION - HUMAN SATELLITE</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<style>body{margin:0}#map{height:100vh} .top{position:fixed;top:0;left:0;right:0;z-index:999;background:#000;color:#0f0;padding:8px;text-align:center;font-weight:900}</style>
+<style>
+body{margin:0;font-family:system-ui;background:#000;color:#fff;overflow:hidden}
+#map{height:100vh;width:100vw}
+.top{position:fixed;top:0;left:0;right:0;z-index:999;background:#000;border-bottom:2px solid #0f0;padding:8px 10px;display:flex;justify-content:space-between;align-items:center}
+.top b{color:#0f0}
+.btns{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:999;display:flex;gap:10px}
+button{padding:14px 18px;border:0;border-radius:30px;font-weight:900;cursor:pointer}
+#goLive{background:#0f0;color:#000}
+#stopLive{background:#f00;color:#fff;display:none}
+#info{position:fixed;top:50px;left:10px;z-index:999;background:rgba(0,0,0,0.8);padding:8px;border-radius:8px;font-size:12px;border:1px solid #0f0}
+video{width:100%;border-radius:12px;background:#111}
+#cameraBox{position:fixed;bottom:90px;left:10px;right:10px;z-index:998;background:#111;border:2px solid #0f0;border-radius:12px;padding:8px;display:none}
+</style>
 </head>
 <body>
-<div class="top">NIGERIA BIG LOCATION — FREE MAP — NO GOOGLE — 100% YOURS</div>
+<div class="top"><b>🇳🇬 BIG LOCATION</b><span style="font-size:11px">HUMAN SATELLITE • FREE MAP • NO GOOGLE</span></div>
+<div id="info">Click map to WATCH • Tap GO LIVE to show road work LIVE</div>
 <div id="map"></div>
+
+<div id="cameraBox">
+<video id="liveVideo" autoplay playsinline muted></video>
+<div style="text-align:center;padding:6px;font-size:12px"><span id="timer">00:15</span> • <span id="locText">Getting GPS...</span> • Human visible clearly for road</div>
+</div>
+
+<div class="btns">
+<button id="goLive">🔴 GO LIVE - SHOW ROAD WORK</button>
+<button id="stopLive">⏹ STOP & PUBLISH TO MAP</button>
+</div>
+
 <script>
-// 1. Map center Nigeria
-let map = L.map('map').setView([9.08,8.67],6);
-
-// 2. FREE MAP — OpenStreetMap — No API key — No Google bill
+// === 1. FREE MAP - NO GOOGLE - OpenStreetMap ===
+let map = L.map('map',{zoomControl:false}).setView([9.082,8.6753],6);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-maxZoom:19,
-attribution:'© OpenStreetMap — FREE — No Google'
+attribution:'© OpenStreetMap FREE - No Google - Human Satellite'
 }).addTo(map);
+L.control.zoom({position:'topright'}).addTo(map);
 
-// 3. Your Human Satellite pins — Real live later
-L.marker([5.55,5.78]).addTo(map).bindPopup('Warri — Tap to see LIVE video soon');
-L.marker([6.44,3.42]).addTo(map).bindPopup('Lagos — Tap to see LIVE video soon');
-L.marker([9.07,7.48]).addTo(map).bindPopup('Abuja — Command Center');
+// Store live pins
+let livePins = [];
+let myStream = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+let watchID = null;
+let myMarker = null;
+
+// === 2. CLICK MAP TO WATCH LIVE (Demo pins) ===
+map.on('click', e=>{
+ if(document.getElementById('cameraBox').style.display==='block') return;
+ L.popup().setLatLng(e.latlng)
+ .setContent(`<div style="width:260px"><b>📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}</b><br><small>No recent LIVE here yet</small><br><br><button onclick="alert('Be first to GO LIVE here!')" style="width:100%;padding:10px;background:#0f0;border:0;border-radius:8px;font-weight:900">BE FIRST TO GO LIVE HERE - EARN ₦50</button><br><br><video controls playsinline width="100%" poster="" style="background:#000"><source src=""></video><br><small>When boys go LIVE, video go show here — Real human for road — Clear</small></div>`)
+ .openOn(map);
+});
+
+// === 3. GO LIVE - SEE HUMAN CLEARLY FOR ROAD ===
+document.getElementById('goLive').onclick = async ()=>{
+ try{
+  let stream = await navigator.mediaDevices.getUserMedia({
+   video:{facingMode:"environment", width:{ideal:640}, height:{ideal:480}},
+   audio:true
+  });
+  myStream = stream;
+  document.getElementById('liveVideo').srcObject = stream;
+  document.getElementById('cameraBox').style.display='block';
+  document.getElementById('goLive').style.display='none';
+  document.getElementById('stopLive').style.display='block';
+
+  // GPS
+  watchID = navigator.geolocation.watchPosition(pos=>{
+   let lat=pos.coords.latitude, lng=pos.coords.longitude;
+   document.getElementById('locText').innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)} | Accuracy ${pos.coords.accuracy.toFixed(0)}m`;
+   if(!myMarker){ myMarker = L.marker([lat,lng],{icon:L.divIcon({html:'<div style="background:#0f0;width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 10px #0f0"></div>'})}).addTo(map); }
+   else myMarker.setLatLng([lat,lng]);
+   map.setView([lat,lng],16);
+  }, err=>{ document.getElementById('locText').innerText='GPS blocked - Enable location'; },{enableHighAccuracy:true});
+
+  // Record 15 sec limit
+  recordedChunks=[];
+  mediaRecorder = new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9'});
+  mediaRecorder.ondataavailable = e=>{ if(e.data.size>0) recordedChunks.push(e.data); };
+  mediaRecorder.start();
+
+  let sec=15;
+  let timerInt=setInterval(()=>{
+   sec--; document.getElementById('timer').innerText=`00:${sec<10?'0':''}${sec}`;
+   if(sec<=0){ clearInterval(timerInt); stopAndPublish(); }
+  },1000);
+  mediaRecorder._timerInt = timerInt;
+
+ }catch(err){ alert('Camera/GPS blocked: '+err.message+' - Allow camera & location'); }
+};
+
+function stopAndPublish(){
+ if(mediaRecorder && mediaRecorder.state!=='inactive'){ mediaRecorder.stop(); clearInterval(mediaRecorder._timerInt); }
+ if(myStream){ myStream.getTracks().forEach(t=>t.stop()); }
+ if(watchID) navigator.geolocation.clearWatch(watchID);
+
+ let blob = new Blob(recordedChunks,{type:'video/webm'});
+ let url = URL.createObjectURL(blob);
+ let pos = myMarker ? myMarker.getLatLng() : map.getCenter();
+
+ // Publish to map as Human Satellite pin
+ let popupHtml = `<div style="width:280px"><b style="color:#0f0">🔴 LIVE NOW - HUMAN VISIBLE</b><br><small>${pos.lat.toFixed(5)}, ${pos.lng.toFixed(5)} • ${new Date().toLocaleTimeString()}</small><br><br><video src="${url}" controls autoplay playsinline width="100%" style="border:2px solid #0f0"></video><br><small>👷 Human working for road - Clearly visible - 15 sec - 7MB</small><br><br><small>Data: 7MB • You earn ₦50</small></div>`;
+ L.marker([pos.lat,pos.lng],{icon:L.divIcon({html:'<div style="background:red;width:16px;height:16px;border-radius:50%;border:2px solid #fff;animation:pulse 1s infinite"></div>',className:''})}).addTo(map).bindPopup(popupHtml).openPopup();
+
+ document.getElementById('cameraBox').style.display='none';
+ document.getElementById('goLive').style.display='block';
+ document.getElementById('stopLive').style.display='none';
+ document.getElementById('info').innerHTML='✅ LIVE published to map! Click pin to watch human clearly';
+}
+
+document.getElementById('stopLive').onclick = stopAndPublish;
+
+// Add style for pulse
+let s=document.createElement('style'); s.innerHTML='@keyframes pulse{0%{box-shadow:0 0 0 0 red}70%{box-shadow:0 0 0 10px rgba(255,0,0,0)}100%{box-shadow:0 0 0 0 rgba(255,0,0,0)}}'; document.head.appendChild(s);
+
+// Add demo pins for Warri/Lagos to show human work
+L.marker([5.5544,5.7932]).addTo(map).bindPopup('<b>Warri — Demo Live</b><br>When your boys GO LIVE here, you go see human for road clear<br><video controls width="260" src=""></video>');
+L.marker([6.5244,3.3792]).addTo(map).bindPopup('<b>Lagos — Demo Live</b><br>Human for road live — Click GO LIVE to add real');
 </script>
 </body>
 </html>
