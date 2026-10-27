@@ -1,22 +1,226 @@
-currentReceiptText =
-`TRUST BANK
-WORLDWIDE TRANSFER DEMO RECEIPT
+<style>
+    #receipt {
+        display: none;
+        max-width: 520px;
+        margin: 25px auto;
+        background: #ffffff;
+        border: 1px solid #d9e8dd;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 28px rgba(10, 42, 18, 0.12);
+        font-family: Arial, sans-serif;
+        color: #26352b;
+    }
 
-✓ DEMO TRANSFER SUCCESSFUL
+    .trust-header {
+        background: #ffffff;
+        text-align: center;
+        padding: 26px 18px 18px;
+    }
 
-Demonstration completed successfully.
-No real money was transferred.
+    .trust-header h1 {
+        color: #087a3e;
+        font-size: 30px;
+        font-weight: 800;
+        margin: 0 0 6px;
+        letter-spacing: 2px;
+    }
 
---------------------------------
-Transaction Reference: ${transactionReference}
-Date: ${new Date().toLocaleString()}
-Sender Name: ${senderName}
-Destination Country: ${destinationCountry}
-Bank Name: ${bankName}
-Receiver Name: ${receiverName}
-Account Number: ${accountNumber}
-Transfer Amount: ${currency} ${amount}
-Description: ${description}
---------------------------------
+    .trust-header p {
+        margin: 0;
+        color: #65756a;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
 
-DEMO ONLY — NOT PROOF OF PAYMENT`;
+    .demo-success {
+        background: #e4f7e9;
+        border-top: 1px solid #b9e6c5;
+        border-bottom: 1px solid #b9e6c5;
+        color: #087a3e;
+        text-align: center;
+        padding: 20px 12px;
+    }
+
+    .demo-success .checkmark {
+        display: inline-flex;
+        width: 38px;
+        height: 38px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #198754;
+        color: #ffffff;
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+
+    .demo-success h2 {
+        margin: 0 0 7px;
+        font-size: 20px;
+    }
+
+    .demo-success p {
+        margin: 0;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .receipt-content {
+        padding: 22px;
+    }
+
+    .receipt-label {
+        text-align: center;
+        color: #087a3e;
+        font-weight: bold;
+        font-size: 13px;
+        letter-spacing: 1px;
+        margin-bottom: 18px;
+    }
+
+    .receipt-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 13px 0;
+        border-bottom: 1px solid #edf2ee;
+        font-size: 14px;
+    }
+
+    .receipt-row span:first-child {
+        color: #69766d;
+    }
+
+    .receipt-row strong {
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .demo-notice {
+        background: #f3faf5;
+        color: #376047;
+        text-align: center;
+        padding: 14px;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .receipt-actions {
+        padding: 0 22px 22px;
+    }
+
+    .receipt-actions button {
+        width: 100%;
+        padding: 13px;
+        border: none;
+        border-radius: 8px;
+        background: #087a3e;
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .receipt-actions button:hover {
+        background: #065e30;
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        #receipt, #receipt * {
+            visibility: visible;
+        }
+
+        #receipt {
+            display: block !important;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            max-width: 100%;
+            box-shadow: none;
+        }
+
+        .receipt-actions {
+            display: none;
+        }
+    }
+</style>
+
+<div id="receipt">
+
+    <div class="trust-header">
+        <h1>TRUST BANK</h1>
+        <p>WORLDWIDE TRANSFER DEMONSTRATION</p>
+    </div>
+
+    <div class="demo-success">
+        <div class="checkmark">✓</div>
+        <h2>DEMO SUCCESSFUL</h2>
+        <p>
+            The demonstration was completed.<br>
+            No real money was transferred.
+        </p>
+    </div>
+
+    <div class="receipt-content">
+        <div class="receipt-label">DEMONSTRATION RECEIPT</div>
+
+        <div class="receipt-row">
+            <span>Demo Reference</span>
+            <strong id="receiptReference">DEMO-000001</strong>
+        </div>
+
+        <div class="receipt-row">
+            <span>Date</span>
+            <strong id="receiptDate">Demo transaction</strong>
+        </div>
+
+        <div class="receipt-row">
+            <span>Destination Country</span>
+            <strong id="receiptCountry">Demo country</strong>
+        </div>
+
+        <div class="receipt-row">
+            <span>Bank Name</span>
+            <strong id="receiptBank">Trust Bank (Demo)</strong>
+        </div>
+
+        <div class="receipt-row">
+            <span>Receiver Name</span>
+            <strong id="receiptReceiver">Demo receiver</strong>
+        </div>
+
+        <div class="receipt-row">
+            <span>Account Number</span>
+            <strong id="receiptAccount">Demo account</strong>
+        </div>
+
+        <div class="receipt-row">
+            <span>Amount</span>
+            <strong id="receiptAmount">Demo amount</strong>
+        </div>
+
+        <div class="receipt-row">
+            <span>Description</span>
+            <strong id="receiptDescription">Test transfer</strong>
+        </div>
+    </div>
+
+    <div class="demo-notice">
+        DEMONSTRATION ONLY<br>
+        This page does not process payments or verify bank transfers.
+        This receipt is not proof of payment.
+    </div>
+
+    <div class="receipt-actions">
+        <button type="button" onclick="window.print()">
+            Print Demo Receipt
+        </button>
+    </div>
+
+</div>
