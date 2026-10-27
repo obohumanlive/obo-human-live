@@ -1,14 +1,22 @@
 currentReceiptText =
-    "========================================\n" +
-    "              TRUST BANK\n" +
-    "     WORLDWIDE TRANSFER DEMO RECEIPT\n" +
-    "========================================\n\n" +
-    "       DEMO TRANSFER SUCCESSFUL\n\n" +
-    "DEMONSTRATION ONLY — NOT A REAL TRANSFER\n\n" +
-    details.map(function(item) {
-        return item[0] + ": " + item[1];
-    }).join("\n") +
-    "\n\n========================================\n" +
-    "No real money was transferred.\n" +
-    "This document is not proof of payment.\n" +
-    "========================================\n";
+`TRUST BANK
+WORLDWIDE TRANSFER DEMO RECEIPT
+
+✓ DEMO TRANSFER SUCCESSFUL
+
+Demonstration completed successfully.
+No real money was transferred.
+
+--------------------------------
+Transaction Reference: ${transactionReference}
+Date: ${new Date().toLocaleString()}
+Sender Name: ${senderName}
+Destination Country: ${destinationCountry}
+Bank Name: ${bankName}
+Receiver Name: ${receiverName}
+Account Number: ${accountNumber}
+Transfer Amount: ${currency} ${amount}
+Description: ${description}
+--------------------------------
+
+DEMO ONLY — NOT PROOF OF PAYMENT`;
