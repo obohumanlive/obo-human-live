@@ -2,857 +2,457 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OBO Human Live AI Avatar Studio</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OBO Human Live — Avatar Studio</title>
 <style>
-:root {
-  --bg: #08111f;
-  --panel: #111d30;
-  --panel2: #17263d;
-  --text: #f4f7ff;
-  --muted: #a7b5ca;
-  --green: #28d89a;
-  --blue: #5d9cff;
-  --red: #ff647c;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  color: var(--text);
-  background: var(--bg);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-header {
-  padding: 22px 16px;
-  text-align: center;
-  background: linear-gradient(120deg, #102849, #142039, #073a35);
-  border-bottom: 1px solid #273750;
-}
-
-header h1 {
-  margin: 0 0 8px;
-  font-size: clamp(23px, 5vw, 35px);
-}
-
-header p {
-  color: #c4d2e8;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.container {
-  max-width: 1150px;
-  margin: auto;
-  padding: 18px;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 18px;
-}
-
-.panel {
-  min-width: 0;
-  background: var(--panel);
-  border: 1px solid #273750;
-  border-radius: 15px;
-  padding: 17px;
-  margin-bottom: 18px;
-}
-
-.panel h2 {
-  font-size: 19px;
-  margin: 0 0 13px;
-}
-
-.description {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.55;
-}
-
-button, .upload-label {
-  border: 0;
-  border-radius: 9px;
-  padding: 12px 15px;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  display: inline-block;
-  margin: 4px 3px 4px 0;
-}
-
-button:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
-
-.primary { background: var(--green); color: #06241a; }
-.secondary { background: var(--blue); color: #07172e; }
-.neutral { background: #34445c; color: white; }
-.danger { background: #61283a; color: white; }
-
-.upload-label {
-  background: var(--blue);
-  color: #07172e;
-}
-
-input[type="file"] {
-  display: none;
-}
-
-input[type="range"] {
-  width: 100%;
-  margin: 12px 0;
-  accent-color: var(--green);
-}
-
-label.control-label {
-  display: block;
-  margin-top: 14px;
-  font-size: 14px;
-  color: #d9e4f5;
-}
-
-.stage {
-  width: 100%;
-  background: #02060c;
-  border: 1px solid #34445c;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-  aspect-ratio: 4 / 3;
-}
-
-.stage canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.camera-box {
-  width: 100%;
-  background: #02060c;
-  border: 1px solid #34445c;
-  border-radius: 12px;
-  overflow: hidden;
-  aspect-ratio: 4 / 3;
-}
-
-.camera-box video {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  transform: scaleX(-1);
-}
-
-.status {
-  background: #091525;
-  border: 1px solid #2c405d;
-  border-radius: 9px;
-  padding: 12px;
-  margin: 12px 0;
-  color: #c6d5eb;
-  font-size: 13px;
-  line-height: 1.55;
-  overflow-wrap: anywhere;
-}
-
-.status strong { color: var(--green); }
-
-.status.error strong { color: #ff8193; }
-
-.badge {
-  display: inline-block;
-  padding: 5px 9px;
-  border-radius: 20px;
-  background: #253650;
-  font-size: 12px;
-  margin: 3px 4px 3px 0;
-}
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 5px;
-}
-
-.small {
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-footer {
-  text-align: center;
-  padding: 20px;
-  color: #8d9eb7;
-  font-size: 12px;
-}
-
-@media (max-width: 760px) {
-  .layout { grid-template-columns: 1fr; }
-  .container { padding: 12px; }
-}
+*{box-sizing:border-box}
+body{margin:0;background:#07101b;color:#edf5ff;font:14px Arial,sans-serif}
+header{padding:16px 20px;background:#0b1725;border-bottom:1px solid #293b50}
+h1{margin:0;font-size:24px}h1 span{color:#43e477}
+main{display:grid;grid-template-columns:260px minmax(0,1fr) 260px;gap:12px;padding:12px;max-width:1500px;margin:auto}
+.panel{background:#101c2a;border:1px solid #293b50;border-radius:9px;margin-bottom:12px;overflow:hidden}
+h2{font-size:13px;margin:0;padding:12px;background:#0d1723;border-bottom:1px solid #293b50}
+.pad{padding:12px}
+button,select{background:#1b2c41;color:white;border:1px solid #3a5069;border-radius:5px;padding:9px;cursor:pointer;margin:3px 2px}
+button:hover,button.active{border-color:#43e477;background:#17482f}
+.green{background:#168642}
+label{display:block;margin-top:12px;font-size:12px;color:#b9cce0}
+input[type=range]{width:100%;accent-color:#43e477}
+input[type=color]{width:100%;height:32px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.grid button{min-height:65px;margin:0}
+.stage{height:540px;background:#07101b;position:relative}
+#threeHost{height:100%;width:100%}#threeHost canvas{display:block;width:100%;height:100%}
+.stageLabel{position:absolute;top:10px;left:10px;background:#07101bcc;padding:8px;border-radius:4px;font-size:12px}
+.status{padding:10px;background:#091522;border:1px solid #293b50;border-radius:5px;color:#b9cce0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.status b{color:#43e477}
+video{width:100%;background:#000;transform:scaleX(-1);border-radius:5px}
+.row{display:flex;flex-wrap:wrap;gap:5px}
+.muted{font-size:12px;color:#9db0c7;line-height:1.5}
+.hide{display:none}
+@media(max-width:950px){main{grid-template-columns:1fr}.stage{height:450px}}
 </style>
 </head>
-
 <body>
-
 <header>
-  <h1>OBO Human Live AI Avatar Studio</h1>
-  <p>Portrait upload • Webcam • Live face tracking • Avatar output</p>
+<h1><span>OBO</span> HUMAN LIVE <small> | AI AVATAR STUDIO</small></h1>
+<p class="muted">3D character engine · webcam tracking · live animation prototype</p>
 </header>
 
-<main class="container">
+<main>
+<aside>
+<section class="panel">
+<h2>1. AVATAR LIBRARY</h2>
+<div class="pad">
+<div class="grid">
+<button data-avatar="male">🧑🏽<br>David</button>
+<button data-avatar="male2">👨🏻<br>Liam</button>
+<button data-avatar="male3">🧔🏾<br>Noah</button>
+<button data-avatar="female">👩🏻<br>Sophia</button>
+<button data-avatar="female2">👩🏽<br>Emma</button>
+<button data-avatar="robot">🤖<br>Android</button>
+</div>
+</div>
+</section>
 
-  <div class="layout">
+<section class="panel">
+<h2>2. APPEARANCE</h2>
+<div class="pad">
+<label>Skin tone</label><input id="skin" type="color" value="#b87955">
+<label>Hair color</label><input id="hair" type="color" value="#211b1a">
+<label>Clothing</label><input id="shirt" type="color" value="#202b39">
+<label>Character size</label><input id="scale" type="range" min="70" max="130" value="100">
+<label>Expression</label>
+<select id="expression">
+<option value="neutral">Neutral</option>
+<option value="happy">Happy</option>
+<option value="surprised">Surprised</option>
+<option value="serious">Serious</option>
+</select>
+<button id="apply" class="green">APPLY APPEARANCE</button>
+</div>
+</section>
 
-    <section>
+<section class="panel">
+<h2>3. ANIMATION</h2>
+<div class="pad">
+<label>Animation preset</label>
+<select id="motion">
+<option value="idle">Idle / breathing</option>
+<option value="talk">Talking gestures</option>
+<option value="wave">Wave hand</option>
+<option value="dance">Dance loop</option>
+</select>
+<label>Movement intensity</label><input id="power" type="range" min="0" max="100" value="55">
+<div class="row"><button id="play" class="green">▶ PLAY</button><button id="pause">Ⅱ PAUSE</button></div>
+</div>
+</section>
+</aside>
 
-      <div class="panel">
-        <h2>1. Upload Your Avatar</h2>
+<section>
+<section class="panel">
+<h2>4. LIVE 3D AVATAR PREVIEW</h2>
+<div class="stage">
+<div id="threeHost"></div>
+<div class="stageLabel">3D VIEW · <span id="name">DAVID</span></div>
+</div>
+<div class="pad">
+<div class="row">
+<button id="rotate">AUTO ROTATE: ON</button>
+<button id="snapshot">SNAPSHOT</button>
+<button id="fullscreen">FULL SCREEN</button>
+</div>
+<div id="status" class="status"><b>Status:</b> Starting 3D engine…</div>
+</div>
+</section>
 
-        <p class="description">
-          Choose a portrait from your laptop. JPG, PNG and WebP images
-          are supported. Your picture is processed locally in this page.
-        </p>
+<section class="panel">
+<h2>5. BACKGROUND</h2>
+<div class="pad row">
+<button data-bg="#07101b">Studio</button>
+<button data-bg="#263b4a">Slate</button>
+<button data-bg="#1c392b">Green</button>
+<button data-bg="#342044">Neon</button>
+<button data-bg="#e8edf2">Light</button>
+</div>
+</section>
 
-        <label class="upload-label" for="imageInput">
-          Choose Portrait
-        </label>
+<section class="panel">
+<h2>6. RECORDING</h2>
+<div class="pad">
+<div class="row">
+<button id="record" class="green">● RECORD</button>
+<button id="stopRecord">■ STOP</button>
+<button id="download">DOWNLOAD</button>
+</div>
+<p class="muted">Records the 3D preview as a WebM video where browser support permits.</p>
+</div>
+</section>
+</section>
 
-        <input
-          type="file"
-          id="imageInput"
-          accept="image/png,image/jpeg,image/webp"
-        >
+<aside>
+<section class="panel">
+<h2>7. WEBCAM & POSE TRACKING</h2>
+<div class="pad">
+<video id="webcam" autoplay muted playsinline></video>
+<div class="row">
+<button id="startCam" class="green">START WEBCAM</button>
+<button id="stopCam">STOP</button>
+</div>
+<div class="row">
+<button id="startTrack" class="green">START TRACKING</button>
+<button id="stopTrack">STOP TRACKING</button>
+</div>
+<div id="trackStatus" class="status">Camera is off.</div>
+</div>
+</section>
 
-        <div class="row">
-          <button id="removeImageBtn" class="neutral">
-            Remove Portrait
-          </button>
-          <span id="imageStatus" class="badge">No image selected</span>
-        </div>
+<section class="panel">
+<h2>8. HEAD & MOUTH CONTROLS</h2>
+<div class="pad">
+<label>Head tilt</label><input id="tilt" type="range" min="-25" max="25" value="0">
+<label>Manual mouth movement</label><input id="mouth" type="range" min="0" max="100" value="10">
+<p class="muted">These controls demonstrate facial movement. Automatic lip-sync requires a compatible facial rig and audio processing.</p>
+</div>
+</section>
 
-        <label class="control-label" for="sizeSlider">
-          Portrait size
-        </label>
-        <input id="sizeSlider" type="range" min="25" max="150" value="100">
+<section class="panel">
+<h2>9. WHATSAPP OUTPUT</h2>
+<div class="pad">
+<div class="status">This page cannot create a Windows virtual camera by itself. OBS Studio can capture this preview and transmit it through OBS Virtual Camera.</div>
+<button id="obs" class="green">SHOW CONNECTION STEPS</button>
+<div id="obsSteps" class="status hide">
+1. Install OBS Studio.<br>
+2. Add Window Capture and select this browser.<br>
+3. Crop to the avatar preview.<br>
+4. Start Virtual Camera in OBS.<br>
+5. Select OBS Virtual Camera in WhatsApp Desktop if available.
+</div>
+</div>
+</section>
 
-        <label class="control-label" for="horizontalSlider">
-          Horizontal position
-        </label>
-        <input id="horizontalSlider" type="range" min="-100" max="100" value="0">
-
-        <label class="control-label" for="verticalSlider">
-          Vertical position
-        </label>
-        <input id="verticalSlider" type="range" min="-100" max="100" value="0">
-
-        <div class="row">
-          <button id="resetPositionBtn" class="secondary">
-            Reset Position
-          </button>
-          <button id="mirrorBtn" class="neutral">
-            Mirror: OFF
-          </button>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>2. Webcam and Tracking</h2>
-
-        <p class="description">
-          Allow camera access when Chrome asks. Face tracking is optional:
-          the camera and portrait preview should still work if the tracking
-          service cannot load.
-        </p>
-
-        <div class="camera-box">
-          <video id="webcam" autoplay muted playsinline></video>
-        </div>
-
-        <div class="row">
-          <button id="startCameraBtn" class="primary">
-            Start Webcam
-          </button>
-          <button id="stopCameraBtn" class="danger">
-            Stop Webcam
-          </button>
-        </div>
-
-        <div class="row">
-          <button id="startTrackingBtn" class="secondary">
-            Start Face Tracking
-          </button>
-          <button id="stopTrackingBtn" class="neutral">
-            Stop Tracking
-          </button>
-        </div>
-
-        <div id="trackingStatus" class="status" role="status" aria-live="polite">
-          <strong>Status:</strong> Ready. Upload a portrait to begin.
-        </div>
-      </div>
-
-    </section>
-
-    <section>
-
-      <div class="panel">
-        <h2>3. Avatar Output</h2>
-
-        <p class="description">
-          This is the portrait output you can test. When face tracking is
-          available, the portrait position and scale respond to your
-          webcam face position. The original picture itself is not
-          automatically rigged into a fully animated body.
-        </p>
-
-        <div class="stage">
-          <canvas id="avatarCanvas" width="960" height="720"></canvas>
-        </div>
-
-        <div class="row">
-          <button id="startOutputBtn" class="primary">
-            Start Output
-          </button>
-          <button id="pauseOutputBtn" class="neutral">
-            Pause Output
-          </button>
-          <button id="fullscreenBtn" class="secondary">
-            Full Screen
-          </button>
-        </div>
-
-        <div class="row">
-          <button id="backgroundBtn" class="neutral">
-            Change Background
-          </button>
-          <button id="saveImageBtn" class="secondary">
-            Save Output Image
-          </button>
-        </div>
-
-        <div id="outputStatus" class="status" role="status" aria-live="polite">
-          <strong>Output:</strong> Waiting for a portrait.
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>4. WhatsApp Video Call Test</h2>
-
-        <p class="description">
-          This website does not create a Windows virtual camera by itself.
-          To send this screen as your camera feed, you can use OBS Studio
-          with its Virtual Camera feature.
-        </p>
-
-        <span class="badge">Step 1: Open OBS Studio</span>
-        <span class="badge">Step 2: Capture this browser window</span>
-        <span class="badge">Step 3: Start Virtual Camera</span>
-        <span class="badge">Step 4: Select OBS Virtual Camera in WhatsApp</span>
-
-        <div class="status">
-          <strong>Important:</strong> The portrait output in this prototype
-          is not a complete AI avatar. OBS can transmit the displayed
-          portrait output, but it cannot create realistic mouth, hand,
-          arm or leg movement that the portrait does not contain.
-        </div>
-      </div>
-
-    </section>
-
-  </div>
-
+<section class="panel">
+<h2>10. ENGINE STATUS</h2>
+<div class="pad"><div id="engineStatus" class="status">Loading renderer…</div></div>
+</section>
+</aside>
 </main>
 
-<footer>
-  OBO Human Live AI Avatar Studio · Browser prototype
-</footer>
-
-<script>
-(function () {
-  "use strict";
-
-  const imageInput = document.getElementById("imageInput");
-  const imageStatus = document.getElementById("imageStatus");
-  const webcam = document.getElementById("webcam");
-  const canvas = document.getElementById("avatarCanvas");
-  const ctx = canvas.getContext("2d");
-
-  const trackingStatus = document.getElementById("trackingStatus");
-  const outputStatus = document.getElementById("outputStatus");
-
-  const sizeSlider = document.getElementById("sizeSlider");
-  const horizontalSlider = document.getElementById("horizontalSlider");
-  const verticalSlider = document.getElementById("verticalSlider");
-
-  let avatarImage = null;
-  let imageURL = null;
-  let cameraStream = null;
-  let outputRunning = true;
-  let trackingRunning = false;
-  let trackingBusy = false;
-  let faceLandmarker = null;
-  let trackingLoadAttempted = false;
-  let animationFrame = null;
-  let mirrorImage = false;
-  let backgroundIndex = 0;
-  let lastVideoTime = -1;
-
-  let faceState = {
-    x: 0,
-    y: 0,
-    scale: 1,
-    detected: false
-  };
-
-  const backgrounds = [
-    "#02060c",
-    "#102c44",
-    "#17362b",
-    "#34304f",
-    "#f0f2f5"
-  ];
-
-  function setStatus(element, message, error) {
-    element.classList.toggle("error", !!error);
-    element.textContent = "";
-
-    const strong = document.createElement("strong");
-    strong.textContent = error ? "Notice: " : "Status: ";
-    element.appendChild(strong);
-    element.appendChild(document.createTextNode(message));
-  }
-
-  function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = backgrounds[backgroundIndex];
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
-  function drawPlaceholder() {
-    clearCanvas();
-    ctx.fillStyle = backgroundIndex === 4 ? "#283344" : "#c7d5e8";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.font = "bold 34px Arial";
-    ctx.fillText("OBO HUMAN LIVE", canvas.width / 2, canvas.height / 2 - 25);
-    ctx.font = "22px Arial";
-    ctx.fillText("Upload a portrait to begin", canvas.width / 2, canvas.height / 2 + 25);
-  }
-
-  function drawOutput() {
-    if (!outputRunning) return;
-
-    clearCanvas();
-
-    if (!avatarImage || !avatarImage.complete || !avatarImage.naturalWidth) {
-      drawPlaceholder();
-      return;
-    }
-
-    const baseScale = Number(sizeSlider.value) / 100;
-    const userX = Number(horizontalSlider.value) * 2.2;
-    const userY = Number(verticalSlider.value) * 2.2;
-
-    const trackedX = trackingRunning && faceState.detected ? faceState.x : 0;
-    const trackedY = trackingRunning && faceState.detected ? faceState.y : 0;
-    const trackedScale = trackingRunning && faceState.detected
-      ? faceState.scale
-      : 1;
-
-    const scale = baseScale * trackedScale;
-
-    const maxWidth = canvas.width * 0.78;
-    const maxHeight = canvas.height * 0.92;
-
-    let width = avatarImage.naturalWidth;
-    let height = avatarImage.naturalHeight;
-
-    const fitScale = Math.min(maxWidth / width, maxHeight / height);
-    width *= fitScale * scale;
-    height *= fitScale * scale;
-
-    const x = (canvas.width - width) / 2 + userX + trackedX;
-    const y = (canvas.height - height) / 2 + userY + trackedY;
-
-    ctx.save();
-
-    if (mirrorImage) {
-      ctx.translate(canvas.width, 0);
-      ctx.scale(-1, 1);
-      ctx.drawImage(avatarImage, canvas.width - x - width, y, width, height);
-    } else {
-      ctx.drawImage(avatarImage, x, y, width, height);
-    }
-
-    ctx.restore();
-
-    ctx.fillStyle = backgroundIndex === 4 ? "#283344" : "#a7b5ca";
-    ctx.font = "14px Arial";
-    ctx.textAlign = "left";
-    ctx.fillText(
-      trackingRunning
-        ? (faceState.detected ? "FACE TRACKING ACTIVE" : "SEARCHING FOR FACE...")
-        : "PORTRAIT OUTPUT",
-      18,
-      canvas.height - 18
-    );
-  }
-
-  function renderLoop() {
-    if (outputRunning) drawOutput();
-    animationFrame = requestAnimationFrame(renderLoop);
-  }
-
-  function loadImage(file) {
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setStatus(outputStatus, "Please choose a valid image file.", true);
-      return;
-    }
-
-    if (file.size > 15 * 1024 * 1024) {
-      setStatus(outputStatus, "Image is too large. Choose an image smaller than 15 MB.", true);
-      return;
-    }
-
-    if (imageURL) URL.revokeObjectURL(imageURL);
-
-    imageURL = URL.createObjectURL(file);
-    const img = new Image();
-
-    img.onload = function () {
-      avatarImage = img;
-      imageStatus.textContent = "Portrait loaded";
-      setStatus(outputStatus, "Portrait loaded successfully. Your output is ready.", false);
-      drawOutput();
-    };
-
-    img.onerror = function () {
-      avatarImage = null;
-      imageStatus.textContent = "Image failed to load";
-      setStatus(outputStatus, "The selected image could not be opened. Try another JPG or PNG.", true);
-    };
-
-    img.src = imageURL;
-  }
-
-  imageInput.addEventListener("change", function () {
-    loadImage(imageInput.files && imageInput.files[0]);
-  });
-
-  document.getElementById("removeImageBtn").addEventListener("click", function () {
-    avatarImage = null;
-
-    if (imageURL) {
-      URL.revokeObjectURL(imageURL);
-      imageURL = null;
-    }
-
-    imageInput.value = "";
-    imageStatus.textContent = "No image selected";
-    faceState.detected = false;
-    drawPlaceholder();
-    setStatus(outputStatus, "Portrait removed. Choose another picture when ready.", false);
-  });
-
-  sizeSlider.addEventListener("input", drawOutput);
-  horizontalSlider.addEventListener("input", drawOutput);
-  verticalSlider.addEventListener("input", drawOutput);
-
-  document.getElementById("resetPositionBtn").addEventListener("click", function () {
-    sizeSlider.value = 100;
-    horizontalSlider.value = 0;
-    verticalSlider.value = 0;
-    faceState.x = 0;
-    faceState.y = 0;
-    faceState.scale = 1;
-    drawOutput();
-    setStatus(outputStatus, "Portrait position and size reset.", false);
-  });
-
-  document.getElementById("mirrorBtn").addEventListener("click", function () {
-    mirrorImage = !mirrorImage;
-    this.textContent = "Mirror: " + (mirrorImage ? "ON" : "OFF");
-    drawOutput();
-  });
-
-  document.getElementById("startCameraBtn").addEventListener("click", startCamera);
-  document.getElementById("stopCameraBtn").addEventListener("click", stopCamera);
-
-  document.getElementById("startTrackingBtn").addEventListener("click", startTracking);
-  document.getElementById("stopTrackingBtn").addEventListener("click", stopTracking);
-
-  document.getElementById("startOutputBtn").addEventListener("click", function () {
-    outputRunning = true;
-    setStatus(outputStatus, "Output is running.", false);
-    drawOutput();
-  });
-
-  document.getElementById("pauseOutputBtn").addEventListener("click", function () {
-    outputRunning = false;
-    setStatus(outputStatus, "Output is paused. Press Start Output to resume.", false);
-  });
-
-  document.getElementById("fullscreenBtn").addEventListener("click", async function () {
-    const stage = canvas.parentElement;
-
-    try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
-      } else if (stage.requestFullscreen) {
-        await stage.requestFullscreen();
-      } else {
-        setStatus(outputStatus, "Full screen is not supported by this browser.", true);
-      }
-    } catch (error) {
-      setStatus(outputStatus, "Could not open full screen: " + error.message, true);
-    }
-  });
-
-  document.getElementById("backgroundBtn").addEventListener("click", function () {
-    backgroundIndex = (backgroundIndex + 1) % backgrounds.length;
-    drawOutput();
-  });
-
-  document.getElementById("saveImageBtn").addEventListener("click", function () {
-    try {
-      const link = document.createElement("a");
-      link.download = "obo-avatar-output.png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-      setStatus(outputStatus, "Output image saved or downloaded.", false);
-    } catch (error) {
-      setStatus(outputStatus, "Could not save the output image: " + error.message, true);
-    }
-  });
-
-  async function startCamera() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setStatus(trackingStatus, "Camera access is unavailable. Open the site over HTTPS in a supported browser.", true);
-      return;
-    }
-
-    if (cameraStream) {
-      setStatus(trackingStatus, "Webcam is already running.", false);
-      return;
-    }
-
-    try {
-      setStatus(trackingStatus, "Requesting camera permission...", false);
-
-      cameraStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: "user",
-          width: { ideal: 640 },
-          height: { ideal: 480 }
-        },
-        audio: false
-      });
-
-      webcam.srcObject = cameraStream;
-      await webcam.play();
-
-      setStatus(trackingStatus, "Webcam is running. You can now start face tracking.", false);
-    } catch (error) {
-      cameraStream = null;
-
-      let message = error.message || "Camera could not be started.";
-
-      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
-        message = "Camera permission was denied. Allow camera access for this website in Chrome settings.";
-      } else if (error.name === "NotFoundError") {
-        message = "No webcam was found. Check that your laptop camera is connected and working.";
-      } else if (error.name === "NotReadableError") {
-        message = "The webcam may be in use by another application. Close other camera apps and try again.";
-      }
-
-      setStatus(trackingStatus, message, true);
-    }
-  }
-
-  function stopCamera() {
-    stopTracking();
-
-    if (cameraStream) {
-      cameraStream.getTracks().forEach(function (track) {
-        track.stop();
-      });
-      cameraStream = null;
-    }
-
-    webcam.pause();
-    webcam.srcObject = null;
-
-    setStatus(trackingStatus, "Webcam stopped.", false);
-  }
-
-  async function loadFaceModel() {
-    if (faceLandmarker) return faceLandmarker;
-
-    if (trackingLoadAttempted) {
-      throw new Error("The face tracking model could not be loaded earlier. Reload the page and try again.");
-    }
-
-    trackingLoadAttempted = true;
-    setStatus(trackingStatus, "Loading face tracking library. Please wait...", false);
-
-    const visionModuleURL =
-      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm";
-
-    const vision = await import(visionModuleURL);
-
-    const files = await vision.FilesetResolver.forVisionTasks(
-      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
-    );
-
-    faceLandmarker = await vision.FaceLandmarker.createFromOptions(files, {
-      baseOptions: {
-        modelAssetPath:
-          "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-        delegate: "GPU"
-      },
-      runningMode: "VIDEO",
-      numFaces: 1,
-      outputFaceBlendshapes: false,
-      outputFacialTransformationMatrixes: false
-    });
-
-    return faceLandmarker;
-  }
-
-  async function startTracking() {
-    if (!cameraStream) {
-      setStatus(trackingStatus, "Start the webcam first, then click Start Face Tracking.", true);
-      return;
-    }
-
-    if (trackingRunning) {
-      setStatus(trackingStatus, "Face tracking is already running.", false);
-      return;
-    }
-
-    try {
-      await loadFaceModel();
-
-      trackingRunning = true;
-      lastVideoTime = -1;
-
-      setStatus(trackingStatus, "Face tracking started. Look toward the webcam.", false);
-      trackFaceFrame();
-    } catch (error) {
-      trackingRunning = false;
-
-      setStatus(
-        trackingStatus,
-        "Face tracking could not start. Check your internet connection and reload the page. Details: " +
-          (error.message || error),
-        true
-      );
-    }
-  }
-
-  function trackFaceFrame() {
-    if (!trackingRunning || !faceLandmarker) return;
-    if (trackingBusy) {
-      requestAnimationFrame(trackFaceFrame);
-      return;
-    }
-
-    if (webcam.readyState < 2 || webcam.videoWidth === 0) {
-      requestAnimationFrame(trackFaceFrame);
-      return;
-    }
-
-    if (webcam.currentTime !== lastVideoTime) {
-      trackingBusy = true;
-
-      try {
-        const results = faceLandmarker.detectForVideo(webcam, performance.now());
-        lastVideoTime = webcam.currentTime;
-
-        if (results.faceLandmarks && results.faceLandmarks.length > 0) {
-          const landmarks = results.faceLandmarks[0];
-
-          let minX = 1;
-          let maxX = 0;
-          let minY = 1;
-          let maxY = 0;
-
-          for (const point of landmarks) {
-            minX = Math.min(minX, point.x);
-            maxX = Math.max(maxX, point.x);
-            minY = Math.min(minY, point.y);
-            maxY = Math.max(maxY, point.y);
-          }
-
-          const centerX = (minX + maxX) / 2;
-          const centerY = (minY + maxY) / 2;
-          const faceWidth = Math.max(0.01, maxX - minX);
-
-          faceState.x = (0.5 - centerX) * canvas.width * 0.7;
-          faceState.y = (0.5 - centerY) * canvas.height * 0.5;
-          faceState.scale = Math.max(0.75, Math.min(1.3, 0.18 / faceWidth));
-          faceState.detected = true;
-
-          setStatus(trackingStatus, "Face detected. Portrait is responding to face position.", false);
-        } else {
-          faceState.detected = false;
-          setStatus(trackingStatus, "Tracking is running, but no face is detected. Face the webcam and improve the lighting.", false);
-        }
-      } catch (error) {
-        trackingRunning = false;
-        faceState.detected = false;
-
-        setStatus(trackingStatus, "Tracking stopped because of an error: " + (error.message || error), true);
-      } finally {
-        trackingBusy = false;
-      }
-    }
-
-    if (trackingRunning) requestAnimationFrame(trackFaceFrame);
-  }
-
-  function stopTracking() {
-    trackingRunning = false;
-    trackingBusy = false;
-    faceState.detected = false;
-    faceState.x = 0;
-    faceState.y = 0;
-    faceState.scale = 1;
-    drawOutput();
-  }
-
-  window.addEventListener("beforeunload", function () {
-    stopCamera();
-
-    if (imageURL) URL.revokeObjectURL(imageURL);
-
-    if (faceLandmarker && typeof faceLandmarker.close === "function") {
-      faceLandmarker.close();
-    }
-
-    if (animationFrame) cancelAnimationFrame(animationFrame);
-  });
-
-  drawPlaceholder();
-  renderLoop();
-
-})();
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}
 </script>
 
+<script type="module">
+import * as THREE from "three";
+
+const $=id=>document.getElementById(id);
+const host=$("threeHost");
+let scene,camera,renderer,root,parts={};
+let playing=true,rotating=true,stream=null,poseModel=null,tracking=false;
+let recorder=null,chunks=[],poseBusy=false;
+let avatarType="male",poseData=null;
+const clock=new THREE.Clock();
+
+function status(message,error=false){
+ $("status").innerHTML="";
+ const b=document.createElement("b");
+ b.textContent=error?"Notice: ":"Status: ";
+ $("status").append(b,document.createTextNode(message));
+}
+function trackMessage(message,error=false){
+ $("trackStatus").textContent=message;
+ $("trackStatus").style.color=error?"#ff8392":"#b9cce0";
+}
+function material(color,roughness=.7,metalness=0){
+ return new THREE.MeshStandardMaterial({color,roughness,metalness});
+}
+function ball(parent,mat,x,y,z,sx,sy,sz){
+ const m=new THREE.Mesh(new THREE.SphereGeometry(1,24,18),mat);
+ m.position.set(x,y,z);m.scale.set(sx,sy,sz);
+ m.castShadow=true;parent.add(m);return m;
+}
+function rod(parent,mat,a,b,r1,r2){
+ const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b);
+ const direction=new THREE.Vector3().subVectors(B,A);
+ const m=new THREE.Mesh(new THREE.CylinderGeometry(r2,r1,direction.length(),14),mat);
+ m.position.copy(A).add(B).multiplyScalar(.5);
+ m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),direction.normalize());
+ m.castShadow=true;parent.add(m);
+ ball(parent,mat,...a,r1,r1,r1);
+ ball(parent,mat,...b,r2,r2,r2);
+ return m;
+}
+function init(){
+ scene=new THREE.Scene();scene.background=new THREE.Color("#07101b");
+ camera=new THREE.PerspectiveCamera(35,1,.1,100);
+ camera.position.set(0,2.1,7.8);camera.lookAt(0,1.5,0);
+ renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+ renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ renderer.shadowMap.enabled=true;
+ host.appendChild(renderer.domElement);
+
+ scene.add(new THREE.HemisphereLight(0xcce4ff,0x30313c,2));
+ const light=new THREE.DirectionalLight(0xffffff,3);
+ light.position.set(3,6,5);light.castShadow=true;scene.add(light);
+ const rim=new THREE.DirectionalLight(0x43e477,2);
+ rim.position.set(-4,3,-3);scene.add(rim);
+
+ const floor=new THREE.Mesh(new THREE.PlaneGeometry(100,100),material("#0d1724"));
+ floor.rotation.x=-Math.PI/2;floor.position.y=-.03;scene.add(floor);
+ scene.add(new THREE.GridHelper(20,40,"#24384c","#142335"));
+
+ buildAvatar("male");resize();window.addEventListener("resize",resize);
+ animate();
+ $("engineStatus").innerHTML="Renderer: <b>Three.js WebGL</b><br>Character: procedural 3D model<br>Pose tracking: off";
+ status("3D engine started. Choose a character or start the webcam.");
+}
+function resize(){
+ if(!renderer)return;
+ const w=host.clientWidth||600,h=host.clientHeight||500;
+ renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+function buildAvatar(type){
+ avatarType=type;
+ if(root){
+  scene.remove(root);
+  root.traverse(o=>{
+   if(o.geometry)o.geometry.dispose();
+   if(o.material)o.material.dispose();
+  });
+ }
+ root=new THREE.Group();scene.add(root);parts={};
+ root.scale.setScalar(Number($("scale").value)/100);
+
+ const robot=type==="robot";
+ const skin=material(robot?"#9cb6c4":$("skin").value);
+ const clothes=material(robot?"#405d72":$("shirt").value,.55,robot?.5:0);
+ const hair=material(robot?"#263b4b":$("hair").value);
+ const pants=material("#202a39"),white=material("#f7f8fa");
+ const iris=material("#426d8b"),lip=material("#814843");
+
+ rod(root,pants,[-.2,1.05,0],[-.23,.32,0],.14,.1);
+ rod(root,pants,[.2,1.05,0],[.23,.32,0],.14,.1);
+ rod(root,material("#121923"),[-.23,.32,0],[-.24,.12,.1],.1,.1);
+ rod(root,material("#121923"),[.23,.32,0],[.24,.12,.1],.1,.1);
+
+ parts.torso=ball(root,clothes,0,1.55,0,.48,.61,.28);
+ rod(root,skin,[0,1.98,0],[0,2.22,0],.12,.12);
+
+ parts.head=new THREE.Group();parts.head.position.set(0,2.53,0);root.add(parts.head);
+ ball(parts.head,skin,0,0,0,.34,.43,.31);
+ ball(parts.head,skin,-.35,0,0,.07,.11,.06);
+ ball(parts.head,skin,.35,0,0,.07,.11,.06);
+
+ for(const s of [-1,1]){
+  ball(parts.head,white,s*.13,.09,.27,.08,.05,.035);
+  ball(parts.head,iris,s*.13,.09,.302,.03,.035,.018);
+  rod(parts.head,hair,[s*.07,.18,.28],[s*.21,.19,.27],.025,.025);
+ }
+ ball(parts.head,skin,0,-.015,.3,.055,.1,.07);
+ parts.mouth=ball(parts.head,lip,0,-.19,.28,.09,.018,.025);
+
+ if(!robot){
+  ball(parts.head,hair,0,.28,-.02,.35,.19,.32);
+  for(let i=0;i<7;i++){
+   ball(parts.head,hair,-.27+i*.09,.36+Math.sin(i*1.7)*.03,.02,.11,.11,.13);
+  }
+  if(type.startsWith("female"))
+   ball(parts.head,hair,0,-.08,-.15,.38,.4,.18);
+  if(type==="male3")
+   ball(parts.head,hair,0,-.18,.22,.23,.13,.1);
+ }else{
+  const glow=material("#43e4d7",.25,.6);
+  ball(parts.head,glow,-.13,.09,.31,.05,.05,.02);
+  ball(parts.head,glow,.13,.09,.31,.05,.05,.02);
+ }
+
+ parts.leftArm=new THREE.Group();parts.leftArm.position.set(-.43,1.9,0);root.add(parts.leftArm);
+ rod(parts.leftArm,clothes,[0,0,0],[-.1,-.3,0],.13,.1);
+ rod(parts.leftArm,clothes,[-.1,-.3,0],[-.12,-.59,.03],.1,.075);
+ ball(parts.leftArm,skin,-.12,-.65,.04,.08,.09,.08);
+
+ parts.rightArm=new THREE.Group();parts.rightArm.position.set(.43,1.9,0);root.add(parts.rightArm);
+ rod(parts.rightArm,clothes,[0,0,0],[.1,-.3,0],.13,.1);
+ rod(parts.rightArm,clothes,[.1,-.3,0],[.12,-.59,.03],.1,.075);
+ ball(parts.rightArm,skin,.12,-.65,.04,.08,.09,.08);
+
+ $("name").textContent=type.toUpperCase();
+ document.querySelectorAll("[data-avatar]").forEach(b=>b.classList.toggle("active",b.dataset.avatar===type));
+ status("Selected "+type+" 3D character.");
+}
+function animate(){
+ requestAnimationFrame(animate);
+ const t=clock.getElapsedTime(),power=Number($("power").value)/100;
+ if(root&&playing){
+  root.position.y=Math.sin(t*2)*.025*power;
+  if(rotating)root.rotation.y=Math.sin(t*.3)*.16;
+  if(parts.head){
+   parts.head.rotation.z=Number($("tilt").value)*Math.PI/180;
+   if(tracking&&poseData){
+    parts.head.rotation.y=THREE.MathUtils.lerp(parts.head.rotation.y,poseData.headY,.2);
+    parts.head.rotation.x=THREE.MathUtils.lerp(parts.head.rotation.x,poseData.headX,.2);
+    parts.leftArm.rotation.z=THREE.MathUtils.lerp(parts.leftArm.rotation.z,poseData.left,.2);
+    parts.rightArm.rotation.z=THREE.MathUtils.lerp(parts.rightArm.rotation.z,poseData.right,.2);
+   }else{
+    const mode=$("motion").value;
+    parts.head.rotation.y=Math.sin(t*.7)*.07;
+    parts.leftArm.rotation.z=mode==="dance"?Math.sin(t*4)*.45*power:Math.sin(t*2)*.04;
+    parts.rightArm.rotation.z=mode==="wave"?-.7+Math.sin(t*6)*.3*power:
+      mode==="dance"?-Math.sin(t*4)*.45*power:
+      mode==="talk"?-Math.sin(t*3)*.14*power:-Math.sin(t*1.5)*.04;
+    if(mode==="talk")parts.head.rotation.y+=Math.sin(t*5)*.025;
+   }
+   let mouth=Number($("mouth").value)/100;
+   if($("expression").value==="surprised")mouth=Math.max(mouth,.65);
+   parts.mouth.scale.y=.018+mouth*.1+
+    ($("motion").value==="talk"?Math.abs(Math.sin(t*7))*.035:0);
+   parts.mouth.scale.x=$("expression").value==="happy"?.13:.09;
+  }
+ }
+ renderer.render(scene,camera);
+}
+
+document.querySelectorAll("[data-avatar]").forEach(b=>b.onclick=()=>buildAvatar(b.dataset.avatar));
+$("apply").onclick=()=>buildAvatar(avatarType);
+$("skin").onchange=$("hair").onchange=$("shirt").onchange=$("scale").onchange=$("expression").onchange=()=>buildAvatar(avatarType);
+$("play").onclick=()=>{playing=true;status("Animation playing.");};
+$("pause").onclick=()=>{playing=false;status("Animation paused.");};
+$("rotate").onclick=()=>{rotating=!rotating;$("rotate").textContent="AUTO ROTATE: "+(rotating?"ON":"OFF");};
+document.querySelectorAll("[data-bg]").forEach(b=>b.onclick=()=>{
+ scene.background=new THREE.Color(b.dataset.bg);
+ document.querySelectorAll("[data-bg]").forEach(x=>x.classList.toggle("active",x===b));
+});
+$("fullscreen").onclick=async()=>{
+ try{if(document.fullscreenElement)await document.exitFullscreen();else await host.parentElement.requestFullscreen();resize();}
+ catch(e){status("Fullscreen failed: "+e.message,true);}
+};
+$("snapshot").onclick=()=>{
+ const a=document.createElement("a");a.download="obo-avatar.png";
+ a.href=renderer.domElement.toDataURL("image/png");a.click();
+};
+$("obs").onclick=()=>$("obsSteps").classList.toggle("hide");
+
+$("startCam").onclick=async()=>{
+ try{
+  stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
+  $("webcam").srcObject=stream;await $("webcam").play();
+  trackMessage("Webcam is running. Click START TRACKING to load pose estimation.");
+ }catch(e){trackMessage("Camera error: "+e.message+". Allow camera permission in Chrome.",true);}
+};
+function stopTracking(){
+ tracking=false;poseData=null;
+ if(poseModel&&poseModel.close)poseModel.close();
+ poseModel=null;
+ $("engineStatus").innerHTML="Renderer: <b>Three.js WebGL</b><br>Character: procedural 3D model<br>Pose tracking: off";
+}
+$("stopCam").onclick=()=>{
+ stopTracking();
+ if(stream)stream.getTracks().forEach(t=>t.stop());
+ stream=null;$("webcam").srcObject=null;trackMessage("Webcam stopped.");
+};
+$("startTrack").onclick=async()=>{
+ if(!stream){trackMessage("Start the webcam first.");return;}
+ try{
+  trackMessage("Loading MediaPipe pose model…");
+  const mp=await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm");
+  const files=await mp.FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  poseModel=await mp.PoseLandmarker.createFromOptions(files,{
+   baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",delegate:"GPU"},
+   runningMode:"VIDEO",numPoses:1
+  });
+  tracking=true;
+  $("engineStatus").innerHTML="Renderer: <b>Three.js WebGL</b><br>Character: procedural 3D model<br>Pose tracking: <b>active</b>";
+  trackMessage("Pose tracking active. Keep your shoulders and arms visible.");
+  poseLoop();
+ }catch(e){tracking=false;trackMessage("Tracking could not load. Check internet and reload. "+e.message,true);}
+};
+function poseLoop(){
+ if(!tracking||!poseModel||$("webcam").readyState<2){if(tracking)requestAnimationFrame(poseLoop);return;}
+ if(!poseBusy){
+  poseBusy=true;
+  try{
+   const res=poseModel.detectForVideo($("webcam"),performance.now());
+   const l=res.landmarks&&res.landmarks[0];
+   if(l){
+    const nose=l[0],ls=l[11],rs=l[12],lw=l[15],rw=l[16];
+    poseData={
+     headY:(.5-nose.x)*1.1,
+     headX:(nose.y-.45)*.7,
+     left:ls&&lw?THREE.MathUtils.clamp((lw.y-ls.y)*2,-1.2,1.2):0,
+     right:rs&&rw?THREE.MathUtils.clamp((rs.y-rw.y)*2,-1.2,1.2):0
+    };
+    trackMessage("Body landmarks detected. Approximate head and arm movement is active.");
+   }else trackMessage("No pose detected. Improve lighting and move back from the camera.");
+  }catch(e){trackMessage("Tracking error: "+e.message,true);}
+  finally{poseBusy=false;}
+ }
+ if(tracking)requestAnimationFrame(poseLoop);
+}
+$("stopTrack").onclick=()=>{stopTracking();trackMessage("Pose tracking stopped.");};
+
+$("record").onclick=()=>{
+ try{
+  chunks=[];
+  const stream=renderer.domElement.captureStream(30);
+  recorder=new MediaRecorder(stream);
+  recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+  recorder.onstop=()=>status("Recording ready. Click DOWNLOAD.");
+  recorder.start();status("Recording started.");
+ }catch(e){status("Recording unavailable: "+e.message,true);}
+};
+$("stopRecord").onclick=()=>{if(recorder&&recorder.state!=="inactive")recorder.stop();};
+$("download").onclick=()=>{
+ if(!chunks.length){status("Record and stop first.");return;}
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob(chunks,{type:"video/webm"}));
+ a.download="obo-human-live.webm";a.click();
+};
+window.addEventListener("beforeunload",()=>{
+ if(stream)stream.getTracks().forEach(t=>t.stop());
+ if(poseModel&&poseModel.close)poseModel.close();
+});
+init();
+</script>
 </body>
 </html>
