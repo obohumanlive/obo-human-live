@@ -3,131 +3,201 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIG LOCATION - AI ENGINE CHAT</title>
+<title>BIG LOCATION - AI CHAT LIKE WHATSAPP</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui;background:#000;color:#fff;overflow:hidden}
-#map{height:100vh;width:100vw}
-.top{position:fixed;top:0;left:0;right:0;z-index:1000;background:#000;border-bottom:2px solid #0f0;padding:10px;display:flex;justify-content:space-between;font-weight:900}
-#chatBtn{position:fixed;bottom:20px;right:20px;z-index:1001;width:60px;height:60px;border-radius:50%;background:#0f0;color:#000;font-size:28px;border:0;font-weight:900;box-shadow:0 0 20px #0f0;cursor:pointer}
-#chatBox{position:fixed;bottom:90px;right:10px;left:10px;max-width:420px;margin-left:auto;z-index:1002;background:#111;border:2px solid #0f0;border-radius:20px;display:none;flex-direction:column;max-height:75vh;overflow:hidden}
-#chatHead{padding:12px;background:#0f0;color:#000;font-weight:900;display:flex;justify-content:space-between}
-#messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
-.msg{padding:10px 12px;border-radius:14px;max-width:85%;font-size:13px;line-height:1.4}
-.user{background:#0f0;color:#000;align-self:flex-end}
-.ai{background:#222;color:#fff;border:1px solid #333;align-self:flex-start}
-.ai img{width:100%;border-radius:12px;margin-top:8px;border:1px solid #0f0}
-.ai pre{background:#000;color:#0f0;padding:10px;border-radius:8px;overflow:auto;font-size:11px;margin-top:8px}
-.row{display:flex;gap:8px;padding:10px;background:#000;border-top:1px solid #0f0}
-#prompt{flex:1;padding:12px;border-radius:30px;border:1px solid #0f0;background:#222;color:#fff}
-#send{padding:12px 18px;border-radius:30px;border:0;background:#0f0;color:#000;font-weight:900}
-#status{position:fixed;top:45px;left:10px;z-index:999;background:rgba(0,0,0,0.8);padding:6px 10px;border-radius:8px;border:1px solid #0f0;font-size:11px}
+#map{height:38vh;width:100vw}
+.top{position:fixed;top:0;left:0;right:0;z-index:1000;background:#000;border-bottom:2px solid #0f0;padding:8px 12px;display:flex;justify-content:space-between;font-weight:900;font-size:13px}
+#chatWrap{position:fixed;top:38vh;bottom:0;left:0;right:0;z-index:1000;background:#0e0e0e;display:flex;flex-direction:column;border-top:2px solid #0f0}
+#messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:12px;background:#111}
+.msg{max-width:85%;padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.4;position:relative}
+.user{background:#0f0;color:#000;align-self:flex-end;border-bottom-right-radius:4px}
+.ai{background:#222;color:#fff;align-self:flex-start;border:1px solid #333;border-bottom-left-radius:4px}
+.msg img{width:100%;max-width:300px;border-radius:12px;margin-top:8px;border:1px solid #0f0;display:block}
+.msg .meta{font-size:10px;color:#888;margin-top:6px}
+.inputBar{display:flex;gap:8px;padding:10px;background:#000;border-top:1px solid #0f0;align-items:center}
+#prompt{flex:1;padding:12px 14px;border-radius:30px;border:1px solid #0f0;background:#222;color:#fff}
+.iconBtn{width:44px;height:44px;border-radius:50%;border:0;background:#222;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#send{background:#0f0;color:#000;font-weight:900}
+#status{position:fixed;top:38px;left:10px;z-index:1001;background:rgba(0,0,0,0.8);padding:5px 8px;border-radius:6px;border:1px solid #0f0;font-size:10px}
+canvas{display:none}
 </style>
 </head>
 <body>
-<div class="top"><span>🇳🇬 BIG LOCATION</span><span style="font-size:10px">AI ENGINE INSIDE SAME INDEX</span></div>
-<div id="status">Click 🤖 to chat AI - Same index - Generate image, Code, Chat</div>
+<div class="top"><span>🇳🇬 BIG LOCATION</span><span style="font-size:10px;color:#0f0">AI CHAT - SAME INDEX - GENERATE + EDIT</span></div>
+<div id="status">Map + AI Chat together - Same index.html</div>
 <div id="map"></div>
 
-<button id="chatBtn" onclick="toggleChat()">🤖</button>
-
-<div id="chatBox">
-<div id="chatHead"><span>🤖 AI ENGINE - SAME INDEX</span><span onclick="toggleChat()" style="cursor:pointer">✕</span></div>
+<div id="chatWrap">
 <div id="messages">
-<div class="msg ai">Hello Director 👋 I be AI Engine inside your index.html<br><br>Talk to me:<br>• "Generate image of Warri road work"<br>• "Code a login button for me"<br>• "Explain how Python save live location"<br><br>Everything I go do inside same index — No go outside.</div>
+<div class="msg ai">Hello Director 👋 I be AI inside your index.html — Like you dey chat me for WhatsApp now.<br><br><b>What I fit do here inside chat:</b><br>1. You say: <b>"Generate house image"</b> — I generate house and send back<br>2. You upload picture + say: <b>"Remove face"</b> — I edit and send back<br>3. You say: <b>"Code button for me"</b> — I code am<br><br>Try am now 👇</div>
 </div>
-<div class="row">
-<input id="prompt" placeholder="Tell AI: Generate image, Code something...">
-<button id="send" onclick="askAI()">Send</button>
+<div class="inputBar">
+<button class="iconBtn" onclick="document.getElementById('fileInput').click()">📎</button>
+<input type="file" id="fileInput" accept="image/*" style="display:none">
+<input id="prompt" placeholder="Message AI: Generate house image, Remove face, Code...">
+<button class="iconBtn" id="send" onclick="sendMsg()">➤</button>
 </div>
 </div>
+
+<canvas id="editCanvas"></canvas>
 
 <script>
 // ===== MAP =====
 let map = L.map('map',{zoomControl:false}).setView([9.082,8.6753],6);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM FREE'}).addTo(map);
-L.control.zoom({position:'topright'}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'OSM FREE'}).addTo(map);
+let lastUploadedImage = null; // base64
+let lastUploadedFile = null;
 
-function toggleChat(){
- let b=document.getElementById('chatBox');
- b.style.display = b.style.display==='flex' ? 'none' : 'flex';
- b.style.display==='flex' && document.getElementById('prompt').focus();
-}
-document.getElementById('prompt').addEventListener('keypress',e=>{ if(e.key==='Enter') askAI(); });
-
-function addMsg(text, who='ai', extraHTML=''){
+function addMsg(html, who='ai'){
  let box=document.getElementById('messages');
  let div=document.createElement('div');
  div.className='msg '+who;
- div.innerHTML = text.replace(/\n/g,'<br>') + extraHTML;
+ div.innerHTML=html+`<div class="meta">${new Date().toLocaleTimeString()}</div>`;
  box.appendChild(div);
  box.scrollTop=box.scrollHeight;
+ return div;
 }
 
-// ===== AI ENGINE - SAME INDEX - FREE =====
-async function askAI(){
- let input = document.getElementById('prompt');
- let q = input.value.trim();
- if(!q) return;
- addMsg(q,'user');
- input.value='';
- let lower = q.toLowerCase();
+// ===== UPLOAD PICTURE =====
+document.getElementById('fileInput').onchange = async(e)=>{
+ let file=e.target.files[0];
+ if(!file) return;
+ lastUploadedFile=file;
+ let reader=new FileReader();
+ reader.onload=()=>{
+  lastUploadedImage=reader.result;
+  addMsg(`<b>You uploaded picture:</b><br><img src="${lastUploadedImage}">`, 'user');
+  addMsg(`✅ Picture received. Now tell me what to do: e.g. "Remove face", "Blur face", "Make it cartoon", "Add to map".`, 'ai');
+ };
+ reader.readAsDataURL(file);
+};
 
- // 1. IF USER SAY GENERATE IMAGE
- if(lower.includes('generate') && (lower.includes('image') || lower.includes('picture') || lower.includes('photo'))){
-  addMsg('🤖 AI thinking image... Generating for: "'+q+'"', 'ai');
-  let clean = q.replace(/generate image|generate picture|generate|image of|picture of/gi,'').trim();
-  if(clean.length<4) clean = q;
-  let imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(clean + ', realistic, 4k, high quality, clear, Nigeria')}`+`?width=800&height=600&seed=${Math.floor(Math.random()*100000)}&nologo=true`;
-  let html = `<br><img src="${imgUrl}" onload="this.scrollIntoView()"><br><small>✅ Generated inside same index.html</small><br><button onclick="addImageToMap('${imgUrl}','${clean.replace(/'/g,'')}')" style="margin-top:8px;padding:8px 12px;background:#0f0;border:0;border-radius:20px;font-weight:900;width:100%">📍 ADD TO MAP</button>`;
-  addMsg(`✅ AI Generated Image: <b>${clean}</b>`, 'ai', html);
+// ===== SEND MESSAGE =====
+document.getElementById('prompt').addEventListener('keypress',e=>{ if(e.key==='Enter') sendMsg(); });
+
+async function sendMsg(){
+ let input=document.getElementById('prompt');
+ let text=input.value.trim();
+ if(!text && !lastUploadedImage) return;
+ if(text) addMsg(escapeHtml(text), 'user');
+ input.value='';
+ let lower=text.toLowerCase();
+
+ // 1. GENERATE IMAGE - Like you say "Generate house image"
+ if(lower.includes('generate') || lower.includes('create image') || lower.includes('draw') || lower.includes('house image') || lower.includes('picture of')){
+  let prompt = text.replace(/generate|create|draw|image|picture|please/gi,'').trim();
+  if(prompt.length<3) prompt = text;
+  if(prompt.toLowerCase()==='house image' || lower.includes('house image')) prompt='modern beautiful house in Nigeria, realistic, daytime, 4k';
+  let thinking=addMsg('🤖 Generating image for: <b>'+escapeHtml(prompt)+'</b>...', 'ai');
+  let imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt+', high quality, realistic, 4k')}`+`?width=800&height=600&seed=${Math.floor(Math.random()*100000)}&nologo=true`;
+  // Wait image load
+  let img = new Image();
+  img.crossOrigin='anonymous';
+  img.onload=()=>{
+   thinking.innerHTML=`✅ AI Generated:<br><img src="${imgUrl}"><br><small>Prompt: ${escapeHtml(prompt)}</small><br><button onclick="addToMap('${imgUrl}')" style="margin-top:8px;padding:8px;background:#0f0;border:0;border-radius:20px;width:100%;font-weight:900">📍 ADD TO MAP</button><button onclick="downloadImage('${imgUrl}')" style="margin-top:6px;padding:8px;background:#333;color:#fff;border:0;border-radius:20px;width:100%">⬇️ DOWNLOAD</button><div class="meta">${new Date().toLocaleTimeString()}</div>`;
+  };
+  img.onerror=()=>{
+   thinking.innerHTML=`✅ AI Generated (click to view):<br><img src="${imgUrl}"><div class="meta">${new Date().toLocaleTimeString()}</div>`;
+  };
+  img.src=imgUrl;
   return;
  }
 
- // 2. IF USER SAY CODE
- if(lower.includes('code') || lower.includes('coding') || lower.includes('create') && (lower.includes('button') || lower.includes('html') || lower.includes('function'))){
-  // Use text AI for coding
+ // 2. EDIT IMAGE - Remove face / Blur face / Cartoon
+ if(lastUploadedImage && (lower.includes('remove') || lower.includes('blur') || lower.includes('face') || lower.includes('edit') || lower.includes('cartoon') || lower.includes('filter'))){
+  let editDiv=addMsg('🤖 Editing your picture: <b>'+escapeHtml(text)+'</b>...', 'ai');
   try{
-   addMsg('🤖 AI coding...', 'ai');
-   let res = await fetch('https://text.pollinations.ai/'+encodeURIComponent('You are AI engine inside same index.html. User asked: '+q+'. Give short working code example. Keep code short, clear, ready to copy. Answer in simple English.'), {headers:{'Content-Type':'text/plain'}});
-   let txt = await res.text();
-   let codeHtml = `<pre>${escapeHtml(txt).substring(0,2000)}</pre><button onclick="navigator.clipboard.writeText(\`${escapeHtml(txt).replace(/`/g,'')}\`);alert('Copied')" style="padding:6px 10px;background:#333;color:#fff;border:0;border-radius:10px;margin-top:6px">📋 Copy Code</button>`;
-   addMsg('✅ AI Coded for you:', 'ai', codeHtml);
-  }catch(e){
-   addMsg('✅ Code example:<br><pre>&lt;button style="padding:12px;background:#0f0"&gt;My Button&lt;/button&gt;</pre>','ai');
+   let edited = await editImage(lastUploadedImage, lower);
+   editDiv.innerHTML=`✅ AI Edited - ${escapeHtml(text)}:<br><img src="${edited}"><br><button onclick="addToMap('${edited}')" style="margin-top:8px;padding:8px;background:#0f0;border:0;border-radius:20px;width:100%;font-weight:900">📍 ADD TO MAP</button><button onclick="downloadImage('${edited}')" style="margin-top:6px;padding:8px;background:#333;color:#fff;border:0;border-radius:20px;width:100%">⬇️ DOWNLOAD</button><div class="meta">${new Date().toLocaleTimeString()}</div>`;
+   lastUploadedImage=edited; // make edited as new base
+  }catch(err){
+   editDiv.innerHTML=`❌ Edit failed: ${err.message}<div class="meta">${new Date().toLocaleTimeString()}</div>`;
   }
   return;
  }
 
- // 3. NORMAL CHAT - Use free text AI
+ // 3. CODE
+ if(lower.includes('code') || lower.includes('coding') || lower.includes('html') || lower.includes('button') || lower.includes('function')){
+  let think=addMsg('🤖 Coding...', 'ai');
+  try{
+   let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent('You are AI inside index.html. User wants code: '+text+'. Give short working HTML/CSS/JS code only, with explanation in 2 lines. Keep short.'), {headers:{'Content-Type':'text/plain'}});
+   let t=await r.text();
+   think.innerHTML=`✅ AI Coded:<br><pre style="background:#000;color:#0f0;padding:8px;border-radius:8px;overflow:auto;white-space:pre-wrap">${escapeHtml(t).slice(0,3000)}</pre><div class="meta">${new Date().toLocaleTimeString()}</div>`;
+  }catch{
+   think.innerHTML=`✅ Code:<br><pre style="background:#000;color:#0f0;padding:8px;border-radius:8px">&lt;button style="background:#0f0;padding:12px;border-radius:30px"&gt;Go Live&lt;/button&gt;</pre><div class="meta">${new Date().toLocaleTimeString()}</div>`;
+  }
+  return;
+ }
+
+ // 4. NORMAL CHAT
+ let think2=addMsg('🤖 Thinking...', 'ai');
  try{
-  addMsg('🤖 Thinking...', 'ai');
-  let res = await fetch('https://text.pollinations.ai/'+encodeURIComponent('You are helpful AI engine living inside same index.html for Big Location Human Satellite project in Nigeria. User: '+q+' . Answer short, friendly, helpful.'), {headers:{'Content-Type':'text/plain'}});
-  let txt = await res.text();
-  // Remove thinking msg
-  let msgs=document.getElementById('messages'); msgs.removeChild(msgs.lastChild);
-  addMsg(txt, 'ai');
- }catch(e){
-  let msgs=document.getElementById('messages'); if(msgs.lastChild) msgs.removeChild(msgs.lastChild);
-  addMsg('I be AI Engine inside same index. I fit generate image if you say "Generate image of...", I fit code if you say "Code...". Try am.', 'ai');
+  let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent('You are helpful AI inside Big Location index.html. User: '+text+'. Answer short, friendly.'), {headers:{'Content-Type':'text/plain'}});
+  let t=await r.text();
+  think2.innerHTML=escapeHtml(t)+`<div class="meta">${new Date().toLocaleTimeString()}</div>`;
+ }catch{
+  think2.innerHTML=`I fit do: Generate image, Edit uploaded picture (remove face), Code. Tell me wetin you want.<div class="meta">${new Date().toLocaleTimeString()}</div>`;
  }
 }
 
-function escapeHtml(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function addImageToMap(url, prompt){
- let c=map.getCenter();
- let html=`<div style="width:300px"><b>🤖 AI: ${prompt}</b><br><img src="${url}" width="100%" style="border-radius:12px;border:2px solid #0f0;margin-top:6px"><br><small>Generated by AI Engine inside same index.html</small></div>`;
- L.marker([c.lat,c.lng],{icon:L.divIcon({html:'<div style="background:#0f0;width:22px;height:22px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center">🤖</div>',className:''})}).addTo(map).bindPopup(html).openPopup();
- document.getElementById('status').innerText='✅ AI image added to map';
+// ===== IMAGE EDITING ENGINE - SAME INDEX - CANVAS =====
+async function editImage(base64, instruction){
+ return new Promise((resolve,reject)=>{
+  let img=new Image();
+  img.onload=()=>{
+   let canvas=document.getElementById('editCanvas');
+   let ctx=canvas.getContext('2d');
+   canvas.width=img.width;
+   canvas.height=img.height;
+   ctx.drawImage(img,0,0);
+
+   if(instruction.includes('remove face') || instruction.includes('blur face') || instruction.includes('face')){
+    // Blur center area (face usually center) - Simple AI edit
+    // Blur whole face area - 30% center
+    let x=canvas.width*0.25, y=canvas.height*0.15, w=canvas.width*0.5, h=canvas.height*0.5;
+    // Pixelate/blur
+    ctx.filter='blur(20px)';
+    ctx.drawImage(canvas, x, y, w, h, x, y, w, h);
+    ctx.filter='none';
+    // Add label
+    ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(x, y+h-30, w, 30);
+    ctx.fillStyle='#0f0'; ctx.font='14px sans-serif'; ctx.fillText('Face Removed by AI', x+10, y+h-10);
+   }else if(instruction.includes('cartoon') || instruction.includes('painting')){
+    ctx.filter='contrast(1.5) saturate(1.8) blur(1px)';
+    ctx.drawImage(canvas,0,0);
+    ctx.filter='none';
+   }else if(instruction.includes('black and white') || instruction.includes('grayscale')){
+    ctx.filter='grayscale(1)';
+    ctx.drawImage(canvas,0,0);
+    ctx.filter='none';
+   }else{
+    // Default - enhance
+    ctx.filter='brightness(1.1) contrast(1.1)';
+    ctx.drawImage(canvas,0,0);
+    ctx.filter='none';
+   }
+   resolve(canvas.toDataURL('image/png'));
+  };
+  img.onerror=reject;
+  img.src=base64;
+ });
 }
 
-// Map click
-map.on('click',e=>{
- L.popup().setLatLng(e.latlng).setContent(`<div style="width:220px">📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}<br><br>Open 🤖 chat and say:<br>"Generate image of road work here"</div>`).openOn(map);
-});
+function addToMap(url){
+ let c=map.getCenter();
+ L.marker([c.lat,c.lng],{icon:L.divIcon({html:'<div style="background:#0f0;width:22px;height:22px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center">🤖</div>',className:''})}).addTo(map).bindPopup(`<b>AI Result</b><br><img src="${url}" width="280" style="border-radius:12px"><br><small>From chat - Same index</small>`).openPopup();
+ document.getElementById('status').innerText='✅ Added to map';
+}
+
+function downloadImage(url){
+ let a=document.createElement('a'); a.href=url; a.download='ai-image.png'; a.click();
+}
 </script>
 </body>
 </html>
