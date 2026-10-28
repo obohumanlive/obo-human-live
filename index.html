@@ -3,125 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIG LOCATION - HUMAN SATELLITE - FINAL</title>
+<title>BIG LOCATION - HUMAN SATELLITE + AI PICTURE</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,Arial;background:#000;color:#fff;overflow:hidden}
+body{margin:0;font-family:system-ui;background:#000;color:#fff;overflow:hidden}
 #map{height:100vh;width:100vw}
-.top{position:fixed;top:0;left:0;right:0;z-index:1000;background:#000;color:#0f0;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #0f0;font-weight:900}
-.btns{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:10px}
-button{padding:15px 20px;border:0;border-radius:999px;font-weight:900;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.6)}
-#goLive{background:#0f0;color:#000}
-#stopLive{background:#ff1a1a;color:#fff;display:none}
-#cameraBox{position:fixed;bottom:80px;left:10px;right:10px;z-index:999;background:#111;border:2px solid #0f0;border-radius:16px;padding:10px;display:none}
-#cameraBox video{width:100%;height:220px;object-fit:cover;border-radius:12px;background:#000}
-.small{position:fixed;top:48px;left:10px;z-index:999;background:rgba(0,0,0,0.85);padding:8px 10px;border-radius:8px;border:1px solid #0f0;font-size:11px;max-width:300px}
-@keyframes pulse{0%{box-shadow:0 0 0 0 #f00}70%{box-shadow:0 0 0 12px rgba(255,0,0,0)}100%{box-shadow:0 0 0 0 rgba(255,0,0,0)}}
+.top{position:fixed;top:0;left:0;right:0;z-index:1000;background:#000;border-bottom:2px solid #0f0;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;font-weight:900}
+.top small{color:#fff;font-weight:400;font-size:10px}
+.panel{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:#0f0f0f;border-top:2px solid #0f0;padding:10px;border-radius:20px 20px 0 0;max-height:45vh;overflow:auto}
+.row{display:flex;gap:8px}
+input{flex:1;padding:14px;border-radius:30px;border:2px solid #0f0;background:#000;color:#fff}
+button{padding:14px 18px;border:0;border-radius:30px;font-weight:900;cursor:pointer}
+#genBtn{background:#0f0;color:#000}
+#liveBtn{background:#fff;color:#000}
+#aiResult{margin-top:10px;display:none}
+#aiResult img{width:100%;border-radius:16px;border:2px solid #0f0}
+#status{position:fixed;top:44px;left:10px;z-index:999;background:rgba(0,0,0,0.8);padding:6px 10px;border-radius:8px;border:1px solid #0f0;font-size:11px}
+#cameraBox{position:fixed;top:80px;left:10px;right:10px;z-index:999;background:#111;border:2px solid #0f0;border-radius:16px;padding:8px;display:none}
+#cameraBox video{width:100%;height:180px;object-fit:cover;border-radius:12px;background:#000}
 </style>
 </head>
 <body>
-<div class="top"><span>🇳🇬 BIG LOCATION</span><span style="font-size:10px;color:#fff">FREE MAP • PYTHON READY • HUMAN LIVE</span></div>
-<div class="small" id="status">👋 Click map to WATCH • Tap GO LIVE to SHOW ROAD WORK CLEARLY • No Google bill</div>
+<div class="top"><span>🇳🇬 BIG LOCATION</span><small>MAP + LIVE + AI PICTURE — SAME INDEX</small></div>
+<div id="status">✅ Same index — Map + Go Live + AI Picture Generator ready</div>
 <div id="map"></div>
 
 <div id="cameraBox">
 <video id="liveVideo" autoplay playsinline muted></video>
-<div style="display:flex;justify-content:space-between;padding:8px 2px 2px 2px;font-size:12px"><span id="timer">15s - 480p - 7MB</span><span id="locText">Getting GPS...</span></div>
-<div style="font-size:11px;color:#0f0;text-align:center">Human visible for road - Face to face - Clear</div>
+<div style="text-align:center;font-size:11px;padding:4px" id="locText">GPS...</div>
+<button id="stopLive" style="width:100%;background:#f00;color:#fff;margin-top:6px">⏹ STOP & PUBLISH</button>
 </div>
 
-<div class="btns">
-<button id="goLive">🔴 GO LIVE - SHOW ROAD</button>
-<button id="stopLive">⏹ STOP & PUBLISH TO MAP</button>
+<div class="panel">
+<div style="font-size:12px;margin-bottom:8px;color:#0f0;font-weight:900">🤖 AI ENGINE — Talk to am — E go generate picture + still keep map</div>
+<div class="row">
+<input id="prompt" placeholder='Say: "Generate picture of Warri boys working for road, clear, daytime"'>
+<button id="genBtn">🎨 GENERATE</button>
+</div>
+<div class="row" style="margin-top:8px">
+<button id="liveBtn" style="flex:1">🔴 GO LIVE - SHOW ROAD CLEAR</button>
+<button onclick="map.setView([9.082,8.6753],6)" style="background:#333;color:#fff">🌍 Reset Map</button>
+</div>
+<div id="aiResult">
+<div style="font-size:11px;margin:8px 0" id="aiText"></div>
+<img id="aiImg" src="">
+<div style="display:flex;gap:8px;margin-top:8px">
+<button onclick="addToMap()" style="flex:1;background:#0f0">📍 ADD THIS PICTURE TO MAP</button>
+<button onclick="document.getElementById('aiResult').style.display='none'" style="background:#333;color:#fff">Close</button>
+</div>
+</div>
 </div>
 
 <script>
-// ===== FREE MAP - OSM - NO GOOGLE - Owner: Community - Free =====
-let map = L.map('map',{zoomControl:false}).setView([9.0820,8.6753],6);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap FREE'}).addTo(map);
+// ===== FREE MAP =====
+let map = L.map('map',{zoomControl:false}).setView([9.082,8.6753],6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM FREE'}).addTo(map);
 L.control.zoom({position:'topright'}).addTo(map);
+let lastAiUrl=null, lastPrompt='';
 
-// Demo pins - To show human for road concept
-let demo = [
-[5.5544,5.7932,'Warri - Road Work'],
-[6.5244,3.3792,'Lagos - Traffic'],
-[9.0765,7.3986,'Abuja - Site Work'],
-[12.0022,8.5920,'Kano - Market Road']
-];
-demo.forEach(d=>{
- L.marker(d.slice(0,2)).addTo(map).bindPopup(`<b>${d[2]}</b><br><small>Tap GO LIVE here to show real human working</small>`);
-});
-
-// ===== CAMERA + LIVE LOGIC - JavaScript - Owner: ECMA - Free =====
-let myStream=null, mediaRecorder=null, chunks=[], watchID=null, myMarker=null, timerInt=null, myLatLng=null;
-
-function updateStatus(t){ document.getElementById('status').innerHTML=t; }
-
-document.getElementById('goLive').onclick = async()=>{
- try{
-  let stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:640},height:{ideal:480}},audio:true});
-  myStream=stream;
-  document.getElementById('liveVideo').srcObject=stream;
-  document.getElementById('cameraBox').style.display='block';
-  document.getElementById('goLive').style.display='none';
-  document.getElementById('stopLive').style.display='block';
-  updateStatus('🔴 LIVE - Camera ON - Human visible clearly - GPS tracking...');
-
-  watchID = navigator.geolocation.watchPosition(pos=>{
-   myLatLng=[pos.coords.latitude,pos.coords.longitude];
-   document.getElementById('locText').innerText = `${myLatLng[0].toFixed(5)}, ${myLatLng[1].toFixed(5)}`;
-   if(!myMarker){
-    myMarker = L.marker(myLatLng,{icon:L.divIcon({html:'<div style="width:18px;height:18px;background:#0f0;border:3px solid #fff;border-radius:50%;box-shadow:0 0 12px #0f0"></div>',className:''})}).addTo(map);
-   }else myMarker.setLatLng(myLatLng);
-   map.setView(myLatLng,17);
-  },e=>{document.getElementById('locText').innerText='Allow Location for GPS'}, {enableHighAccuracy:true});
-
-  chunks=[];
-  mediaRecorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp9'});
-  mediaRecorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};
-  mediaRecorder.start();
-
-  let sec=15;
-  document.getElementById('timer').innerText=`00:${sec} - REC`;
-  timerInt=setInterval(()=>{
-   sec--; document.getElementById('timer').innerText=`00:${sec<10?'0':''+sec:sec} - REC - 480p`;
-   if(sec<=0) stopAndPublish();
-  },1000);
-
- }catch(err){ alert('Allow Camera + Location: '+err.message); }
+// ===== AI PICTURE GENERATOR - FREE - NO API KEY - SAME INDEX =====
+document.getElementById('genBtn').onclick = async()=>{
+ let prompt = document.getElementById('prompt').value.trim();
+ if(!prompt){ alert('Type wetin you want: e.g. Generate picture of Warri road work with 3 men wearing yellow helmet'); return; }
+ // Remove "generate picture" words - AI only need description
+ let cleanPrompt = prompt.toLowerCase().replace('generate picture','').replace('generate','').replace('create','').trim();
+ if(cleanPrompt.length<3) cleanPrompt = prompt;
+ 
+ document.getElementById('aiText').innerText = `🤖 AI thinking: "${cleanPrompt}"...`;
+ document.getElementById('aiResult').style.display='block';
+ document.getElementById('aiImg').src = '';
+ lastPrompt = cleanPrompt;
+ 
+ // FREE AI ENGINE - Pollinations - No key needed - Works for all
+ let encoded = encodeURIComponent(cleanPrompt + ', high quality, realistic, 4k, clear, daytime, Nigeria road');
+ let url = `https://image.pollinations.ai/prompt/${encoded}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random()*100000)}`;
+ 
+ lastAiUrl = url;
+ document.getElementById('aiImg').src = url;
+ document.getElementById('aiText').innerText = `✅ AI Generated: "${cleanPrompt}" - Same index - Ready to add to map`;
 };
 
-function stopAndPublish(){
- if(timerInt) clearInterval(timerInt);
- if(mediaRecorder && mediaRecorder.state!=='inactive'){ try{mediaRecorder.stop();}catch(e){} }
- if(myStream){ myStream.getTracks().forEach(t=>t.stop()); }
- if(watchID) navigator.geolocation.clearWatch(watchID);
-
- setTimeout(()=>{
-  let blob = new Blob(chunks,{type:'video/webm'});
-  let url = URL.createObjectURL(blob);
-  let latlng = myLatLng || map.getCenter();
-  let html = `<div style="width:300px"><div style="color:#0f0;font-weight:900">🔴 HUMAN LIVE - VISIBLE CLEARLY</div><div style="font-size:11px">${latlng[0].toFixed(5)}, ${latlng[1].toFixed(5)} • ${new Date().toLocaleTimeString()}</div><video src="${url}" controls autoplay playsinline width="100%" style="margin-top:8px;border:2px solid #0f0;border-radius:12px"></video><div style="font-size:11px;margin-top:6px">👷 Person working for road - Face visible - 15s - 7MB<br><span style="color:#0f0">Data saved: ${ (blob.size/1024/1024).toFixed(2)} MB • Earn ₦50</span><br><br><b>Python backend later go save this video for cloud forever</b></div></div>`;
-  L.marker([latlng[0],latlng[1]],{icon:L.divIcon({html:'<div style="width:18px;height:18px;background:red;border:3px solid #fff;border-radius:50%;animation:pulse 1s infinite"></div>',className:''})}).addTo(map).bindPopup(html).openPopup();
-  
-  document.getElementById('cameraBox').style.display='none';
-  document.getElementById('goLive').style.display='block';
-  document.getElementById('stopLive').style.display='none';
-  updateStatus('✅ Published! Click red pin to watch human clearly. GO LIVE again for another road.');
- },300);
+// Add AI picture to map as pin
+function addToMap(){
+ if(!lastAiUrl) return;
+ let center = map.getCenter();
+ let html = `<div style="width:300px"><b>🤖 AI PICTURE - ${lastPrompt}</b><br><img src="${lastAiUrl}" width="100%" style="border-radius:12px;border:2px solid #0f0;margin-top:6px"><br><small>Generated by AI Engine inside same index.html - No Google</small><br><small>Location: ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}</small></div>`;
+ L.marker([center.lat,center.lng],{icon:L.divIcon({html:'<div style="background:#0f0;width:20px;height:20px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:12px">🤖</div>',className:''})}).addTo(map).bindPopup(html).openPopup();
+ document.getElementById('status').innerText = `✅ AI picture added to map at ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`;
 }
 
-document.getElementById('stopLive').onclick = stopAndPublish;
+// Enter key to generate
+document.getElementById('prompt').addEventListener('keypress',e=>{ if(e.key==='Enter') document.getElementById('genBtn').click(); });
 
-// Click map to watch
+// ===== LIVE CAMERA - SAME INDEX =====
+let myStream=null, myLatLng=null, watchID=null, myMarker=null;
+document.getElementById('liveBtn').onclick = async()=>{
+ try{
+  let s = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:640},height:{ideal:480}},audio:false});
+  myStream=s;
+  document.getElementById('liveVideo').srcObject=s;
+  document.getElementById('cameraBox').style.display='block';
+  watchID = navigator.geolocation.watchPosition(p=>{myLatLng=[p.coords.latitude,p.coords.longitude]; document.getElementById('locText').innerText=`${myLatLng[0].toFixed(5)}, ${myLatLng[1].toFixed(5)} - Human visible clearly`; if(!myMarker) myMarker=L.marker(myLatLng).addTo(map); else myMarker.setLatLng(myLatLng); map.setView(myLatLng,17); },{},{enableHighAccuracy:true});
+ }catch(e){ alert('Allow camera: '+e.message); }
+};
+document.getElementById('stopLive').onclick = ()=>{
+ if(myStream) myStream.getTracks().forEach(t=>t.stop());
+ if(watchID) navigator.geolocation.clearWatch(watchID);
+ let url = document.getElementById('liveVideo').srcObject ? '' : '';
+ document.getElementById('cameraBox').style.display='none';
+ if(myLatLng){
+  L.marker(myLatLng,{icon:L.divIcon({html:'<div style="background:red;width:16px;height:16px;border-radius:50%;border:2px solid #fff"></div>',className:''})}).addTo(map).bindPopup(`<b>🔴 LIVE ROAD WORK</b><br>Human visible for road clearly<br>${myLatLng[0].toFixed(5)}, ${myLatLng[1].toFixed(5)}`).openPopup();
+ }
+};
+
+// Map click
 map.on('click',e=>{
- if(document.getElementById('cameraBox').style.display==='block') return;
- L.popup().setLatLng(e.latlng).setContent(`<div style="width:260px"><b>📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}</b><br><small>No LIVE yet here</small><br><br><button onclick="document.getElementById('goLive').click()" style="width:100%;padding:12px;background:#0f0;border:0;border-radius:10px;font-weight:900">🔴 GO LIVE HERE - SHOW HUMAN</button><br><br><small>When you GO LIVE, people go see human for road clear - face to face</small></div>`).openOn(map);
+ L.popup().setLatLng(e.latlng).setContent(`<div style="width:240px"><b>📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}</b><br><br>Type for AI box: "Generate picture of road work here"<br>AI go generate inside same index</div>`).openOn(map);
 });
-
-updateStatus('✅ Ready - Save file as index.html - Double click - E go open - Test GO LIVE');
 </script>
 </body>
 </html>
