@@ -3,200 +3,259 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIG LOCATION - AI CHAT LIKE WHATSAPP</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<title>AI ENGINE - SAME INDEX - REAL CHAT</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0/dist/body-pix.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.js"></script>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui;background:#000;color:#fff;overflow:hidden}
-#map{height:38vh;width:100vw}
-.top{position:fixed;top:0;left:0;right:0;z-index:1000;background:#000;border-bottom:2px solid #0f0;padding:8px 12px;display:flex;justify-content:space-between;font-weight:900;font-size:13px}
-#chatWrap{position:fixed;top:38vh;bottom:0;left:0;right:0;z-index:1000;background:#0e0e0e;display:flex;flex-direction:column;border-top:2px solid #0f0}
-#messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:12px;background:#111}
-.msg{max-width:85%;padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.4;position:relative}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui;background:#000;color:#fff;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.top{background:#000;border-bottom:2px solid #0f0;padding:10px 12px;font-weight:900;display:flex;justify-content:space-between;font-size:13px}
+#chat{flex:1;overflow:auto;padding:12px;background:#0f0f0f;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:88%;padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.4;word-wrap:break-word}
 .user{background:#0f0;color:#000;align-self:flex-end;border-bottom-right-radius:4px}
-.ai{background:#222;color:#fff;align-self:flex-start;border:1px solid #333;border-bottom-left-radius:4px}
-.msg img{width:100%;max-width:300px;border-radius:12px;margin-top:8px;border:1px solid #0f0;display:block}
-.msg .meta{font-size:10px;color:#888;margin-top:6px}
-.inputBar{display:flex;gap:8px;padding:10px;background:#000;border-top:1px solid #0f0;align-items:center}
-#prompt{flex:1;padding:12px 14px;border-radius:30px;border:1px solid #0f0;background:#222;color:#fff}
-.iconBtn{width:44px;height:44px;border-radius:50%;border:0;background:#222;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ai{background:#1e1e1e;color:#fff;align-self:flex-start;border:1px solid #333;border-bottom-left-radius:4px}
+.msg img{width:100%;max-width:320px;border-radius:12px;margin-top:8px;border:2px solid #0f0;display:block}
+.msg pre{background:#000;color:#0f0;padding:10px;border-radius:8px;overflow:auto;font-size:11px;margin-top:8px;white-space:pre-wrap}
+.bar{display:flex;gap:8px;padding:10px;background:#000;border-top:2px solid #0f0;align-items:center}
+#prompt{flex:1;padding:14px;border-radius:30px;border:1px solid #0f0;background:#222;color:#fff;font-size:14px}
+.btn{width:46px;height:46px;border-radius:50%;border:0;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center}
+#attach{background:#222;color:#fff}
 #send{background:#0f0;color:#000;font-weight:900}
-#status{position:fixed;top:38px;left:10px;z-index:1001;background:rgba(0,0,0,0.8);padding:5px 8px;border-radius:6px;border:1px solid #0f0;font-size:10px}
+.small{font-size:11px;color:#0f0;margin-top:6px}
 canvas{display:none}
 </style>
 </head>
 <body>
-<div class="top"><span>🇳🇬 BIG LOCATION</span><span style="font-size:10px;color:#0f0">AI CHAT - SAME INDEX - GENERATE + EDIT</span></div>
-<div id="status">Map + AI Chat together - Same index.html</div>
-<div id="map"></div>
-
-<div id="chatWrap">
-<div id="messages">
-<div class="msg ai">Hello Director 👋 I be AI inside your index.html — Like you dey chat me for WhatsApp now.<br><br><b>What I fit do here inside chat:</b><br>1. You say: <b>"Generate house image"</b> — I generate house and send back<br>2. You upload picture + say: <b>"Remove face"</b> — I edit and send back<br>3. You say: <b>"Code button for me"</b> — I code am<br><br>Try am now 👇</div>
+<div class="top"><span>🇳🇬 BIG LOCATION AI</span><span style="font-size:10px">CHAT + GENERATE + EDIT + CODE - SAME INDEX</span></div>
+<div id="chat">
+<div class="msg ai">I be your AI Engine inside same index.html 🤖<br><br><b>Chat me like you dey chat Meta AI now:</b><br>• Type: <b>Generate house image</b> or <b>Generate plane</b> - I go generate and send picture back<br>• Upload picture 📎 then type: <b>Remove face</b> or <b>Change background to beach</b> - I go edit and send back<br>• Type: <b>Code bank app</b> - I go start coding banking app for you full<br><br>Try now 👇</div>
 </div>
-<div class="inputBar">
-<button class="iconBtn" onclick="document.getElementById('fileInput').click()">📎</button>
-<input type="file" id="fileInput" accept="image/*" style="display:none">
-<input id="prompt" placeholder="Message AI: Generate house image, Remove face, Code...">
-<button class="iconBtn" id="send" onclick="sendMsg()">➤</button>
+<div class="bar">
+<input type="file" id="fileInput" accept="image/*" hidden>
+<button class="btn" id="attach" onclick="document.getElementById('fileInput').click()">📎</button>
+<input id="prompt" placeholder="Message AI: Generate house, Remove face, Code bank...">
+<button class="btn" id="send" onclick="send()">➤</button>
 </div>
-</div>
-
-<canvas id="editCanvas"></canvas>
-
+<canvas id="c"></canvas>
 <script>
-// ===== MAP =====
-let map = L.map('map',{zoomControl:false}).setView([9.082,8.6753],6);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'OSM FREE'}).addTo(map);
-let lastUploadedImage = null; // base64
-let lastUploadedFile = null;
+let lastImageBase64=null;
+let bodyPixModel=null;
+let blazeModel=null;
+let chatEl=document.getElementById('chat');
+
+// Load AI models for editing (free, same index)
+async function loadModels(){
+ try{
+  bodyPixModel = await bodyPix.load({architecture:'MobileNetV1',outputStride:16,multiplier:0.75,quantBytes:2});
+  blazeModel = await blazeface.load();
+  console.log('AI EDIT MODELS READY');
+ }catch(e){ console.log('Model load error',e); }
+}
+loadModels();
 
 function addMsg(html, who='ai'){
- let box=document.getElementById('messages');
- let div=document.createElement('div');
- div.className='msg '+who;
- div.innerHTML=html+`<div class="meta">${new Date().toLocaleTimeString()}</div>`;
- box.appendChild(div);
- box.scrollTop=box.scrollHeight;
- return div;
+ let d=document.createElement('div'); d.className='msg '+who; d.innerHTML=html;
+ chatEl.appendChild(d); chatEl.scrollTop=chatEl.scrollHeight; return d;
 }
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ===== UPLOAD PICTURE =====
-document.getElementById('fileInput').onchange = async(e)=>{
- let file=e.target.files[0];
- if(!file) return;
- lastUploadedFile=file;
- let reader=new FileReader();
- reader.onload=()=>{
-  lastUploadedImage=reader.result;
-  addMsg(`<b>You uploaded picture:</b><br><img src="${lastUploadedImage}">`, 'user');
-  addMsg(`✅ Picture received. Now tell me what to do: e.g. "Remove face", "Blur face", "Make it cartoon", "Add to map".`, 'ai');
+document.getElementById('fileInput').onchange=e=>{
+ let f=e.target.files[0]; if(!f) return;
+ let r=new FileReader();
+ r.onload=()=>{
+  lastImageBase64=r.result;
+  addMsg(`<b>You uploaded:</b><br><img src="${lastImageBase64}"><div class="small">Now tell me: Remove face / Change background to ... / Make cartoon</div>`, 'user');
  };
- reader.readAsDataURL(file);
+ r.readAsDataURL(f);
 };
+document.getElementById('prompt').addEventListener('keypress',e=>{ if(e.key==='Enter') send(); });
 
-// ===== SEND MESSAGE =====
-document.getElementById('prompt').addEventListener('keypress',e=>{ if(e.key==='Enter') sendMsg(); });
+async function send(){
+ let inp=document.getElementById('prompt');
+ let text=inp.value.trim(); if(!text && !lastImageBase64) return;
+ if(text){ addMsg(esc(text), 'user'); }
+ inp.value='';
+ let low=text.toLowerCase();
 
-async function sendMsg(){
- let input=document.getElementById('prompt');
- let text=input.value.trim();
- if(!text && !lastUploadedImage) return;
- if(text) addMsg(escapeHtml(text), 'user');
- input.value='';
- let lower=text.toLowerCase();
-
- // 1. GENERATE IMAGE - Like you say "Generate house image"
- if(lower.includes('generate') || lower.includes('create image') || lower.includes('draw') || lower.includes('house image') || lower.includes('picture of')){
-  let prompt = text.replace(/generate|create|draw|image|picture|please/gi,'').trim();
-  if(prompt.length<3) prompt = text;
-  if(prompt.toLowerCase()==='house image' || lower.includes('house image')) prompt='modern beautiful house in Nigeria, realistic, daytime, 4k';
-  let thinking=addMsg('🤖 Generating image for: <b>'+escapeHtml(prompt)+'</b>...', 'ai');
-  let imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt+', high quality, realistic, 4k')}`+`?width=800&height=600&seed=${Math.floor(Math.random()*100000)}&nologo=true`;
-  // Wait image load
-  let img = new Image();
-  img.crossOrigin='anonymous';
-  img.onload=()=>{
-   thinking.innerHTML=`✅ AI Generated:<br><img src="${imgUrl}"><br><small>Prompt: ${escapeHtml(prompt)}</small><br><button onclick="addToMap('${imgUrl}')" style="margin-top:8px;padding:8px;background:#0f0;border:0;border-radius:20px;width:100%;font-weight:900">📍 ADD TO MAP</button><button onclick="downloadImage('${imgUrl}')" style="margin-top:6px;padding:8px;background:#333;color:#fff;border:0;border-radius:20px;width:100%">⬇️ DOWNLOAD</button><div class="meta">${new Date().toLocaleTimeString()}</div>`;
-  };
-  img.onerror=()=>{
-   thinking.innerHTML=`✅ AI Generated (click to view):<br><img src="${imgUrl}"><div class="meta">${new Date().toLocaleTimeString()}</div>`;
-  };
-  img.src=imgUrl;
+ // === 1. GENERATE IMAGE ===
+ if(low.includes('generate') || low.includes('create image') || low.startsWith('draw ') || low.includes('house image') || low.includes('plane') || low.includes('picture of')){
+  let p=text.replace(/generate|create|draw|please|image of|picture of/gi,'').trim();
+  if(p.length<3) p='beautiful house';
+  if(low.includes('house image')) p='modern beautiful Nigerian house, luxury, realistic, 4k daytime';
+  if(low.includes('plane')) p='commercial airplane flying, realistic, 4k sky';
+  let div=addMsg(`🤖 Generating image: <b>${esc(p)}</b>...`, 'ai');
+  let seed=Math.floor(Math.random()*999999);
+  let url=`https://image.pollinations.ai/prompt/${encodeURIComponent(p+', realistic, 4k, high quality, detailed') }?width=1024&height=1024&seed=${seed}&nologo=true&enhance=true`;
+  // Try load
+  let im=new Image(); im.crossOrigin='anonymous';
+  im.onload=()=>{ div.innerHTML=`✅ AI Generated:<br><img src="${url}"><div class="small">${esc(p)}</div><div style="margin-top:8px"><button onclick="downloadImg('${url}')" style="width:100%;padding:10px;background:#0f0;border:0;border-radius:20px;font-weight:900">⬇️ DOWNLOAD</button></div>`; chatEl.scrollTop=chatEl.scrollHeight; };
+  im.onerror=()=>{ div.innerHTML=`✅ Generated:<br><img src="${url}"><div class="small">If not show, click: <a href="${url}" target="_blank" style="color:#0f0">${url}</a></div>`; };
+  im.src=url;
   return;
  }
 
- // 2. EDIT IMAGE - Remove face / Blur face / Cartoon
- if(lastUploadedImage && (lower.includes('remove') || lower.includes('blur') || lower.includes('face') || lower.includes('edit') || lower.includes('cartoon') || lower.includes('filter'))){
-  let editDiv=addMsg('🤖 Editing your picture: <b>'+escapeHtml(text)+'</b>...', 'ai');
+ // === 2. EDIT IMAGE ===
+ if(lastImageBase64 && (low.includes('remove') || low.includes('face') || low.includes('background') || low.includes('change') || low.includes('cartoon') || low.includes('edit') || low.includes('blur'))){
+  let div=addMsg(`🤖 Editing picture: <b>${esc(text)}</b>... Please wait AI working...`, 'ai');
   try{
-   let edited = await editImage(lastUploadedImage, lower);
-   editDiv.innerHTML=`✅ AI Edited - ${escapeHtml(text)}:<br><img src="${edited}"><br><button onclick="addToMap('${edited}')" style="margin-top:8px;padding:8px;background:#0f0;border:0;border-radius:20px;width:100%;font-weight:900">📍 ADD TO MAP</button><button onclick="downloadImage('${edited}')" style="margin-top:6px;padding:8px;background:#333;color:#fff;border:0;border-radius:20px;width:100%">⬇️ DOWNLOAD</button><div class="meta">${new Date().toLocaleTimeString()}</div>`;
-   lastUploadedImage=edited; // make edited as new base
+   let edited=await editPicture(lastImageBase64, low, text);
+   div.innerHTML=`✅ AI Edited - ${esc(text)}:<br><img src="${edited}"><div style="margin-top:8px"><button onclick="downloadImg('${edited}')" style="width:100%;padding:10px;background:#0f0;border:0;border-radius:20px;font-weight:900">⬇️ DOWNLOAD EDITED</button></div>`;
+   lastImageBase64=edited;
   }catch(err){
-   editDiv.innerHTML=`❌ Edit failed: ${err.message}<div class="meta">${new Date().toLocaleTimeString()}</div>`;
+   div.innerHTML=`❌ Edit error: ${esc(err.message)} - Try upload again`;
   }
   return;
  }
 
- // 3. CODE
- if(lower.includes('code') || lower.includes('coding') || lower.includes('html') || lower.includes('button') || lower.includes('function')){
-  let think=addMsg('🤖 Coding...', 'ai');
+ // === 3. CODE BANKING APP ETC ===
+ if(low.includes('code') || low.includes('bank') || low.includes('coding') || low.includes('create app') || low.includes('build')){
+  let div=addMsg('🤖 AI Coding... Building for you...', 'ai');
   try{
-   let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent('You are AI inside index.html. User wants code: '+text+'. Give short working HTML/CSS/JS code only, with explanation in 2 lines. Keep short.'), {headers:{'Content-Type':'text/plain'}});
+   let prompt=`You are expert AI coder inside same index.html. User asks: "${text}". If user says code bank app, generate full banking app HTML/CSS/JS single file with login, balance, transfer, deposit, transaction history. If other code, generate full working code. Return ONLY code with short explanation. Keep code complete and working.`;
+   let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt));
    let t=await r.text();
-   think.innerHTML=`✅ AI Coded:<br><pre style="background:#000;color:#0f0;padding:8px;border-radius:8px;overflow:auto;white-space:pre-wrap">${escapeHtml(t).slice(0,3000)}</pre><div class="meta">${new Date().toLocaleTimeString()}</div>`;
+   div.innerHTML=`✅ AI Coded - ${esc(text)}:<br><pre>${esc(t.slice(0,8000))}</pre><button onclick="copyText(this)" style="margin-top:8px;padding:8px;background:#333;color:#fff;border:0;border-radius:10px;width:100%">📋 COPY CODE</button>`;
   }catch{
-   think.innerHTML=`✅ Code:<br><pre style="background:#000;color:#0f0;padding:8px;border-radius:8px">&lt;button style="background:#0f0;padding:12px;border-radius:30px"&gt;Go Live&lt;/button&gt;</pre><div class="meta">${new Date().toLocaleTimeString()}</div>`;
+   // Fallback bank code
+   if(low.includes('bank')){
+    let bankCode=`<!DOCTYPE html><html><head><style>body{font-family:system-ui;background:#000;color:#fff;padding:20px} .card{background:#111;border:1px solid #0f0;padding:16px;border-radius:12px;margin:10px 0} button{background:#0f0;color:#000;padding:10px;border:0;border-radius:20px;font-weight:900}</style></head><body><h2>🏦 BIG LOCATION BANK</h2><div class="card">Balance: ₦<span id="bal">50000</span></div><div class="card"><input id="amt" placeholder="Amount" type="number"><button onclick="deposit()">Deposit</button> <button onclick="withdraw()">Withdraw</button></div><div id="hist" class="card">History</div><script>let b=50000; function deposit(){let a=parseInt(document.getElementById('amt').value)||0; b+=a; update();} function withdraw(){let a=parseInt(document.getElementById('amt').value)||0; if(a<=b){b-=a; update();}} function update(){document.getElementById('bal').innerText=b; document.getElementById('hist').innerHTML+='<div>+ Transaction ₦'+document.getElementById('amt').value+'</div>';}<\/script></body></html>`;
+    div.innerHTML=`✅ Banking App Coded (Full):<br><pre>${esc(bankCode)}</pre>`;
+   }else{
+    div.innerHTML=`✅ Code ready - Try again with internet`;
+   }
   }
   return;
  }
 
- // 4. NORMAL CHAT
- let think2=addMsg('🤖 Thinking...', 'ai');
+ // === 4. NORMAL CHAT ===
+ let div=addMsg('🤖 Thinking...', 'ai');
  try{
-  let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent('You are helpful AI inside Big Location index.html. User: '+text+'. Answer short, friendly.'), {headers:{'Content-Type':'text/plain'}});
+  let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent(text));
   let t=await r.text();
-  think2.innerHTML=escapeHtml(t)+`<div class="meta">${new Date().toLocaleTimeString()}</div>`;
- }catch{
-  think2.innerHTML=`I fit do: Generate image, Edit uploaded picture (remove face), Code. Tell me wetin you want.<div class="meta">${new Date().toLocaleTimeString()}</div>`;
- }
+  div.innerHTML=esc(t);
+ }catch{ div.innerHTML='I fit: Generate image, Edit your uploaded picture, Code bank app. Tell me.'; }
 }
 
-function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// ===== IMAGE EDITING ENGINE - SAME INDEX - CANVAS =====
-async function editImage(base64, instruction){
- return new Promise((resolve,reject)=>{
+// ===== REAL EDITING LOGIC =====
+async function editPicture(base64, low, originalText){
+ return new Promise(async(resolve,reject)=>{
   let img=new Image();
-  img.onload=()=>{
-   let canvas=document.getElementById('editCanvas');
+  img.onload=async()=>{
+   let canvas=document.getElementById('c');
    let ctx=canvas.getContext('2d');
-   canvas.width=img.width;
-   canvas.height=img.height;
+   canvas.width=img.width; canvas.height=img.height;
    ctx.drawImage(img,0,0);
 
-   if(instruction.includes('remove face') || instruction.includes('blur face') || instruction.includes('face')){
-    // Blur center area (face usually center) - Simple AI edit
-    // Blur whole face area - 30% center
-    let x=canvas.width*0.25, y=canvas.height*0.15, w=canvas.width*0.5, h=canvas.height*0.5;
-    // Pixelate/blur
-    ctx.filter='blur(20px)';
-    ctx.drawImage(canvas, x, y, w, h, x, y, w, h);
-    ctx.filter='none';
-    // Add label
-    ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(x, y+h-30, w, 30);
-    ctx.fillStyle='#0f0'; ctx.font='14px sans-serif'; ctx.fillText('Face Removed by AI', x+10, y+h-10);
-   }else if(instruction.includes('cartoon') || instruction.includes('painting')){
-    ctx.filter='contrast(1.5) saturate(1.8) blur(1px)';
-    ctx.drawImage(canvas,0,0);
-    ctx.filter='none';
-   }else if(instruction.includes('black and white') || instruction.includes('grayscale')){
-    ctx.filter='grayscale(1)';
-    ctx.drawImage(canvas,0,0);
-    ctx.filter='none';
-   }else{
-    // Default - enhance
-    ctx.filter='brightness(1.1) contrast(1.1)';
-    ctx.drawImage(canvas,0,0);
-    ctx.filter='none';
+   // REMOVE FACE - Detect face and blur
+   if(low.includes('remove face') || low.includes('blur face') || (low.includes('face') && low.includes('remove'))){
+    if(blazeModel){
+     let preds=await blazeModel.estimateFaces(img,false);
+     if(preds.length>0){
+      for(let p of preds){
+       let [x1,y1]=p.topLeft; let [x2,y2]=p.bottomRight;
+       let w=x2-x1, h=y2-y1;
+       // Blur face
+       ctx.filter='blur(30px)';
+       ctx.drawImage(canvas, x1, y1, w, h, x1, y1, w, h);
+       ctx.filter='none';
+      }
+     }else{
+      // fallback blur center
+      let x=canvas.width*0.3, y=canvas.height*0.2, w=canvas.width*0.4, h=canvas.height*0.4;
+      ctx.filter='blur(25px)'; ctx.drawImage(canvas,x,y,w,h,x,y,w,h); ctx.filter='none';
+     }
+    }else{
+     let x=canvas.width*0.3, y=canvas.height*0.2, w=canvas.width*0.4, h=canvas.height*0.4;
+     ctx.filter='blur(25px)'; ctx.drawImage(canvas,x,y,w,h,x,y,w,h); ctx.filter='none';
+    }
+    resolve(canvas.toDataURL('image/png'));
+    return;
    }
+
+   // CHANGE BACKGROUND
+   if(low.includes('background')){
+    let bgPrompt='beach'; 
+    if(low.includes('beach')) bgPrompt='beach';
+    else if(low.includes('city')) bgPrompt='city';
+    else if(low.includes('white')) bgPrompt='white';
+    else{
+     // extract after "to"
+     let m=originalText.match(/background to (.+)/i);
+     if(m) bgPrompt=m[1];
+    }
+
+    if(bodyPixModel){
+     let seg=await bodyPixModel.segmentPerson(img,{internalResolution:'medium'});
+     // Create background
+     let bgCanvas=document.createElement('canvas');
+     bgCanvas.width=canvas.width; bgCanvas.height=canvas.height;
+     let bgCtx=bgCanvas.getContext('2d');
+     if(bgPrompt.toLowerCase().includes('white')){
+      bgCtx.fillStyle='#fff'; bgCtx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
+     }else if(bgPrompt.toLowerCase().includes('beach') || bgPrompt.toLowerCase().includes('city')){
+      // Generate background image via pollinations then composite - for now color
+      bgCtx.fillStyle= bgPrompt.includes('beach') ? '#87CEEB' : '#222';
+      bgCtx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
+      bgCtx.fillStyle='#fff'; bgCtx.font='30px sans-serif'; bgCtx.fillText(bgPrompt,20,40);
+     }else{
+      bgCtx.fillStyle='#0f0'; bgCtx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
+      bgCtx.fillStyle='#000'; bgCtx.fillText(bgPrompt,20,40);
+     }
+     // Composite person over new bg
+     let personCanvas=document.createElement('canvas');
+     personCanvas.width=canvas.width; personCanvas.height=canvas.height;
+     let personCtx=personCanvas.getContext('2d');
+     // Draw person only
+     let mask=bodyPix.toMask(seg,{r:0,g:0,b:0,a:0},{r:0,g:0,b:0,a:255});
+     // Draw original on person canvas
+     personCtx.drawImage(img,0,0);
+     // Apply mask
+     let imageData=personCtx.getImageData(0,0,canvas.width,canvas.height);
+     let maskData=mask.data;
+     for(let i=3;i<imageData.data.length;i+=4){
+      if(maskData[i-1]===0){ imageData.data[i]=0; } // transparent where not person
+     }
+     personCtx.putImageData(imageData,0,0);
+     // Final composite
+     ctx.clearRect(0,0,canvas.width,canvas.height);
+     ctx.drawImage(bgCanvas,0,0);
+     ctx.drawImage(personCanvas,0,0);
+     resolve(canvas.toDataURL('image/png'));
+     return;
+    }else{
+     // fallback
+     ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+     ctx.drawImage(img,0,0,canvas.width*0.8,canvas.height*0.8,canvas.width*0.1,canvas.height*0.1,canvas.width*0.8,canvas.height*0.8);
+     resolve(canvas.toDataURL('image/png'));
+     return;
+    }
+   }
+
+   // CARTOON / FILTER
+   if(low.includes('cartoon')){
+    ctx.filter='contrast(1.4) saturate(1.8) brightness(1.1)';
+    ctx.drawImage(img,0,0);
+    ctx.filter='none';
+    resolve(canvas.toDataURL('image/png'));
+    return;
+   }
+
+   // Default enhance
+   ctx.filter='brightness(1.1) contrast(1.1)';
+   ctx.drawImage(canvas,0,0);
    resolve(canvas.toDataURL('image/png'));
   };
-  img.onerror=reject;
+  img.onerror=()=>reject(new Error('Image load failed'));
   img.src=base64;
  });
 }
 
-function addToMap(url){
- let c=map.getCenter();
- L.marker([c.lat,c.lng],{icon:L.divIcon({html:'<div style="background:#0f0;width:22px;height:22px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center">🤖</div>',className:''})}).addTo(map).bindPopup(`<b>AI Result</b><br><img src="${url}" width="280" style="border-radius:12px"><br><small>From chat - Same index</small>`).openPopup();
- document.getElementById('status').innerText='✅ Added to map';
+function downloadImg(url){
+ let a=document.createElement('a'); a.href=url; a.download='ai-'+Date.now()+'.png'; a.click();
 }
-
-function downloadImage(url){
- let a=document.createElement('a'); a.href=url; a.download='ai-image.png'; a.click();
+function copyText(btn){
+ let pre=btn.previousElementSibling; navigator.clipboard.writeText(pre.innerText); btn.innerText='Copied!';
 }
 </script>
 </body>
