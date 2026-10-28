@@ -3,124 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BIG LOCATION - HUMAN SATELLITE + AI PICTURE</title>
+<title>BIG LOCATION - AI ENGINE CHAT</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui;background:#000;color:#fff;overflow:hidden}
 #map{height:100vh;width:100vw}
-.top{position:fixed;top:0;left:0;right:0;z-index:1000;background:#000;border-bottom:2px solid #0f0;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;font-weight:900}
-.top small{color:#fff;font-weight:400;font-size:10px}
-.panel{position:fixed;bottom:0;left:0;right:0;z-index:1000;background:#0f0f0f;border-top:2px solid #0f0;padding:10px;border-radius:20px 20px 0 0;max-height:45vh;overflow:auto}
-.row{display:flex;gap:8px}
-input{flex:1;padding:14px;border-radius:30px;border:2px solid #0f0;background:#000;color:#fff}
-button{padding:14px 18px;border:0;border-radius:30px;font-weight:900;cursor:pointer}
-#genBtn{background:#0f0;color:#000}
-#liveBtn{background:#fff;color:#000}
-#aiResult{margin-top:10px;display:none}
-#aiResult img{width:100%;border-radius:16px;border:2px solid #0f0}
-#status{position:fixed;top:44px;left:10px;z-index:999;background:rgba(0,0,0,0.8);padding:6px 10px;border-radius:8px;border:1px solid #0f0;font-size:11px}
-#cameraBox{position:fixed;top:80px;left:10px;right:10px;z-index:999;background:#111;border:2px solid #0f0;border-radius:16px;padding:8px;display:none}
-#cameraBox video{width:100%;height:180px;object-fit:cover;border-radius:12px;background:#000}
+.top{position:fixed;top:0;left:0;right:0;z-index:1000;background:#000;border-bottom:2px solid #0f0;padding:10px;display:flex;justify-content:space-between;font-weight:900}
+#chatBtn{position:fixed;bottom:20px;right:20px;z-index:1001;width:60px;height:60px;border-radius:50%;background:#0f0;color:#000;font-size:28px;border:0;font-weight:900;box-shadow:0 0 20px #0f0;cursor:pointer}
+#chatBox{position:fixed;bottom:90px;right:10px;left:10px;max-width:420px;margin-left:auto;z-index:1002;background:#111;border:2px solid #0f0;border-radius:20px;display:none;flex-direction:column;max-height:75vh;overflow:hidden}
+#chatHead{padding:12px;background:#0f0;color:#000;font-weight:900;display:flex;justify-content:space-between}
+#messages{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:10px 12px;border-radius:14px;max-width:85%;font-size:13px;line-height:1.4}
+.user{background:#0f0;color:#000;align-self:flex-end}
+.ai{background:#222;color:#fff;border:1px solid #333;align-self:flex-start}
+.ai img{width:100%;border-radius:12px;margin-top:8px;border:1px solid #0f0}
+.ai pre{background:#000;color:#0f0;padding:10px;border-radius:8px;overflow:auto;font-size:11px;margin-top:8px}
+.row{display:flex;gap:8px;padding:10px;background:#000;border-top:1px solid #0f0}
+#prompt{flex:1;padding:12px;border-radius:30px;border:1px solid #0f0;background:#222;color:#fff}
+#send{padding:12px 18px;border-radius:30px;border:0;background:#0f0;color:#000;font-weight:900}
+#status{position:fixed;top:45px;left:10px;z-index:999;background:rgba(0,0,0,0.8);padding:6px 10px;border-radius:8px;border:1px solid #0f0;font-size:11px}
 </style>
 </head>
 <body>
-<div class="top"><span>🇳🇬 BIG LOCATION</span><small>MAP + LIVE + AI PICTURE — SAME INDEX</small></div>
-<div id="status">✅ Same index — Map + Go Live + AI Picture Generator ready</div>
+<div class="top"><span>🇳🇬 BIG LOCATION</span><span style="font-size:10px">AI ENGINE INSIDE SAME INDEX</span></div>
+<div id="status">Click 🤖 to chat AI - Same index - Generate image, Code, Chat</div>
 <div id="map"></div>
 
-<div id="cameraBox">
-<video id="liveVideo" autoplay playsinline muted></video>
-<div style="text-align:center;font-size:11px;padding:4px" id="locText">GPS...</div>
-<button id="stopLive" style="width:100%;background:#f00;color:#fff;margin-top:6px">⏹ STOP & PUBLISH</button>
-</div>
+<button id="chatBtn" onclick="toggleChat()">🤖</button>
 
-<div class="panel">
-<div style="font-size:12px;margin-bottom:8px;color:#0f0;font-weight:900">🤖 AI ENGINE — Talk to am — E go generate picture + still keep map</div>
+<div id="chatBox">
+<div id="chatHead"><span>🤖 AI ENGINE - SAME INDEX</span><span onclick="toggleChat()" style="cursor:pointer">✕</span></div>
+<div id="messages">
+<div class="msg ai">Hello Director 👋 I be AI Engine inside your index.html<br><br>Talk to me:<br>• "Generate image of Warri road work"<br>• "Code a login button for me"<br>• "Explain how Python save live location"<br><br>Everything I go do inside same index — No go outside.</div>
+</div>
 <div class="row">
-<input id="prompt" placeholder='Say: "Generate picture of Warri boys working for road, clear, daytime"'>
-<button id="genBtn">🎨 GENERATE</button>
-</div>
-<div class="row" style="margin-top:8px">
-<button id="liveBtn" style="flex:1">🔴 GO LIVE - SHOW ROAD CLEAR</button>
-<button onclick="map.setView([9.082,8.6753],6)" style="background:#333;color:#fff">🌍 Reset Map</button>
-</div>
-<div id="aiResult">
-<div style="font-size:11px;margin:8px 0" id="aiText"></div>
-<img id="aiImg" src="">
-<div style="display:flex;gap:8px;margin-top:8px">
-<button onclick="addToMap()" style="flex:1;background:#0f0">📍 ADD THIS PICTURE TO MAP</button>
-<button onclick="document.getElementById('aiResult').style.display='none'" style="background:#333;color:#fff">Close</button>
-</div>
+<input id="prompt" placeholder="Tell AI: Generate image, Code something...">
+<button id="send" onclick="askAI()">Send</button>
 </div>
 </div>
 
 <script>
-// ===== FREE MAP =====
+// ===== MAP =====
 let map = L.map('map',{zoomControl:false}).setView([9.082,8.6753],6);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM FREE'}).addTo(map);
 L.control.zoom({position:'topright'}).addTo(map);
-let lastAiUrl=null, lastPrompt='';
 
-// ===== AI PICTURE GENERATOR - FREE - NO API KEY - SAME INDEX =====
-document.getElementById('genBtn').onclick = async()=>{
- let prompt = document.getElementById('prompt').value.trim();
- if(!prompt){ alert('Type wetin you want: e.g. Generate picture of Warri road work with 3 men wearing yellow helmet'); return; }
- // Remove "generate picture" words - AI only need description
- let cleanPrompt = prompt.toLowerCase().replace('generate picture','').replace('generate','').replace('create','').trim();
- if(cleanPrompt.length<3) cleanPrompt = prompt;
- 
- document.getElementById('aiText').innerText = `🤖 AI thinking: "${cleanPrompt}"...`;
- document.getElementById('aiResult').style.display='block';
- document.getElementById('aiImg').src = '';
- lastPrompt = cleanPrompt;
- 
- // FREE AI ENGINE - Pollinations - No key needed - Works for all
- let encoded = encodeURIComponent(cleanPrompt + ', high quality, realistic, 4k, clear, daytime, Nigeria road');
- let url = `https://image.pollinations.ai/prompt/${encoded}?width=800&height=600&nologo=true&seed=${Math.floor(Math.random()*100000)}`;
- 
- lastAiUrl = url;
- document.getElementById('aiImg').src = url;
- document.getElementById('aiText').innerText = `✅ AI Generated: "${cleanPrompt}" - Same index - Ready to add to map`;
-};
+function toggleChat(){
+ let b=document.getElementById('chatBox');
+ b.style.display = b.style.display==='flex' ? 'none' : 'flex';
+ b.style.display==='flex' && document.getElementById('prompt').focus();
+}
+document.getElementById('prompt').addEventListener('keypress',e=>{ if(e.key==='Enter') askAI(); });
 
-// Add AI picture to map as pin
-function addToMap(){
- if(!lastAiUrl) return;
- let center = map.getCenter();
- let html = `<div style="width:300px"><b>🤖 AI PICTURE - ${lastPrompt}</b><br><img src="${lastAiUrl}" width="100%" style="border-radius:12px;border:2px solid #0f0;margin-top:6px"><br><small>Generated by AI Engine inside same index.html - No Google</small><br><small>Location: ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}</small></div>`;
- L.marker([center.lat,center.lng],{icon:L.divIcon({html:'<div style="background:#0f0;width:20px;height:20px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:12px">🤖</div>',className:''})}).addTo(map).bindPopup(html).openPopup();
- document.getElementById('status').innerText = `✅ AI picture added to map at ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`;
+function addMsg(text, who='ai', extraHTML=''){
+ let box=document.getElementById('messages');
+ let div=document.createElement('div');
+ div.className='msg '+who;
+ div.innerHTML = text.replace(/\n/g,'<br>') + extraHTML;
+ box.appendChild(div);
+ box.scrollTop=box.scrollHeight;
 }
 
-// Enter key to generate
-document.getElementById('prompt').addEventListener('keypress',e=>{ if(e.key==='Enter') document.getElementById('genBtn').click(); });
+// ===== AI ENGINE - SAME INDEX - FREE =====
+async function askAI(){
+ let input = document.getElementById('prompt');
+ let q = input.value.trim();
+ if(!q) return;
+ addMsg(q,'user');
+ input.value='';
+ let lower = q.toLowerCase();
 
-// ===== LIVE CAMERA - SAME INDEX =====
-let myStream=null, myLatLng=null, watchID=null, myMarker=null;
-document.getElementById('liveBtn').onclick = async()=>{
- try{
-  let s = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:640},height:{ideal:480}},audio:false});
-  myStream=s;
-  document.getElementById('liveVideo').srcObject=s;
-  document.getElementById('cameraBox').style.display='block';
-  watchID = navigator.geolocation.watchPosition(p=>{myLatLng=[p.coords.latitude,p.coords.longitude]; document.getElementById('locText').innerText=`${myLatLng[0].toFixed(5)}, ${myLatLng[1].toFixed(5)} - Human visible clearly`; if(!myMarker) myMarker=L.marker(myLatLng).addTo(map); else myMarker.setLatLng(myLatLng); map.setView(myLatLng,17); },{},{enableHighAccuracy:true});
- }catch(e){ alert('Allow camera: '+e.message); }
-};
-document.getElementById('stopLive').onclick = ()=>{
- if(myStream) myStream.getTracks().forEach(t=>t.stop());
- if(watchID) navigator.geolocation.clearWatch(watchID);
- let url = document.getElementById('liveVideo').srcObject ? '' : '';
- document.getElementById('cameraBox').style.display='none';
- if(myLatLng){
-  L.marker(myLatLng,{icon:L.divIcon({html:'<div style="background:red;width:16px;height:16px;border-radius:50%;border:2px solid #fff"></div>',className:''})}).addTo(map).bindPopup(`<b>🔴 LIVE ROAD WORK</b><br>Human visible for road clearly<br>${myLatLng[0].toFixed(5)}, ${myLatLng[1].toFixed(5)}`).openPopup();
+ // 1. IF USER SAY GENERATE IMAGE
+ if(lower.includes('generate') && (lower.includes('image') || lower.includes('picture') || lower.includes('photo'))){
+  addMsg('🤖 AI thinking image... Generating for: "'+q+'"', 'ai');
+  let clean = q.replace(/generate image|generate picture|generate|image of|picture of/gi,'').trim();
+  if(clean.length<4) clean = q;
+  let imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(clean + ', realistic, 4k, high quality, clear, Nigeria')}`+`?width=800&height=600&seed=${Math.floor(Math.random()*100000)}&nologo=true`;
+  let html = `<br><img src="${imgUrl}" onload="this.scrollIntoView()"><br><small>✅ Generated inside same index.html</small><br><button onclick="addImageToMap('${imgUrl}','${clean.replace(/'/g,'')}')" style="margin-top:8px;padding:8px 12px;background:#0f0;border:0;border-radius:20px;font-weight:900;width:100%">📍 ADD TO MAP</button>`;
+  addMsg(`✅ AI Generated Image: <b>${clean}</b>`, 'ai', html);
+  return;
  }
-};
+
+ // 2. IF USER SAY CODE
+ if(lower.includes('code') || lower.includes('coding') || lower.includes('create') && (lower.includes('button') || lower.includes('html') || lower.includes('function'))){
+  // Use text AI for coding
+  try{
+   addMsg('🤖 AI coding...', 'ai');
+   let res = await fetch('https://text.pollinations.ai/'+encodeURIComponent('You are AI engine inside same index.html. User asked: '+q+'. Give short working code example. Keep code short, clear, ready to copy. Answer in simple English.'), {headers:{'Content-Type':'text/plain'}});
+   let txt = await res.text();
+   let codeHtml = `<pre>${escapeHtml(txt).substring(0,2000)}</pre><button onclick="navigator.clipboard.writeText(\`${escapeHtml(txt).replace(/`/g,'')}\`);alert('Copied')" style="padding:6px 10px;background:#333;color:#fff;border:0;border-radius:10px;margin-top:6px">📋 Copy Code</button>`;
+   addMsg('✅ AI Coded for you:', 'ai', codeHtml);
+  }catch(e){
+   addMsg('✅ Code example:<br><pre>&lt;button style="padding:12px;background:#0f0"&gt;My Button&lt;/button&gt;</pre>','ai');
+  }
+  return;
+ }
+
+ // 3. NORMAL CHAT - Use free text AI
+ try{
+  addMsg('🤖 Thinking...', 'ai');
+  let res = await fetch('https://text.pollinations.ai/'+encodeURIComponent('You are helpful AI engine living inside same index.html for Big Location Human Satellite project in Nigeria. User: '+q+' . Answer short, friendly, helpful.'), {headers:{'Content-Type':'text/plain'}});
+  let txt = await res.text();
+  // Remove thinking msg
+  let msgs=document.getElementById('messages'); msgs.removeChild(msgs.lastChild);
+  addMsg(txt, 'ai');
+ }catch(e){
+  let msgs=document.getElementById('messages'); if(msgs.lastChild) msgs.removeChild(msgs.lastChild);
+  addMsg('I be AI Engine inside same index. I fit generate image if you say "Generate image of...", I fit code if you say "Code...". Try am.', 'ai');
+ }
+}
+
+function escapeHtml(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function addImageToMap(url, prompt){
+ let c=map.getCenter();
+ let html=`<div style="width:300px"><b>🤖 AI: ${prompt}</b><br><img src="${url}" width="100%" style="border-radius:12px;border:2px solid #0f0;margin-top:6px"><br><small>Generated by AI Engine inside same index.html</small></div>`;
+ L.marker([c.lat,c.lng],{icon:L.divIcon({html:'<div style="background:#0f0;width:22px;height:22px;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center">🤖</div>',className:''})}).addTo(map).bindPopup(html).openPopup();
+ document.getElementById('status').innerText='✅ AI image added to map';
+}
 
 // Map click
 map.on('click',e=>{
- L.popup().setLatLng(e.latlng).setContent(`<div style="width:240px"><b>📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}</b><br><br>Type for AI box: "Generate picture of road work here"<br>AI go generate inside same index</div>`).openOn(map);
+ L.popup().setLatLng(e.latlng).setContent(`<div style="width:220px">📍 ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}<br><br>Open 🤖 chat and say:<br>"Generate image of road work here"</div>`).openOn(map);
 });
 </script>
 </body>
