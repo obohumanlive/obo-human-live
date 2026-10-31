@@ -2,65 +2,249 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Avatar Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Avatar Studio V2</title>
 
 <style>
 *{box-sizing:border-box}
+
 body{
- margin:0;background:#0b1422;color:white;
+ margin:0;
+ background:#f3f8f5;
+ color:#18372a;
  font-family:Arial,sans-serif;
 }
+
 header{
- padding:22px 15px;text-align:center;
- background:#101e30;border-bottom:2px solid #20c982;
+ background:#087b48;
+ color:white;
+ padding:22px;
+ text-align:center;
 }
-header h1{margin:0;color:#20c982;letter-spacing:2px}
-header p{color:#aab8c9;font-size:12px}
-main{max-width:950px;margin:20px auto;padding:12px}
-.panel{
- background:#142338;border:1px solid #30435b;
- padding:17px;border-radius:13px;margin-bottom:17px;
+
+header h1{
+ margin:0;
+ letter-spacing:2px;
+ font-size:23px;
 }
-h2{font-size:18px}
-.stage{
- position:relative;background:#050a12;
- width:100%;aspect-ratio:16/9;
- border-radius:12px;overflow:hidden;
+
+header p{
+ margin:8px 0 0;
+ font-size:12px;
 }
-video,canvas{
- position:absolute;width:100%;height:100%;
- inset:0;object-fit:cover;transform:scaleX(-1);
+
+main{
+ max-width:1100px;
+ margin:25px auto;
+ padding:14px;
 }
-#overlay{pointer-events:none}
-#placeholder{
- position:absolute;inset:0;display:flex;
- flex-direction:column;justify-content:center;
- align-items:center;color:#aab8c9;text-align:center;
- padding:15px;font-size:14px;
+
+.card{
+ background:white;
+ border:1px solid #d7e8dd;
+ border-radius:14px;
+ padding:18px;
+ margin-bottom:18px;
+ box-shadow:0 4px 15px #164b3010;
 }
+
+h2{
+ margin-top:0;
+ font-size:18px;
+}
+
+p{
+ line-height:1.5;
+}
+
+.small{
+ color:#668071;
+ font-size:12px;
+}
+
 button{
- padding:13px;border:0;border-radius:8px;
- font-weight:bold;cursor:pointer;
+ border:0;
+ border-radius:8px;
+ padding:12px 16px;
+ cursor:pointer;
+ font-weight:bold;
 }
-.primary{background:#20c982;color:#062015}
-.secondary{background:#30445f;color:white}
-.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
-.controls button{flex:1}
-.effects{
- display:grid;grid-template-columns:repeat(3,1fr);
- gap:9px;margin-top:15px;
+
+button:disabled{
+ opacity:.5;
+ cursor:not-allowed;
 }
-.effect{
- background:#263951;color:white;
- border:1px solid #40536c;
+
+.green{
+ background:#0a9c5b;
+ color:white;
 }
-.effect.selected{background:#126342;border-color:#20c982}
-.status{color:#8ff0c2;font-size:13px}
-.note{color:#aab8c9;font-size:12px;line-height:1.6}
-.metrics{display:flex;justify-content:space-between;
- padding:10px 0;border-bottom:1px solid #30435b;font-size:13px}
-footer{text-align:center;color:#8293a9;font-size:11px;padding:20px}
+
+.dark{
+ background:#e5f2e9;
+ color:#175c39;
+}
+
+.red{
+ background:#ffe7e7;
+ color:#a32222;
+}
+
+button:hover{
+ filter:brightness(.96);
+}
+
+.preview-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:15px;
+}
+
+.preview-box{
+ background:#10271c;
+ border-radius:12px;
+ overflow:hidden;
+ position:relative;
+ aspect-ratio:4/3;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ color:white;
+}
+
+video{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+ transform:scaleX(-1);
+}
+
+#cameraPlaceholder,
+#avatarPlaceholder{
+ position:absolute;
+ text-align:center;
+ padding:15px;
+ color:#d9f5e4;
+ font-size:13px;
+}
+
+#avatarPhoto{
+ width:100%;
+ height:100%;
+ object-fit:contain;
+ display:none;
+ transition:transform .18s ease;
+}
+
+#cameraCanvas{
+ display:none;
+}
+
+.label{
+ position:absolute;
+ left:10px;
+ top:10px;
+ background:#087b48;
+ color:white;
+ border-radius:20px;
+ padding:6px 10px;
+ font-size:10px;
+ z-index:2;
+}
+
+.controls{
+ display:flex;
+ flex-wrap:wrap;
+ gap:9px;
+ margin-top:14px;
+}
+
+.controls button{
+ flex:1;
+}
+
+.upload{
+ display:inline-block;
+ background:#e5f2e9;
+ color:#175c39;
+ padding:12px 15px;
+ border-radius:8px;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.upload input{
+ display:none;
+}
+
+.metrics{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:10px;
+}
+
+.metric{
+ background:#eff8f2;
+ border:1px solid #d7e9dd;
+ padding:13px;
+ border-radius:9px;
+ text-align:center;
+}
+
+.metric strong{
+ display:block;
+ font-size:18px;
+ color:#07834b;
+ margin-top:7px;
+}
+
+.metric span{
+ font-size:11px;
+ color:#668071;
+}
+
+.expression{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:12px;
+ border-bottom:1px solid #e5eee8;
+ font-size:13px;
+}
+
+.expression strong{
+ color:#07834b;
+}
+
+.status{
+ background:#e5f6eb;
+ color:#087b48;
+ padding:11px;
+ border-radius:8px;
+ font-size:12px;
+ margin-top:13px;
+}
+
+.notice{
+ background:#fff8e5;
+ color:#755b16;
+ padding:13px;
+ border-radius:9px;
+ font-size:12px;
+ line-height:1.6;
+}
+
+footer{
+ text-align:center;
+ color:#789080;
+ font-size:11px;
+ padding:20px;
+}
+
+@media(max-width:650px){
+ .preview-grid{grid-template-columns:1fr}
+ .metrics{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 
@@ -68,116 +252,227 @@ footer{text-align:center;color:#8293a9;font-size:11px;padding:20px}
 
 <header>
 <h1>LIVE AVATAR STUDIO</h1>
-<p>REAL-TIME FACE TRACKING STUDIO · VERSION 1</p>
+<p>HUMAN AVATAR MODE · VERSION 2</p>
 </header>
 
 <main>
 
-<section class="panel">
-<h2>Live Camera Preview</h2>
-<p class="note">Start your camera to begin face tracking.</p>
+<section class="card">
+<h2>Live Studio</h2>
 
-<div class="stage" id="stage">
+<div class="preview-grid">
+
+<div>
+<div class="preview-box" id="cameraBox">
+
+<div class="label">YOUR LIVE CAMERA</div>
+
 <video id="camera" autoplay muted playsinline></video>
-<canvas id="overlay"></canvas>
-<div id="placeholder">
-<strong>YOUR LIVE CAMERA WILL APPEAR HERE</strong>
-<p>Press Start Camera to begin.</p>
+
+<div id="cameraPlaceholder">
+Your camera preview will appear here.
 </div>
+
+</div>
+</div>
+
+<div>
+<div class="preview-box" id="avatarBox">
+
+<div class="label">HUMAN AVATAR</div>
+
+<img id="avatarPhoto" alt="Uploaded avatar portrait">
+
+<div id="avatarPlaceholder">
+Upload a portrait to display your human avatar.
+</div>
+
+</div>
+</div>
+
 </div>
 
 <div class="controls">
-<button class="primary" id="start">START CAMERA</button>
-<button class="secondary" id="stop" disabled>STOP CAMERA</button>
-<button class="secondary" id="full">FULL SCREEN</button>
+<button class="green" id="startBtn">START CAMERA</button>
+<button class="red" id="stopBtn" disabled>STOP CAMERA</button>
+<button class="dark" id="fullBtn">FULL SCREEN</button>
 </div>
 
-<p class="status" id="status">Camera stopped</p>
-<p class="note" id="message">Your camera starts only when you press Start Camera.</p>
-</section>
-
-<section class="panel">
-<h2>Choose Your Avatar Effect</h2>
-
-<div class="effects">
-<button class="effect selected" data-effect="none">Normal</button>
-<button class="effect" data-effect="robot">🤖 Robot</button>
-<button class="effect" data-effect="cat">🐱 Cat</button>
-<button class="effect" data-effect="alien">👽 Alien</button>
-<button class="effect" data-effect="glasses">🕶️ Glasses</button>
-<button class="effect" data-effect="mesh">Face Mesh</button>
+<div class="status" id="status">
+Studio ready. Upload a portrait and start your camera.
 </div>
 </section>
 
-<section class="panel">
-<h2>Face Tracking Information</h2>
-<div class="metrics"><span>Face detected</span><strong id="face">No</strong></div>
-<div class="metrics"><span>Expression</span><strong id="expression">Waiting</strong></div>
-<div class="metrics"><span>Tracking points</span><strong id="points">0</strong></div>
-</section>
 
-<section class="panel">
-<strong>Privacy</strong>
-<p class="note">
-This prototype processes your camera in your browser.
-It does not upload or record your video. Use your own face
-or an avatar you have permission to use.
+<section class="card">
+
+<h2>Upload Human Avatar</h2>
+
+<p class="small">
+Choose a photograph from your laptop. The image stays in this browser session;
+this project does not upload it to a server.
 </p>
+
+<label class="upload">
+UPLOAD PORTRAIT
+<input type="file" id="photoInput" accept="image/png,image/jpeg,image/webp">
+</label>
+
+<button class="dark" id="removePhoto">REMOVE PHOTO</button>
+
+<p class="small" id="photoStatus">No portrait selected.</p>
+
+</section>
+
+
+<section class="card">
+
+<h2>Live Facial Tracking</h2>
+
+<div class="metrics">
+
+<div class="metric">
+<span>FACE DETECTED</span>
+<strong id="face">NO</strong>
+</div>
+
+<div class="metric">
+<span>EYE BLINK</span>
+<strong id="blink">WAITING</strong>
+</div>
+
+<div class="metric">
+<span>MOUTH</span>
+<strong id="mouth">WAITING</strong>
+</div>
+
+<div class="metric">
+<span>SMILE</span>
+<strong id="smile">WAITING</strong>
+</div>
+
+<div class="metric">
+<span>HEAD MOVEMENT</span>
+<strong id="head">WAITING</strong>
+</div>
+
+<div class="metric">
+<span>TRACKING POINTS</span>
+<strong id="points">0</strong>
+</div>
+
+</div>
+
+</section>
+
+
+<section class="card">
+
+<h2>Expression Monitor</h2>
+
+<div class="expression">
+<span>Eye movement</span>
+<strong id="eyeState">Waiting</strong>
+</div>
+
+<div class="expression">
+<span>Mouth movement</span>
+<strong id="mouthState">Waiting</strong>
+</div>
+
+<div class="expression">
+<span>Facial expression</span>
+<strong id="faceState">Waiting</strong>
+</div>
+
+<div class="expression">
+<span>Head direction</span>
+<strong id="direction">Waiting</strong>
+</div>
+
+</section>
+
+
+<section class="card">
+<h2>Privacy and Testing</h2>
+
+<div class="notice">
+This is a prototype for testing with an authorised portrait.
+Camera processing happens in your browser. The application does not
+record or upload your camera feed or portrait.
+The human portrait currently responds with basic visual effects;
+realistic facial deformation is a future development stage.
+</div>
 </section>
 
 </main>
 
-<footer>LIVE AVATAR STUDIO · V1 PROTOTYPE</footer>
+<footer>
+LIVE AVATAR STUDIO · VERSION 2 · HUMAN AVATAR TEST
+</footer>
+
 
 <script type="module">
+
 import {
  FaceLandmarker,
  FilesetResolver
 } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
 
-const video=document.getElementById("camera");
-const canvas=document.getElementById("overlay");
-const ctx=canvas.getContext("2d");
-const status=document.getElementById("status");
-const message=document.getElementById("message");
 
-let cameraStream=null;
+const video=document.getElementById("camera");
+const status=document.getElementById("status");
+const avatar=document.getElementById("avatarPhoto");
+
 let tracker=null;
+let stream=null;
 let running=false;
-let effect="none";
 let lastTime=-1;
+let photoURL=null;
+let previousBlink=false;
+
+const $=id=>document.getElementById(id);
+
 
 async function loadTracker(){
- if(tracker)return tracker;
 
- message.textContent="Loading face tracking system...";
+ if(tracker) return tracker;
+
+ status.textContent="Loading facial tracking system...";
 
  const vision=await FilesetResolver.forVisionTasks(
  "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
  );
 
  tracker=await FaceLandmarker.createFromOptions(vision,{
+
   baseOptions:{
    modelAssetPath:
    "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
-   delegate:"GPU"
+   delegate:"CPU"
   },
+
   runningMode:"VIDEO",
   numFaces:1,
   outputFaceBlendshapes:true
+
  });
 
  return tracker;
 }
 
+
 async function startCamera(){
+
  try{
-  document.getElementById("start").disabled=true;
-  message.textContent="Preparing camera and face tracking...";
+
+  $("startBtn").disabled=true;
+
+  status.textContent="Preparing face tracker...";
 
   await loadTracker();
 
-  cameraStream=await navigator.mediaDevices.getUserMedia({
+  stream=await navigator.mediaDevices.getUserMedia({
    video:{
     facingMode:"user",
     width:{ideal:1280},
@@ -186,205 +481,278 @@ async function startCamera(){
    audio:false
   });
 
-  video.srcObject=cameraStream;
+  video.srcObject=stream;
+
   await video.play();
 
-  canvas.width=video.videoWidth;
-  canvas.height=video.videoHeight;
-
   running=true;
-  document.getElementById("placeholder").style.display="none";
-  document.getElementById("stop").disabled=false;
-
-  status.textContent="Camera running";
-  message.textContent="Face tracking is active.";
   lastTime=-1;
+
+  $("cameraPlaceholder").style.display="none";
+  $("stopBtn").disabled=false;
+
+  status.textContent="Camera active. Tracking your facial expressions.";
 
   requestAnimationFrame(loop);
 
  }catch(error){
+
   console.error(error);
-  document.getElementById("start").disabled=false;
-  message.textContent="Camera error: "+error.message+
-  ". Allow camera permission and try again.";
+
+  $("startBtn").disabled=false;
+
+  status.textContent="Camera error: "+error.message+
+  ". Check camera permission and internet connection.";
+
  }
+
 }
+
 
 function stopCamera(){
+
  running=false;
 
- if(cameraStream){
-  cameraStream.getTracks().forEach(track=>track.stop());
+ if(stream){
+  stream.getTracks().forEach(track=>track.stop());
  }
 
- cameraStream=null;
+ stream=null;
  video.srcObject=null;
- ctx.clearRect(0,0,canvas.width,canvas.height);
 
- document.getElementById("placeholder").style.display="flex";
- document.getElementById("start").disabled=false;
- document.getElementById("stop").disabled=true;
+ $("cameraPlaceholder").style.display="block";
+ $("startBtn").disabled=false;
+ $("stopBtn").disabled=true;
 
- status.textContent="Camera stopped";
- message.textContent="Camera has been stopped.";
+ resetMetrics();
 
- document.getElementById("face").textContent="No";
- document.getElementById("expression").textContent="Waiting";
- document.getElementById("points").textContent="0";
+ status.textContent="Camera stopped.";
+
 }
 
+
+function resetMetrics(){
+
+ ["face","blink","mouth","smile","head","points",
+ "eyeState","mouthState","faceState","direction"]
+ .forEach(id=>{
+  $(id).textContent="WAITING";
+ });
+
+ avatar.style.transform="none";
+
+}
+
+
+function getScore(categories,name){
+
+ const item=categories.find(x=>x.categoryName===name);
+
+ return item ? item.score : 0;
+
+}
+
+
 function loop(){
- if(!running)return;
+
+ if(!running) return;
 
  if(video.readyState>=2 && video.currentTime!==lastTime){
+
   lastTime=video.currentTime;
+
   const result=tracker.detectForVideo(video,performance.now());
-  draw(result);
+
+  processFace(result);
+
  }
 
  requestAnimationFrame(loop);
+
 }
 
-function draw(result){
- ctx.clearRect(0,0,canvas.width,canvas.height);
 
- const face=result.faceLandmarks?.[0];
+function processFace(result){
 
- if(!face){
-  document.getElementById("face").textContent="No";
-  document.getElementById("expression").textContent="No face found";
-  document.getElementById("points").textContent="0";
+ const landmarks=result.faceLandmarks?.[0];
+
+ if(!landmarks){
+
+  $("face").textContent="NO";
+  $("points").textContent="0";
+
+  return;
+
+ }
+
+ $("face").textContent="YES";
+ $("points").textContent=landmarks.length;
+
+ const categories=
+ result.faceBlendshapes?.[0]?.categories||[];
+
+ const leftBlink=getScore(categories,"eyeBlinkLeft");
+ const rightBlink=getScore(categories,"eyeBlinkRight");
+
+ const jaw=getScore(categories,"jawOpen");
+
+ const smileLeft=getScore(categories,"mouthSmileLeft");
+ const smileRight=getScore(categories,"mouthSmileRight");
+
+ const smile=Math.max(smileLeft,smileRight);
+
+ const blink=Math.max(leftBlink,rightBlink);
+
+ const blinking=blink>.45;
+ const mouthOpen=jaw>.30;
+ const smiling=smile>.35;
+
+ $("blink").textContent=blinking?"BLINKING":"OPEN";
+ $("mouth").textContent=mouthOpen?"OPEN":"CLOSED";
+ $("smile").textContent=smiling?"YES":"NO";
+
+ $("eyeState").textContent=blinking?"Eyes blinking":"Eyes open";
+ $("mouthState").textContent=mouthOpen?"Mouth open":"Mouth closed";
+ $("faceState").textContent=smiling?"Smiling":"Neutral";
+
+ const left=landmarks[234];
+ const right=landmarks[454];
+
+ const nose=landmarks[1];
+
+ const horizontal=(nose.x-.5)*2;
+
+ let direction="Looking forward";
+
+ if(horizontal<-.12) direction="Turning left";
+ if(horizontal>.12) direction="Turning right";
+
+ $("head").textContent=direction;
+ $("direction").textContent=direction;
+
+ animatePortrait({
+  blinking,
+  mouthOpen,
+  smiling,
+  horizontal
+ });
+
+}
+
+
+function animatePortrait(data){
+
+ if(!avatar.src || !avatar.style.display || avatar.style.display==="none"){
   return;
  }
 
- document.getElementById("face").textContent="Yes";
- document.getElementById("points").textContent=face.length;
+ const tilt=Math.max(-8,Math.min(8,data.horizontal*12));
 
- const categories=result.faceBlendshapes?.[0]?.categories||[];
+ const scale=data.mouthOpen?1.015:1;
 
- const score=name=>{
-  return categories.find(x=>x.categoryName===name)?.score||0;
+ avatar.style.transform=
+ "perspective(700px) rotateY("+tilt+"deg) scale("+scale+")";
+
+ if(data.blinking && !previousBlink){
+  avatar.style.filter="brightness(.88)";
+ }else if(!data.blinking){
+  avatar.style.filter=data.smiling?"brightness(1.06)":"none";
+ }
+
+ previousBlink=data.blinking;
+
+}
+
+
+$("photoInput").addEventListener("change",event=>{
+
+ const file=event.target.files[0];
+
+ if(!file)return;
+
+ if(!file.type.startsWith("image/")){
+  $("photoStatus").textContent="Please select an image file.";
+  return;
+ }
+
+ if(file.size>10*1024*1024){
+  $("photoStatus").textContent="Please select an image smaller than 10 MB.";
+  return;
+ }
+
+ if(photoURL) URL.revokeObjectURL(photoURL);
+
+ photoURL=URL.createObjectURL(file);
+
+ avatar.onload=()=>{
+  avatar.style.display="block";
+  $("avatarPlaceholder").style.display="none";
+  $("photoStatus").textContent="Portrait loaded successfully.";
+  status.textContent="Portrait ready. Start the camera to track expressions.";
  };
 
- const smile=Math.max(score("mouthSmileLeft"),score("mouthSmileRight"));
- const jaw=score("jawOpen");
+ avatar.onerror=()=>{
+  $("photoStatus").textContent="Could not load this image.";
+ };
 
- document.getElementById("expression").textContent=
- jaw>.35?"Mouth open":smile>.35?"Smiling":"Neutral";
+ avatar.src=photoURL;
 
- const point=i=>({
-  x:face[i].x*canvas.width,
-  y:face[i].y*canvas.height
- });
+});
 
- const left=point(234);
- const right=point(454);
- const top=point(10);
- const bottom=point(152);
- const center=point(1);
 
- const width=Math.hypot(right.x-left.x,right.y-left.y);
- const height=Math.hypot(bottom.x-top.x,bottom.y-top.y);
+$("removePhoto").addEventListener("click",()=>{
 
- if(effect==="mesh"){
-  ctx.fillStyle="#20c982";
-  for(let i=0;i<face.length;i+=3){
-   ctx.beginPath();
-   ctx.arc(face[i].x*canvas.width,face[i].y*canvas.height,2,0,Math.PI*2);
-   ctx.fill();
-  }
- }
+ if(photoURL) URL.revokeObjectURL(photoURL);
 
- if(effect==="glasses"){
-  ctx.strokeStyle="#20c982";
-  ctx.fillStyle="rgba(10,25,40,.7)";
-  ctx.lineWidth=5;
-  const a=point(33);
-  const b=point(263);
-  const r=width*.19;
+ photoURL=null;
+ avatar.removeAttribute("src");
+ avatar.style.display="none";
 
-  [a,b].forEach(p=>{
-   ctx.beginPath();
-   ctx.ellipse(p.x,p.y,r,r*.7,0,0,Math.PI*2);
-   ctx.fill();
-   ctx.stroke();
-  });
+ $("avatarPlaceholder").style.display="block";
+ $("photoInput").value="";
+ $("photoStatus").textContent="No portrait selected.";
 
-  ctx.beginPath();
-  ctx.moveTo(a.x+r,p=>{});
-  ctx.moveTo(a.x+r,a.y);
-  ctx.lineTo(b.x-r,b.y);
-  ctx.stroke();
- }
+});
 
- if(effect==="robot" || effect==="cat" || effect==="alien"){
-  ctx.save();
-  ctx.translate(center.x,center.y);
 
-  const color=effect==="robot"?"#64f0d0":
-              effect==="cat"?"#ffbd69":"#8dff9f";
+$("startBtn").addEventListener("click",startCamera);
 
-  ctx.strokeStyle=color;
-  ctx.fillStyle="rgba(50,220,150,.16)";
-  ctx.lineWidth=Math.max(4,width*.035);
+$("stopBtn").addEventListener("click",stopCamera);
 
-  if(effect==="robot"){
-   roundRect(-width*.48,-height*.48,width*.96,height*.96,width*.15);
-   ctx.fill();ctx.stroke();
+
+$("fullBtn").addEventListener("click",async()=>{
+
+ try{
+
+  const box=$("avatarBox");
+
+  if(!document.fullscreenElement){
+   await box.requestFullscreen();
   }else{
-   ctx.beginPath();
-   ctx.ellipse(0,0,width*.48,height*.55,0,0,Math.PI*2);
-   ctx.fill();ctx.stroke();
-
-   if(effect==="cat"){
-    ctx.beginPath();
-    ctx.moveTo(-width*.35,-height*.35);
-    ctx.lineTo(-width*.48,-height*.72);
-    ctx.lineTo(-width*.12,-height*.48);
-    ctx.moveTo(width*.35,-height*.35);
-    ctx.lineTo(width*.48,-height*.72);
-    ctx.lineTo(width*.12,-height*.48);
-    ctx.stroke();
-   }
+   await document.exitFullscreen();
   }
 
-  ctx.fillStyle=color;
-  ctx.beginPath();
-  ctx.ellipse(-width*.18,-height*.08,width*.07,height*.09,0,0,Math.PI*2);
-  ctx.ellipse(width*.18,-height*.08,width*.07,height*.09,0,0,Math.PI*2);
-  ctx.fill();
+ }catch(error){
 
-  ctx.restore();
+  status.textContent="Full screen is unavailable.";
+
  }
-}
 
-function roundRect(c,x,y,w,h,r){
- c.beginPath();
- c.roundRect(x,y,w,h,r);
- c.closePath();
-}
-
-document.querySelectorAll(".effect").forEach(button=>{
- button.addEventListener("click",()=>{
-  document.querySelectorAll(".effect").forEach(b=>b.classList.remove("selected"));
-  button.classList.add("selected");
-  effect=button.dataset.effect;
- });
 });
 
-document.getElementById("start").addEventListener("click",startCamera);
-document.getElementById("stop").addEventListener("click",stopCamera);
 
-document.getElementById("full").addEventListener("click",async()=>{
- const stage=document.getElementById("stage");
- if(!document.fullscreenElement){
-  await stage.requestFullscreen();
- }else{
-  await document.exitFullscreen();
+window.addEventListener("beforeunload",()=>{
+
+ if(stream){
+  stream.getTracks().forEach(track=>track.stop());
  }
+
+ if(photoURL){
+  URL.revokeObjectURL(photoURL);
+ }
+
 });
 
-window.addEventListener("beforeunload",stopCamera);
 </script>
 
 </body>
