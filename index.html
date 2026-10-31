@@ -2,261 +2,390 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI ENGINE - SAME INDEX - REAL CHAT</title>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0/dist/body-pix.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface@0.0.7/dist/blazeface.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Avatar Studio</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui;background:#000;color:#fff;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-.top{background:#000;border-bottom:2px solid #0f0;padding:10px 12px;font-weight:900;display:flex;justify-content:space-between;font-size:13px}
-#chat{flex:1;overflow:auto;padding:12px;background:#0f0f0f;display:flex;flex-direction:column;gap:12px}
-.msg{max-width:88%;padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.4;word-wrap:break-word}
-.user{background:#0f0;color:#000;align-self:flex-end;border-bottom-right-radius:4px}
-.ai{background:#1e1e1e;color:#fff;align-self:flex-start;border:1px solid #333;border-bottom-left-radius:4px}
-.msg img{width:100%;max-width:320px;border-radius:12px;margin-top:8px;border:2px solid #0f0;display:block}
-.msg pre{background:#000;color:#0f0;padding:10px;border-radius:8px;overflow:auto;font-size:11px;margin-top:8px;white-space:pre-wrap}
-.bar{display:flex;gap:8px;padding:10px;background:#000;border-top:2px solid #0f0;align-items:center}
-#prompt{flex:1;padding:14px;border-radius:30px;border:1px solid #0f0;background:#222;color:#fff;font-size:14px}
-.btn{width:46px;height:46px;border-radius:50%;border:0;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center}
-#attach{background:#222;color:#fff}
-#send{background:#0f0;color:#000;font-weight:900}
-.small{font-size:11px;color:#0f0;margin-top:6px}
-canvas{display:none}
+*{box-sizing:border-box}
+body{
+ margin:0;background:#0b1422;color:white;
+ font-family:Arial,sans-serif;
+}
+header{
+ padding:22px 15px;text-align:center;
+ background:#101e30;border-bottom:2px solid #20c982;
+}
+header h1{margin:0;color:#20c982;letter-spacing:2px}
+header p{color:#aab8c9;font-size:12px}
+main{max-width:950px;margin:20px auto;padding:12px}
+.panel{
+ background:#142338;border:1px solid #30435b;
+ padding:17px;border-radius:13px;margin-bottom:17px;
+}
+h2{font-size:18px}
+.stage{
+ position:relative;background:#050a12;
+ width:100%;aspect-ratio:16/9;
+ border-radius:12px;overflow:hidden;
+}
+video,canvas{
+ position:absolute;width:100%;height:100%;
+ inset:0;object-fit:cover;transform:scaleX(-1);
+}
+#overlay{pointer-events:none}
+#placeholder{
+ position:absolute;inset:0;display:flex;
+ flex-direction:column;justify-content:center;
+ align-items:center;color:#aab8c9;text-align:center;
+ padding:15px;font-size:14px;
+}
+button{
+ padding:13px;border:0;border-radius:8px;
+ font-weight:bold;cursor:pointer;
+}
+.primary{background:#20c982;color:#062015}
+.secondary{background:#30445f;color:white}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.controls button{flex:1}
+.effects{
+ display:grid;grid-template-columns:repeat(3,1fr);
+ gap:9px;margin-top:15px;
+}
+.effect{
+ background:#263951;color:white;
+ border:1px solid #40536c;
+}
+.effect.selected{background:#126342;border-color:#20c982}
+.status{color:#8ff0c2;font-size:13px}
+.note{color:#aab8c9;font-size:12px;line-height:1.6}
+.metrics{display:flex;justify-content:space-between;
+ padding:10px 0;border-bottom:1px solid #30435b;font-size:13px}
+footer{text-align:center;color:#8293a9;font-size:11px;padding:20px}
 </style>
 </head>
+
 <body>
-<div class="top"><span>🇳🇬 BIG LOCATION AI</span><span style="font-size:10px">CHAT + GENERATE + EDIT + CODE - SAME INDEX</span></div>
-<div id="chat">
-<div class="msg ai">I be your AI Engine inside same index.html 🤖<br><br><b>Chat me like you dey chat Meta AI now:</b><br>• Type: <b>Generate house image</b> or <b>Generate plane</b> - I go generate and send picture back<br>• Upload picture 📎 then type: <b>Remove face</b> or <b>Change background to beach</b> - I go edit and send back<br>• Type: <b>Code bank app</b> - I go start coding banking app for you full<br><br>Try now 👇</div>
+
+<header>
+<h1>LIVE AVATAR STUDIO</h1>
+<p>REAL-TIME FACE TRACKING STUDIO · VERSION 1</p>
+</header>
+
+<main>
+
+<section class="panel">
+<h2>Live Camera Preview</h2>
+<p class="note">Start your camera to begin face tracking.</p>
+
+<div class="stage" id="stage">
+<video id="camera" autoplay muted playsinline></video>
+<canvas id="overlay"></canvas>
+<div id="placeholder">
+<strong>YOUR LIVE CAMERA WILL APPEAR HERE</strong>
+<p>Press Start Camera to begin.</p>
 </div>
-<div class="bar">
-<input type="file" id="fileInput" accept="image/*" hidden>
-<button class="btn" id="attach" onclick="document.getElementById('fileInput').click()">📎</button>
-<input id="prompt" placeholder="Message AI: Generate house, Remove face, Code bank...">
-<button class="btn" id="send" onclick="send()">➤</button>
 </div>
-<canvas id="c"></canvas>
-<script>
-let lastImageBase64=null;
-let bodyPixModel=null;
-let blazeModel=null;
-let chatEl=document.getElementById('chat');
 
-// Load AI models for editing (free, same index)
-async function loadModels(){
- try{
-  bodyPixModel = await bodyPix.load({architecture:'MobileNetV1',outputStride:16,multiplier:0.75,quantBytes:2});
-  blazeModel = await blazeface.load();
-  console.log('AI EDIT MODELS READY');
- }catch(e){ console.log('Model load error',e); }
-}
-loadModels();
+<div class="controls">
+<button class="primary" id="start">START CAMERA</button>
+<button class="secondary" id="stop" disabled>STOP CAMERA</button>
+<button class="secondary" id="full">FULL SCREEN</button>
+</div>
 
-function addMsg(html, who='ai'){
- let d=document.createElement('div'); d.className='msg '+who; d.innerHTML=html;
- chatEl.appendChild(d); chatEl.scrollTop=chatEl.scrollHeight; return d;
-}
-function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+<p class="status" id="status">Camera stopped</p>
+<p class="note" id="message">Your camera starts only when you press Start Camera.</p>
+</section>
 
-document.getElementById('fileInput').onchange=e=>{
- let f=e.target.files[0]; if(!f) return;
- let r=new FileReader();
- r.onload=()=>{
-  lastImageBase64=r.result;
-  addMsg(`<b>You uploaded:</b><br><img src="${lastImageBase64}"><div class="small">Now tell me: Remove face / Change background to ... / Make cartoon</div>`, 'user');
- };
- r.readAsDataURL(f);
-};
-document.getElementById('prompt').addEventListener('keypress',e=>{ if(e.key==='Enter') send(); });
+<section class="panel">
+<h2>Choose Your Avatar Effect</h2>
 
-async function send(){
- let inp=document.getElementById('prompt');
- let text=inp.value.trim(); if(!text && !lastImageBase64) return;
- if(text){ addMsg(esc(text), 'user'); }
- inp.value='';
- let low=text.toLowerCase();
+<div class="effects">
+<button class="effect selected" data-effect="none">Normal</button>
+<button class="effect" data-effect="robot">🤖 Robot</button>
+<button class="effect" data-effect="cat">🐱 Cat</button>
+<button class="effect" data-effect="alien">👽 Alien</button>
+<button class="effect" data-effect="glasses">🕶️ Glasses</button>
+<button class="effect" data-effect="mesh">Face Mesh</button>
+</div>
+</section>
 
- // === 1. GENERATE IMAGE ===
- if(low.includes('generate') || low.includes('create image') || low.startsWith('draw ') || low.includes('house image') || low.includes('plane') || low.includes('picture of')){
-  let p=text.replace(/generate|create|draw|please|image of|picture of/gi,'').trim();
-  if(p.length<3) p='beautiful house';
-  if(low.includes('house image')) p='modern beautiful Nigerian house, luxury, realistic, 4k daytime';
-  if(low.includes('plane')) p='commercial airplane flying, realistic, 4k sky';
-  let div=addMsg(`🤖 Generating image: <b>${esc(p)}</b>...`, 'ai');
-  let seed=Math.floor(Math.random()*999999);
-  let url=`https://image.pollinations.ai/prompt/${encodeURIComponent(p+', realistic, 4k, high quality, detailed') }?width=1024&height=1024&seed=${seed}&nologo=true&enhance=true`;
-  // Try load
-  let im=new Image(); im.crossOrigin='anonymous';
-  im.onload=()=>{ div.innerHTML=`✅ AI Generated:<br><img src="${url}"><div class="small">${esc(p)}</div><div style="margin-top:8px"><button onclick="downloadImg('${url}')" style="width:100%;padding:10px;background:#0f0;border:0;border-radius:20px;font-weight:900">⬇️ DOWNLOAD</button></div>`; chatEl.scrollTop=chatEl.scrollHeight; };
-  im.onerror=()=>{ div.innerHTML=`✅ Generated:<br><img src="${url}"><div class="small">If not show, click: <a href="${url}" target="_blank" style="color:#0f0">${url}</a></div>`; };
-  im.src=url;
-  return;
- }
+<section class="panel">
+<h2>Face Tracking Information</h2>
+<div class="metrics"><span>Face detected</span><strong id="face">No</strong></div>
+<div class="metrics"><span>Expression</span><strong id="expression">Waiting</strong></div>
+<div class="metrics"><span>Tracking points</span><strong id="points">0</strong></div>
+</section>
 
- // === 2. EDIT IMAGE ===
- if(lastImageBase64 && (low.includes('remove') || low.includes('face') || low.includes('background') || low.includes('change') || low.includes('cartoon') || low.includes('edit') || low.includes('blur'))){
-  let div=addMsg(`🤖 Editing picture: <b>${esc(text)}</b>... Please wait AI working...`, 'ai');
-  try{
-   let edited=await editPicture(lastImageBase64, low, text);
-   div.innerHTML=`✅ AI Edited - ${esc(text)}:<br><img src="${edited}"><div style="margin-top:8px"><button onclick="downloadImg('${edited}')" style="width:100%;padding:10px;background:#0f0;border:0;border-radius:20px;font-weight:900">⬇️ DOWNLOAD EDITED</button></div>`;
-   lastImageBase64=edited;
-  }catch(err){
-   div.innerHTML=`❌ Edit error: ${esc(err.message)} - Try upload again`;
-  }
-  return;
- }
+<section class="panel">
+<strong>Privacy</strong>
+<p class="note">
+This prototype processes your camera in your browser.
+It does not upload or record your video. Use your own face
+or an avatar you have permission to use.
+</p>
+</section>
 
- // === 3. CODE BANKING APP ETC ===
- if(low.includes('code') || low.includes('bank') || low.includes('coding') || low.includes('create app') || low.includes('build')){
-  let div=addMsg('🤖 AI Coding... Building for you...', 'ai');
-  try{
-   let prompt=`You are expert AI coder inside same index.html. User asks: "${text}". If user says code bank app, generate full banking app HTML/CSS/JS single file with login, balance, transfer, deposit, transaction history. If other code, generate full working code. Return ONLY code with short explanation. Keep code complete and working.`;
-   let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent(prompt));
-   let t=await r.text();
-   div.innerHTML=`✅ AI Coded - ${esc(text)}:<br><pre>${esc(t.slice(0,8000))}</pre><button onclick="copyText(this)" style="margin-top:8px;padding:8px;background:#333;color:#fff;border:0;border-radius:10px;width:100%">📋 COPY CODE</button>`;
-  }catch{
-   // Fallback bank code
-   if(low.includes('bank')){
-    let bankCode=`<!DOCTYPE html><html><head><style>body{font-family:system-ui;background:#000;color:#fff;padding:20px} .card{background:#111;border:1px solid #0f0;padding:16px;border-radius:12px;margin:10px 0} button{background:#0f0;color:#000;padding:10px;border:0;border-radius:20px;font-weight:900}</style></head><body><h2>🏦 BIG LOCATION BANK</h2><div class="card">Balance: ₦<span id="bal">50000</span></div><div class="card"><input id="amt" placeholder="Amount" type="number"><button onclick="deposit()">Deposit</button> <button onclick="withdraw()">Withdraw</button></div><div id="hist" class="card">History</div><script>let b=50000; function deposit(){let a=parseInt(document.getElementById('amt').value)||0; b+=a; update();} function withdraw(){let a=parseInt(document.getElementById('amt').value)||0; if(a<=b){b-=a; update();}} function update(){document.getElementById('bal').innerText=b; document.getElementById('hist').innerHTML+='<div>+ Transaction ₦'+document.getElementById('amt').value+'</div>';}<\/script></body></html>`;
-    div.innerHTML=`✅ Banking App Coded (Full):<br><pre>${esc(bankCode)}</pre>`;
-   }else{
-    div.innerHTML=`✅ Code ready - Try again with internet`;
-   }
-  }
-  return;
- }
+</main>
 
- // === 4. NORMAL CHAT ===
- let div=addMsg('🤖 Thinking...', 'ai');
- try{
-  let r=await fetch('https://text.pollinations.ai/'+encodeURIComponent(text));
-  let t=await r.text();
-  div.innerHTML=esc(t);
- }catch{ div.innerHTML='I fit: Generate image, Edit your uploaded picture, Code bank app. Tell me.'; }
-}
+<footer>LIVE AVATAR STUDIO · V1 PROTOTYPE</footer>
 
-// ===== REAL EDITING LOGIC =====
-async function editPicture(base64, low, originalText){
- return new Promise(async(resolve,reject)=>{
-  let img=new Image();
-  img.onload=async()=>{
-   let canvas=document.getElementById('c');
-   let ctx=canvas.getContext('2d');
-   canvas.width=img.width; canvas.height=img.height;
-   ctx.drawImage(img,0,0);
+<script type="module">
+import {
+ FaceLandmarker,
+ FilesetResolver
+} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14";
 
-   // REMOVE FACE - Detect face and blur
-   if(low.includes('remove face') || low.includes('blur face') || (low.includes('face') && low.includes('remove'))){
-    if(blazeModel){
-     let preds=await blazeModel.estimateFaces(img,false);
-     if(preds.length>0){
-      for(let p of preds){
-       let [x1,y1]=p.topLeft; let [x2,y2]=p.bottomRight;
-       let w=x2-x1, h=y2-y1;
-       // Blur face
-       ctx.filter='blur(30px)';
-       ctx.drawImage(canvas, x1, y1, w, h, x1, y1, w, h);
-       ctx.filter='none';
-      }
-     }else{
-      // fallback blur center
-      let x=canvas.width*0.3, y=canvas.height*0.2, w=canvas.width*0.4, h=canvas.height*0.4;
-      ctx.filter='blur(25px)'; ctx.drawImage(canvas,x,y,w,h,x,y,w,h); ctx.filter='none';
-     }
-    }else{
-     let x=canvas.width*0.3, y=canvas.height*0.2, w=canvas.width*0.4, h=canvas.height*0.4;
-     ctx.filter='blur(25px)'; ctx.drawImage(canvas,x,y,w,h,x,y,w,h); ctx.filter='none';
-    }
-    resolve(canvas.toDataURL('image/png'));
-    return;
-   }
+const video=document.getElementById("camera");
+const canvas=document.getElementById("overlay");
+const ctx=canvas.getContext("2d");
+const status=document.getElementById("status");
+const message=document.getElementById("message");
 
-   // CHANGE BACKGROUND
-   if(low.includes('background')){
-    let bgPrompt='beach'; 
-    if(low.includes('beach')) bgPrompt='beach';
-    else if(low.includes('city')) bgPrompt='city';
-    else if(low.includes('white')) bgPrompt='white';
-    else{
-     // extract after "to"
-     let m=originalText.match(/background to (.+)/i);
-     if(m) bgPrompt=m[1];
-    }
+let cameraStream=null;
+let tracker=null;
+let running=false;
+let effect="none";
+let lastTime=-1;
 
-    if(bodyPixModel){
-     let seg=await bodyPixModel.segmentPerson(img,{internalResolution:'medium'});
-     // Create background
-     let bgCanvas=document.createElement('canvas');
-     bgCanvas.width=canvas.width; bgCanvas.height=canvas.height;
-     let bgCtx=bgCanvas.getContext('2d');
-     if(bgPrompt.toLowerCase().includes('white')){
-      bgCtx.fillStyle='#fff'; bgCtx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
-     }else if(bgPrompt.toLowerCase().includes('beach') || bgPrompt.toLowerCase().includes('city')){
-      // Generate background image via pollinations then composite - for now color
-      bgCtx.fillStyle= bgPrompt.includes('beach') ? '#87CEEB' : '#222';
-      bgCtx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
-      bgCtx.fillStyle='#fff'; bgCtx.font='30px sans-serif'; bgCtx.fillText(bgPrompt,20,40);
-     }else{
-      bgCtx.fillStyle='#0f0'; bgCtx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
-      bgCtx.fillStyle='#000'; bgCtx.fillText(bgPrompt,20,40);
-     }
-     // Composite person over new bg
-     let personCanvas=document.createElement('canvas');
-     personCanvas.width=canvas.width; personCanvas.height=canvas.height;
-     let personCtx=personCanvas.getContext('2d');
-     // Draw person only
-     let mask=bodyPix.toMask(seg,{r:0,g:0,b:0,a:0},{r:0,g:0,b:0,a:255});
-     // Draw original on person canvas
-     personCtx.drawImage(img,0,0);
-     // Apply mask
-     let imageData=personCtx.getImageData(0,0,canvas.width,canvas.height);
-     let maskData=mask.data;
-     for(let i=3;i<imageData.data.length;i+=4){
-      if(maskData[i-1]===0){ imageData.data[i]=0; } // transparent where not person
-     }
-     personCtx.putImageData(imageData,0,0);
-     // Final composite
-     ctx.clearRect(0,0,canvas.width,canvas.height);
-     ctx.drawImage(bgCanvas,0,0);
-     ctx.drawImage(personCanvas,0,0);
-     resolve(canvas.toDataURL('image/png'));
-     return;
-    }else{
-     // fallback
-     ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
-     ctx.drawImage(img,0,0,canvas.width*0.8,canvas.height*0.8,canvas.width*0.1,canvas.height*0.1,canvas.width*0.8,canvas.height*0.8);
-     resolve(canvas.toDataURL('image/png'));
-     return;
-    }
-   }
+async function loadTracker(){
+ if(tracker)return tracker;
 
-   // CARTOON / FILTER
-   if(low.includes('cartoon')){
-    ctx.filter='contrast(1.4) saturate(1.8) brightness(1.1)';
-    ctx.drawImage(img,0,0);
-    ctx.filter='none';
-    resolve(canvas.toDataURL('image/png'));
-    return;
-   }
+ message.textContent="Loading face tracking system...";
 
-   // Default enhance
-   ctx.filter='brightness(1.1) contrast(1.1)';
-   ctx.drawImage(canvas,0,0);
-   resolve(canvas.toDataURL('image/png'));
-  };
-  img.onerror=()=>reject(new Error('Image load failed'));
-  img.src=base64;
+ const vision=await FilesetResolver.forVisionTasks(
+ "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+ );
+
+ tracker=await FaceLandmarker.createFromOptions(vision,{
+  baseOptions:{
+   modelAssetPath:
+   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task",
+   delegate:"GPU"
+  },
+  runningMode:"VIDEO",
+  numFaces:1,
+  outputFaceBlendshapes:true
  });
+
+ return tracker;
 }
 
-function downloadImg(url){
- let a=document.createElement('a'); a.href=url; a.download='ai-'+Date.now()+'.png'; a.click();
+async function startCamera(){
+ try{
+  document.getElementById("start").disabled=true;
+  message.textContent="Preparing camera and face tracking...";
+
+  await loadTracker();
+
+  cameraStream=await navigator.mediaDevices.getUserMedia({
+   video:{
+    facingMode:"user",
+    width:{ideal:1280},
+    height:{ideal:720}
+   },
+   audio:false
+  });
+
+  video.srcObject=cameraStream;
+  await video.play();
+
+  canvas.width=video.videoWidth;
+  canvas.height=video.videoHeight;
+
+  running=true;
+  document.getElementById("placeholder").style.display="none";
+  document.getElementById("stop").disabled=false;
+
+  status.textContent="Camera running";
+  message.textContent="Face tracking is active.";
+  lastTime=-1;
+
+  requestAnimationFrame(loop);
+
+ }catch(error){
+  console.error(error);
+  document.getElementById("start").disabled=false;
+  message.textContent="Camera error: "+error.message+
+  ". Allow camera permission and try again.";
+ }
 }
-function copyText(btn){
- let pre=btn.previousElementSibling; navigator.clipboard.writeText(pre.innerText); btn.innerText='Copied!';
+
+function stopCamera(){
+ running=false;
+
+ if(cameraStream){
+  cameraStream.getTracks().forEach(track=>track.stop());
+ }
+
+ cameraStream=null;
+ video.srcObject=null;
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ document.getElementById("placeholder").style.display="flex";
+ document.getElementById("start").disabled=false;
+ document.getElementById("stop").disabled=true;
+
+ status.textContent="Camera stopped";
+ message.textContent="Camera has been stopped.";
+
+ document.getElementById("face").textContent="No";
+ document.getElementById("expression").textContent="Waiting";
+ document.getElementById("points").textContent="0";
 }
+
+function loop(){
+ if(!running)return;
+
+ if(video.readyState>=2 && video.currentTime!==lastTime){
+  lastTime=video.currentTime;
+  const result=tracker.detectForVideo(video,performance.now());
+  draw(result);
+ }
+
+ requestAnimationFrame(loop);
+}
+
+function draw(result){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ const face=result.faceLandmarks?.[0];
+
+ if(!face){
+  document.getElementById("face").textContent="No";
+  document.getElementById("expression").textContent="No face found";
+  document.getElementById("points").textContent="0";
+  return;
+ }
+
+ document.getElementById("face").textContent="Yes";
+ document.getElementById("points").textContent=face.length;
+
+ const categories=result.faceBlendshapes?.[0]?.categories||[];
+
+ const score=name=>{
+  return categories.find(x=>x.categoryName===name)?.score||0;
+ };
+
+ const smile=Math.max(score("mouthSmileLeft"),score("mouthSmileRight"));
+ const jaw=score("jawOpen");
+
+ document.getElementById("expression").textContent=
+ jaw>.35?"Mouth open":smile>.35?"Smiling":"Neutral";
+
+ const point=i=>({
+  x:face[i].x*canvas.width,
+  y:face[i].y*canvas.height
+ });
+
+ const left=point(234);
+ const right=point(454);
+ const top=point(10);
+ const bottom=point(152);
+ const center=point(1);
+
+ const width=Math.hypot(right.x-left.x,right.y-left.y);
+ const height=Math.hypot(bottom.x-top.x,bottom.y-top.y);
+
+ if(effect==="mesh"){
+  ctx.fillStyle="#20c982";
+  for(let i=0;i<face.length;i+=3){
+   ctx.beginPath();
+   ctx.arc(face[i].x*canvas.width,face[i].y*canvas.height,2,0,Math.PI*2);
+   ctx.fill();
+  }
+ }
+
+ if(effect==="glasses"){
+  ctx.strokeStyle="#20c982";
+  ctx.fillStyle="rgba(10,25,40,.7)";
+  ctx.lineWidth=5;
+  const a=point(33);
+  const b=point(263);
+  const r=width*.19;
+
+  [a,b].forEach(p=>{
+   ctx.beginPath();
+   ctx.ellipse(p.x,p.y,r,r*.7,0,0,Math.PI*2);
+   ctx.fill();
+   ctx.stroke();
+  });
+
+  ctx.beginPath();
+  ctx.moveTo(a.x+r,p=>{});
+  ctx.moveTo(a.x+r,a.y);
+  ctx.lineTo(b.x-r,b.y);
+  ctx.stroke();
+ }
+
+ if(effect==="robot" || effect==="cat" || effect==="alien"){
+  ctx.save();
+  ctx.translate(center.x,center.y);
+
+  const color=effect==="robot"?"#64f0d0":
+              effect==="cat"?"#ffbd69":"#8dff9f";
+
+  ctx.strokeStyle=color;
+  ctx.fillStyle="rgba(50,220,150,.16)";
+  ctx.lineWidth=Math.max(4,width*.035);
+
+  if(effect==="robot"){
+   roundRect(-width*.48,-height*.48,width*.96,height*.96,width*.15);
+   ctx.fill();ctx.stroke();
+  }else{
+   ctx.beginPath();
+   ctx.ellipse(0,0,width*.48,height*.55,0,0,Math.PI*2);
+   ctx.fill();ctx.stroke();
+
+   if(effect==="cat"){
+    ctx.beginPath();
+    ctx.moveTo(-width*.35,-height*.35);
+    ctx.lineTo(-width*.48,-height*.72);
+    ctx.lineTo(-width*.12,-height*.48);
+    ctx.moveTo(width*.35,-height*.35);
+    ctx.lineTo(width*.48,-height*.72);
+    ctx.lineTo(width*.12,-height*.48);
+    ctx.stroke();
+   }
+  }
+
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.ellipse(-width*.18,-height*.08,width*.07,height*.09,0,0,Math.PI*2);
+  ctx.ellipse(width*.18,-height*.08,width*.07,height*.09,0,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.restore();
+ }
+}
+
+function roundRect(c,x,y,w,h,r){
+ c.beginPath();
+ c.roundRect(x,y,w,h,r);
+ c.closePath();
+}
+
+document.querySelectorAll(".effect").forEach(button=>{
+ button.addEventListener("click",()=>{
+  document.querySelectorAll(".effect").forEach(b=>b.classList.remove("selected"));
+  button.classList.add("selected");
+  effect=button.dataset.effect;
+ });
+});
+
+document.getElementById("start").addEventListener("click",startCamera);
+document.getElementById("stop").addEventListener("click",stopCamera);
+
+document.getElementById("full").addEventListener("click",async()=>{
+ const stage=document.getElementById("stage");
+ if(!document.fullscreenElement){
+  await stage.requestFullscreen();
+ }else{
+  await document.exitFullscreen();
+ }
+});
+
+window.addEventListener("beforeunload",stopCamera);
 </script>
+
 </body>
 </html>
